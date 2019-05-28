@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28917.182
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9F6E828C-6026-4F63-8F1F-F8AFD5599B35}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DataAccess", "Orc.DataAccess\Orc.DataAccess.csproj", "{5FB38C9C-A74B-46D3-B297-2DE0274F952C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DataAccess.Xaml", "Orc.DataAccess.Xaml\Orc.DataAccess.Xaml.csproj", "{431EF206-5DFD-49C3-8597-371A01E76AB5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DataAccess.Example.NET", "Orc.DataAccess.Example.NET\Orc.DataAccess.Example.NET.csproj", "{FC263844-531B-43BF-8BB2-9A20131AF239}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F895A492-C4FD-4E4D-B1D3-18C8B29CC122}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{4641962C-78EB-4092-8D83-C15D48DAABBD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4D2D568A-E723-41EA-A49D-B1DA5FDC8044}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DataAccess.Tests", "Orc.DataAccess.Tests\Orc.DataAccess.Tests.csproj", "{6BEC2270-2C8F-45F8-B264-8F719BB43E9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5FB38C9C-A74B-46D3-B297-2DE0274F952C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FB38C9C-A74B-46D3-B297-2DE0274F952C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FB38C9C-A74B-46D3-B297-2DE0274F952C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FB38C9C-A74B-46D3-B297-2DE0274F952C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{431EF206-5DFD-49C3-8597-371A01E76AB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{431EF206-5DFD-49C3-8597-371A01E76AB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{431EF206-5DFD-49C3-8597-371A01E76AB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{431EF206-5DFD-49C3-8597-371A01E76AB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC263844-531B-43BF-8BB2-9A20131AF239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC263844-531B-43BF-8BB2-9A20131AF239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC263844-531B-43BF-8BB2-9A20131AF239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC263844-531B-43BF-8BB2-9A20131AF239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BEC2270-2C8F-45F8-B264-8F719BB43E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BEC2270-2C8F-45F8-B264-8F719BB43E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BEC2270-2C8F-45F8-B264-8F719BB43E9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BEC2270-2C8F-45F8-B264-8F719BB43E9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5FB38C9C-A74B-46D3-B297-2DE0274F952C} = {F895A492-C4FD-4E4D-B1D3-18C8B29CC122}
+		{431EF206-5DFD-49C3-8597-371A01E76AB5} = {F895A492-C4FD-4E4D-B1D3-18C8B29CC122}
+		{FC263844-531B-43BF-8BB2-9A20131AF239} = {4641962C-78EB-4092-8D83-C15D48DAABBD}
+		{F895A492-C4FD-4E4D-B1D3-18C8B29CC122} = {9F6E828C-6026-4F63-8F1F-F8AFD5599B35}
+		{4641962C-78EB-4092-8D83-C15D48DAABBD} = {9F6E828C-6026-4F63-8F1F-F8AFD5599B35}
+		{4D2D568A-E723-41EA-A49D-B1DA5FDC8044} = {9F6E828C-6026-4F63-8F1F-F8AFD5599B35}
+		{6BEC2270-2C8F-45F8-B264-8F719BB43E9F} = {4D2D568A-E723-41EA-A49D-B1DA5FDC8044}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {84C53120-B468-4811-BA4C-6EA408904438}
+	EndGlobalSection
+EndGlobal
