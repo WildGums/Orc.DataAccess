@@ -1,6 +1,7 @@
 ﻿namespace Orc.DataAccess.Tests
 {
     using System.Runtime.CompilerServices;
+    using System.Xaml;
     using ApiApprover;
     using NUnit.Framework;
 
@@ -10,7 +11,7 @@
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
         public void Orc_DataAccess_HasNoBreakingChanges()
         {
-            var assembly = typeof(CoreType).Assembly;
+            var assembly = typeof(ReaderBase).Assembly;
 
             PublicApiApprover.ApprovePublicApi(assembly);
         }

@@ -1,12 +1,17 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="XamlType.cs" company="WildGums">
+// <copyright file="RecordTable.cs" company="WildGums">
 //   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Orc.DataAccess
 {
-    public class XamlType
+    using System.Collections.Generic;
+
+    public class RecordTable : List<Record>
     {
+        #region Properties
+        public string[] Headers { get; set; }
+        #endregion
     }
 }

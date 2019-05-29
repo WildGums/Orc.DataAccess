@@ -1,12 +1,14 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="XamlType.cs" company="WildGums">
+// <copyright file="Record.cs" company="WildGums">
 //   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Orc.DataAccess
 {
-    public class XamlType
+    using System.Collections.Generic;
+
+    public class Record : Dictionary<string, object>
     {
     }
 }
