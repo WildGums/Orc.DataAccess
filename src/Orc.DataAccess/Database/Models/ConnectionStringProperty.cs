@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.DataAccess.Controls
+namespace Orc.DataAccess
 {
     using System.ComponentModel;
     using System.Data.Common;
