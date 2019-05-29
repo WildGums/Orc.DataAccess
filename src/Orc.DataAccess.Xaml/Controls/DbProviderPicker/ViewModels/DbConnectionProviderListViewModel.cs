@@ -8,21 +8,20 @@
 namespace Orc.DataAccess.Controls
 {
     using System.Collections.Generic;
-    using System.Data;
-    using System.Data.Common;
     using System.Linq;
     using System.Threading.Tasks;
     using Catel.MVVM;
     using Catel.Threading;
+    using Database;
 
     public class DbConnectionProviderListViewModel : ViewModelBase
     {
         #region Fields
-        private readonly DbProvider _selectedProvider;
+        private readonly DbProviderInfo _selectedProvider;
         #endregion
 
         #region Constructors
-        public DbConnectionProviderListViewModel(DbProvider selectedProvider)
+        public DbConnectionProviderListViewModel(DbProviderInfo selectedProvider)
         {
             _selectedProvider = selectedProvider;
 
@@ -34,8 +33,8 @@ namespace Orc.DataAccess.Controls
         #region Properties
         public override string Title => "Select provider";
 
-        public DbProvider DbProvider { get; set; }
-        public IList<DbProvider> DbProviders { get; private set; }
+        public DbProviderInfo DbProvider { get; set; }
+        public IList<DbProviderInfo> DbProviders { get; private set; }
         public Command Refresh { get; }
         public Command Open { get; }
         #endregion
@@ -60,16 +59,7 @@ namespace Orc.DataAccess.Controls
 
         private void OnRefresh()
         {
-            DbProviders = DbProviderFactories.GetFactoryClasses().Rows.OfType<DataRow>()
-                .Select(x => new DbProvider
-                {
-                    Name = x["Name"]?.ToString(),
-                    Description = x["Description"]?.ToString(),
-                    InvariantName = x["InvariantName"]?.ToString(),
-                })
-                .OrderBy(x => x.Name)
-                .ToList();
-
+            DbProviders = Database.DbProvider.GetRegisteredProviders().Select(x => x.Value.Info).ToList();
             DbProvider = DbProviders.FirstOrDefault(x => x.Equals(_selectedProvider));
         }
         #endregion

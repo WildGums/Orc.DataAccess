@@ -15,6 +15,7 @@ namespace Orc.DataAccess.Controls
     using Catel;
     using Catel.Collections;
     using Catel.Data;
+    using Database;
 
     public class SqlConnectionString : ModelBase
     {
@@ -23,7 +24,7 @@ namespace Orc.DataAccess.Controls
         #endregion
 
         #region Constructors
-        public SqlConnectionString(DbConnectionStringBuilder connectionStringBuilder, DbProvider dbProvider)
+        public SqlConnectionString(DbConnectionStringBuilder connectionStringBuilder, DbProviderInfo dbProvider)
         {
             Argument.IsNotNull(() => connectionStringBuilder);
             Argument.IsNotNull(() => dbProvider);
@@ -38,7 +39,7 @@ namespace Orc.DataAccess.Controls
         #region Properties
         public IReadOnlyDictionary<string, ConnectionStringProperty> Properties { get; private set; }
 
-        public DbProvider DbProvider { get; }
+        public DbProviderInfo DbProvider { get; }
         #endregion
 
         #region Methods

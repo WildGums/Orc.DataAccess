@@ -11,6 +11,7 @@ namespace Orc.DataAccess.Controls
     using System.Data;
     using System.Data.Common;
     using Catel;
+    using Database;
 
     public class ConnectionStringBuilderService : IConnectionStringBuilderService
     {
@@ -62,7 +63,7 @@ namespace Orc.DataAccess.Controls
             return ConnectionState.Valid;
         }
 
-        public SqlConnectionString CreateConnectionString(DbProvider dbProvider, string connectionString = "")
+        public SqlConnectionString CreateConnectionString(DbProviderInfo dbProvider, string connectionString = "")
         {
             Argument.IsNotNull(() => dbProvider);
 

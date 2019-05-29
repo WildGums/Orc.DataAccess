@@ -9,12 +9,13 @@ namespace Orc.DataAccess.Controls
 {
     using System.Windows;
     using Catel.MVVM.Views;
+    using Database;
 
     public sealed partial class DbProviderPicker
     {
         #region Constants
         public static readonly DependencyProperty DbProviderProperty = DependencyProperty.Register(
-            nameof(DbProvider), typeof(DbProvider), typeof(DbProviderPicker), new PropertyMetadata(default(DbProvider)));
+            nameof(DbProvider), typeof(DbProviderInfo), typeof(DbProviderPicker), new PropertyMetadata(default(DbProviderInfo)));
         #endregion
 
         #region Constructors
@@ -31,9 +32,9 @@ namespace Orc.DataAccess.Controls
 
         #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
-        public DbProvider DbProvider
+        public DbProviderInfo DbProvider
         {
-            get { return (DbProvider)GetValue(DbProviderProperty); }
+            get { return (DbProviderInfo)GetValue(DbProviderProperty); }
             set { SetValue(DbProviderProperty, value); }
         }
         #endregion

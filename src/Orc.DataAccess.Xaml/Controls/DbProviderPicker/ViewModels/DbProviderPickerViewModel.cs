@@ -12,6 +12,7 @@ namespace Orc.DataAccess.Controls
     using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
+    using Database;
 
     public class DbProviderPickerViewModel : ViewModelBase
     {
@@ -34,7 +35,7 @@ namespace Orc.DataAccess.Controls
         #endregion
 
         #region Properties
-        public DbProvider DbProvider { get; set; }
+        public DbProviderInfo DbProvider { get; set; }
         public TaskCommand ChangeDbProvider { get; }
         #endregion
 

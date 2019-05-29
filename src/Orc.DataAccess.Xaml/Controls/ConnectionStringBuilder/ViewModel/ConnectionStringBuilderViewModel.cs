@@ -12,13 +12,14 @@ namespace Orc.DataAccess.Controls
     using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
+    using Database;
 
     public class ConnectionStringBuilderViewModel : ViewModelBase
     {
         #region Fields
         private readonly ITypeFactory _typeFactory;
         private readonly IUIVisualizerService _uiVisualizerService;
-        private DbProvider _dbProvider;
+        private DbProviderInfo _dbProvider;
         #endregion
 
         #region Constructors

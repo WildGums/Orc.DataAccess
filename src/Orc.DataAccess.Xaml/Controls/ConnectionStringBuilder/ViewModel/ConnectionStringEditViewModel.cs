@@ -15,6 +15,7 @@ namespace Orc.DataAccess.Controls
     using Catel.MVVM;
     using Catel.Services;
     using Catel.Threading;
+    using Database;
     using Timer = System.Timers.Timer;
 
     public class ConnectionStringEditViewModel : ViewModelBase
@@ -28,7 +29,7 @@ namespace Orc.DataAccess.Controls
         private readonly IConnectionStringBuilderService _connectionStringBuilderService;
         private readonly IDispatcherService _dispatcherService;
 
-        private readonly DbProvider _initalDbProvider;
+        private readonly DbProviderInfo _initalDbProvider;
         private readonly string _initialConnectionString;
         private readonly IMessageService _messageService;
         private readonly ITypeFactory _typeFactory;
@@ -39,7 +40,7 @@ namespace Orc.DataAccess.Controls
         #endregion
 
         #region Constructors
-        public ConnectionStringEditViewModel(string connectionString, DbProvider provider, IMessageService messageService,
+        public ConnectionStringEditViewModel(string connectionString, DbProviderInfo provider, IMessageService messageService,
             IConnectionStringBuilderService connectionStringBuilderService, IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory, IDispatcherService dispatcherService)
         {
             Argument.IsNotNull(() => connectionStringBuilderService);
@@ -116,7 +117,7 @@ namespace Orc.DataAccess.Controls
         public override string Title => "Connection properties";
         public SqlConnectionString ConnectionString { get; private set; }
 
-        public DbProvider DbProvider { get; set; }
+        public DbProviderInfo DbProvider { get; set; }
 
         public Command RefreshServers { get; }
         public Command InitServers { get; }

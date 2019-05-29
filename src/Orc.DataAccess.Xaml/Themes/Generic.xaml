@@ -3,6 +3,8 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Orc.DataAccess.Xaml;component/Themes/Styles.xaml" />
+
+        <ResourceDictionary Source="../Controls/ConnectionStringBuilder/Themes/ConnectionStringBuilder.generic.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>
