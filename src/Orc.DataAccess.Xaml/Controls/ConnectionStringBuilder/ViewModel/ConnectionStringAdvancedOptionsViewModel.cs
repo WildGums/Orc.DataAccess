@@ -12,11 +12,12 @@ namespace Orc.DataAccess.Controls
     using System.Threading.Tasks;
     using Catel;
     using Catel.MVVM;
+    using Database;
 
     public class ConnectionStringAdvancedOptionsViewModel : ViewModelBase
     {
         #region Constructors
-        public ConnectionStringAdvancedOptionsViewModel(SqlConnectionString connectionString)
+        public ConnectionStringAdvancedOptionsViewModel(DbConnectionString connectionString)
         {
             Argument.IsNotNull(() => connectionString);
 
@@ -26,9 +27,9 @@ namespace Orc.DataAccess.Controls
 
         #region Properties
         public override string Title => "Advanced options";
-        public IList<ConnectionStringProperty> ConnectionStringProperties { get; private set; }
+        public IList<DbConnectionStringProperty> ConnectionStringProperties { get; private set; }
         public bool IsAdvancedOptionsReadOnly { get; set; }
-        public SqlConnectionString ConnectionString { get; }
+        public DbConnectionString ConnectionString { get; }
         #endregion
 
         #region Methods

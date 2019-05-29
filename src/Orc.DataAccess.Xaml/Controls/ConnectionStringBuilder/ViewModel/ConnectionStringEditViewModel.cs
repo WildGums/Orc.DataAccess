@@ -72,17 +72,17 @@ namespace Orc.DataAccess.Controls
         #endregion
 
         #region Properties
-        public ConnectionStringProperty DataSource => ConnectionString.TryGetProperty("Data Source")
+        public DbConnectionStringProperty DataSource => ConnectionString.TryGetProperty("Data Source")
                                                       ?? ConnectionString.TryGetProperty("Server")
                                                       ?? ConnectionString.TryGetProperty("Host");
-        public ConnectionStringProperty UserId => ConnectionString.TryGetProperty("User ID")
+        public DbConnectionStringProperty UserId => ConnectionString.TryGetProperty("User ID")
                                                   ?? ConnectionString.TryGetProperty("User name");
-        public ConnectionStringProperty Password => ConnectionString.TryGetProperty("Password");
+        public DbConnectionStringProperty Password => ConnectionString.TryGetProperty("Password");
 
-        public ConnectionStringProperty Port => ConnectionString.TryGetProperty("Port");
-        public ConnectionStringProperty IntegratedSecurity => ConnectionString.TryGetProperty("Integrated Security");
+        public DbConnectionStringProperty Port => ConnectionString.TryGetProperty("Port");
+        public DbConnectionStringProperty IntegratedSecurity => ConnectionString.TryGetProperty("Integrated Security");
 
-        public ConnectionStringProperty InitialCatalog => ConnectionString.TryGetProperty("Initial Catalog")
+        public DbConnectionStringProperty InitialCatalog => ConnectionString.TryGetProperty("Initial Catalog")
                                                           ?? ConnectionString.TryGetProperty("Database");
 
         public bool IsAdvancedOptionsReadOnly { get; set; }
@@ -115,7 +115,7 @@ namespace Orc.DataAccess.Controls
         public bool IsDatabasesRefreshing { get; private set; } = false;
         public ConnectionState ConnectionState { get; private set; } = ConnectionState.Undefined;
         public override string Title => "Connection properties";
-        public SqlConnectionString ConnectionString { get; private set; }
+        public DbConnectionString ConnectionString { get; private set; }
 
         public DbProviderInfo DbProvider { get; set; }
 

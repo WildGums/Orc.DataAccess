@@ -29,7 +29,7 @@ namespace Orc.DataAccess.Controls
         #endregion
 
         #region IConnectionStringBuilderService Members
-        public ConnectionState GetConnectionState(SqlConnectionString connectionString)
+        public ConnectionState GetConnectionState(DbConnectionString connectionString)
         {
             var connectionStringStr = connectionString?.ToString();
 
@@ -63,7 +63,7 @@ namespace Orc.DataAccess.Controls
             return ConnectionState.Valid;
         }
 
-        public SqlConnectionString CreateConnectionString(DbProviderInfo dbProvider, string connectionString = "")
+        public DbConnectionString CreateConnectionString(DbProviderInfo dbProvider, string connectionString = "")
         {
             Argument.IsNotNull(() => dbProvider);
 
@@ -79,10 +79,10 @@ namespace Orc.DataAccess.Controls
                 connectionStringBuilder.ConnectionString = connectionString;
             }
 
-            return new SqlConnectionString(connectionStringBuilder, dbProvider);
+            return new DbConnectionString(connectionStringBuilder, dbProvider);
         }
 
-        public IList<string> GetDatabases(SqlConnectionString connectionString)
+        public IList<string> GetDatabases(DbConnectionString connectionString)
         {
             var dbProvider = connectionString.DbProvider?.InvariantName;
             if (string.IsNullOrWhiteSpace(dbProvider))
@@ -142,7 +142,7 @@ namespace Orc.DataAccess.Controls
             _providers.Add(invariantName, provider);
         }
 
-        public IList<string> GetDataSources(SqlConnectionString connectionString)
+        public IList<string> GetDataSources(DbConnectionString connectionString)
         {
             var dbProvider = connectionString.DbProvider?.InvariantName;
             if (string.IsNullOrWhiteSpace(dbProvider))

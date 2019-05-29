@@ -14,10 +14,10 @@ namespace Orc.DataAccess.Controls
     {
         #region Methods
         void AddDataSourceProvider(string invariantName, IDataSourceProvider provider);
-        SqlConnectionString CreateConnectionString(DbProviderInfo dbProvider, string connectionString = "");
-        ConnectionState GetConnectionState(SqlConnectionString connectionString);
-        IList<string> GetDataSources(SqlConnectionString connectionString);
-        IList<string> GetDatabases(SqlConnectionString connectionString);
+        DbConnectionString CreateConnectionString(DbProviderInfo dbProvider, string connectionString = "");
+        ConnectionState GetConnectionState(DbConnectionString connectionString);
+        IList<string> GetDataSources(DbConnectionString connectionString);
+        IList<string> GetDatabases(DbConnectionString connectionString);
         #endregion
     }
 }

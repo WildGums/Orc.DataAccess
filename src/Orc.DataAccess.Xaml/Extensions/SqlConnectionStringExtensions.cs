@@ -7,12 +7,12 @@
 
 namespace Orc.DataAccess
 {
-    using Controls;
+    using Database;
 
     public static class SqlConnectionStringExtensions
     {
         #region Methods
-        public static ConnectionStringProperty TryGetProperty(this SqlConnectionString connectionString, string propertyName)
+        public static DbConnectionStringProperty TryGetProperty(this DbConnectionString connectionString, string propertyName)
         {
             var properties = connectionString?.Properties;
             if (properties == null)

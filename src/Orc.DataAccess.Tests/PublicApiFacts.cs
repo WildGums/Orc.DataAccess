@@ -1,8 +1,8 @@
 ﻿namespace Orc.DataAccess.Tests
 {
     using System.Runtime.CompilerServices;
-    using System.Xaml;
     using ApiApprover;
+    using Controls;
     using NUnit.Framework;
 
     [TestFixture]
@@ -19,7 +19,7 @@
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
         public void Orc_DataAccess_Xaml_HasNoBreakingChanges()
         {
-            var assembly = typeof(XamlType).Assembly;
+            var assembly = typeof(ConnectionStringBuilder).Assembly;
 
             PublicApiApprover.ApprovePublicApi(assembly);
         }
