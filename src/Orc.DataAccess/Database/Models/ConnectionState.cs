@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
-namespace Orc.DataAccess.Controls
+namespace Orc.DataAccess.Database
 {
     public enum ConnectionState
     {

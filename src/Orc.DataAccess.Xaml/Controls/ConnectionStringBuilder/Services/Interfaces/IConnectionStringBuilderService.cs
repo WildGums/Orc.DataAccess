@@ -7,15 +7,12 @@
 
 namespace Orc.DataAccess.Controls
 {
-    using System.Collections.Generic;
     using Database;
 
     public interface IConnectionStringBuilderService
     {
         #region Methods
-        void AddDataSourceProvider(string invariantName, IDataSourceProvider provider);
         ConnectionState GetConnectionState(DbConnectionString connectionString);
-        IList<string> GetDatabases(DbConnectionString connectionString);
         #endregion
     }
 }

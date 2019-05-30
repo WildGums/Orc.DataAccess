@@ -10,6 +10,7 @@ namespace Orc.DataAccess.Controls
     using System;
     using System.Windows.Media;
     using Catel.MVVM.Converters;
+    using Database;
 
     public class ConnectionStateToColorBrushValueConverter : ValueConverterBase<ConnectionState, SolidColorBrush>
     {

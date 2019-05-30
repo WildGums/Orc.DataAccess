@@ -196,7 +196,7 @@ namespace Orc.DataAccess.Controls
 
         private void OnTestConnection()
         {
-            ConnectionState = _connectionStringBuilderService.GetConnectionState(ConnectionString);
+            ConnectionState = ConnectionString.GetConnectionState();
 
             _messageService.ShowAsync($"{ConnectionState} connection!", "Connection test result");
         }

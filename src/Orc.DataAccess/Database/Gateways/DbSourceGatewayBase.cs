@@ -64,7 +64,7 @@ namespace Orc.DataAccess.Database
                 return null;
             }
 
-            if (connection.State.HasFlag(ConnectionState.Open))
+            if (connection.State.HasFlag(System.Data.ConnectionState.Open))
             {
                 var newConnection = Provider?.CreateConnection(Source);
                 newConnection?.Open();
@@ -73,7 +73,7 @@ namespace Orc.DataAccess.Database
                 return newConnection;
             }
 
-            if (!connection.State.HasFlag(ConnectionState.Open))
+            if (!connection.State.HasFlag(System.Data.ConnectionState.Open))
             {
                 connection.Open();
             }

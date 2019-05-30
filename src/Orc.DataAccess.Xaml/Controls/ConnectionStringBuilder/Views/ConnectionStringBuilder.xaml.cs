@@ -9,6 +9,7 @@ namespace Orc.DataAccess.Controls
 {
     using System.Windows;
     using Catel.MVVM.Views;
+    using Database;
 
     public sealed partial class ConnectionStringBuilder
     {

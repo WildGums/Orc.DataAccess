@@ -3,7 +3,17 @@ using Catel.IoC;
 using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;
-using Orc.DataAccess.Controls;
+using Orc.Controls;
+using ConnectionStringAdvancedOptionsViewModel = Orc.DataAccess.Controls.ConnectionStringAdvancedOptionsViewModel;
+using ConnectionStringAdvancedOptionsWindow = Orc.DataAccess.Controls.ConnectionStringAdvancedOptionsWindow;
+using ConnectionStringBuilder = Orc.DataAccess.Controls.ConnectionStringBuilder;
+using ConnectionStringBuilderService = Orc.DataAccess.Controls.ConnectionStringBuilderService;
+using ConnectionStringBuilderViewModel = Orc.DataAccess.Controls.ConnectionStringBuilderViewModel;
+using ConnectionStringEditViewModel = Orc.DataAccess.Controls.ConnectionStringEditViewModel;
+using ConnectionStringEditWindow = Orc.DataAccess.Controls.ConnectionStringEditWindow;
+using DbConnectionProviderListViewModel = Orc.DataAccess.Controls.DbConnectionProviderListViewModel;
+using DbConnectionProviderListWindow = Orc.DataAccess.Controls.DbConnectionProviderListWindow;
+using IConnectionStringBuilderService = Orc.DataAccess.Controls.IConnectionStringBuilderService;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.
