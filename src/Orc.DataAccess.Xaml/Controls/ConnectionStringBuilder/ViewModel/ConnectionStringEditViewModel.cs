@@ -7,6 +7,7 @@
 
 namespace Orc.DataAccess.Controls
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Timers;
     using Catel;
@@ -152,7 +153,7 @@ namespace Orc.DataAccess.Controls
                 DbProvider = _initalDbProvider;
             }
 
-            ConnectionString = _initalDbProvider != null ? _connectionStringBuilderService.CreateConnectionString(_initalDbProvider, _initialConnectionString) : null;
+            ConnectionString = _initalDbProvider?.CreateConnectionString(_initialConnectionString);
         }
 
         private void OnDbProviderChanged()
@@ -163,7 +164,7 @@ namespace Orc.DataAccess.Controls
                 return;
             }
 
-            ConnectionString = _connectionStringBuilderService.CreateConnectionString(dbProvider);
+            ConnectionString = dbProvider.CreateConnectionString();
             SetIntegratedSecurityToDefault();
         }
 
@@ -229,8 +230,9 @@ namespace Orc.DataAccess.Controls
 
             return TaskHelper.RunAndWaitAsync(() =>
             {
-                var servers = _connectionStringBuilderService.GetDataSources(ConnectionString);
-                Servers.AddItems(servers);
+                var provider = Database.DbProvider.GetRegisteredProvider(ConnectionString.DbProvider.InvariantName);
+                var dataSources = provider.GetDataSources();
+                Servers.AddItems(dataSources.Select(x => x.InstanceName));
 
                 IsServersRefreshing = false;
                 _isServersInitialized = true;
@@ -260,8 +262,11 @@ namespace Orc.DataAccess.Controls
                 var connectionState = _connectionStringBuilderService.GetConnectionState(ConnectionString);
                 if (connectionState != ConnectionState.Invalid)
                 {
-                    var databases = _connectionStringBuilderService.GetDatabases(connectionString);
-                    Databases.AddItems(databases);
+                    var schema = connectionString.GetDataSourceSchema();
+                    if (schema != null)
+                    {
+                        Databases.AddItems(schema.Databases);
+                    }
                 }
                 else
                 {

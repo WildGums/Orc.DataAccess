@@ -14,7 +14,7 @@ namespace Orc.DataAccess.Database
         #region Methods
         public static DbConnectionStringProperty TryGetProperty(this DbConnectionString connectionString, string propertyName)
         {
-            Argument.IsNotNull(() => connectionString);
+            //Argument.IsNotNull(() => connectionString);
 
             var properties = connectionString?.Properties;
             if (properties == null)
@@ -34,6 +34,15 @@ namespace Orc.DataAccess.Database
             }
 
             return null;
+        }
+
+        public static DbDataSourceSchema GetDataSourceSchema(this DbConnectionString connectionString)
+        {
+            Argument.IsNotNull(() => connectionString);
+
+            var provider = connectionString.DbProvider;
+            var schemaProvider = provider.GetProvider()?.GetOrCreateConnectedInstance<IDataSourceSchemaProvider>();
+            return schemaProvider?.GetSchema(connectionString);
         }
         #endregion
     }

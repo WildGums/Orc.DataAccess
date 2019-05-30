@@ -14,9 +14,7 @@ namespace Orc.DataAccess.Controls
     {
         #region Methods
         void AddDataSourceProvider(string invariantName, IDataSourceProvider provider);
-        DbConnectionString CreateConnectionString(DbProviderInfo dbProvider, string connectionString = "");
         ConnectionState GetConnectionState(DbConnectionString connectionString);
-        IList<string> GetDataSources(DbConnectionString connectionString);
         IList<string> GetDatabases(DbConnectionString connectionString);
         #endregion
     }

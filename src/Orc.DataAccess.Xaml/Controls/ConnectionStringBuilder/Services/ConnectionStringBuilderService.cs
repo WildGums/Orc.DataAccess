@@ -63,43 +63,24 @@ namespace Orc.DataAccess.Controls
             return ConnectionState.Valid;
         }
 
-        public DbConnectionString CreateConnectionString(DbProviderInfo dbProvider, string connectionString = "")
-        {
-            Argument.IsNotNull(() => dbProvider);
-
-            var factory = DbProviderFactories.GetFactory(dbProvider.InvariantName);
-            var connectionStringBuilder = factory.CreateConnectionStringBuilder();
-            if (connectionStringBuilder == null)
-            {
-                return null;
-            }
-
-            if (!string.IsNullOrWhiteSpace(connectionString))
-            {
-                connectionStringBuilder.ConnectionString = connectionString;
-            }
-
-            return new DbConnectionString(connectionStringBuilder, dbProvider);
-        }
-
         public IList<string> GetDatabases(DbConnectionString connectionString)
         {
-            var dbProvider = connectionString.DbProvider?.InvariantName;
-            if (string.IsNullOrWhiteSpace(dbProvider))
+            var dbProviderInvariantName = connectionString.DbProvider?.InvariantName;
+            if (string.IsNullOrWhiteSpace(dbProviderInvariantName))
             {
                 return new List<string>();
             }
 
-            _providers.TryGetValue(dbProvider, out var provider);
+            _providers.TryGetValue(dbProviderInvariantName, out var provider);
             if (provider == null)
             {
                 return new List<string>();
             }
 
-            var factory = DbProviderFactories.GetFactory(dbProvider);
+            var dbProvider = DbProvider.GetRegisteredProvider(dbProviderInvariantName);
 
             var databases = new List<string>();
-            using (var sqlConnection = factory.CreateConnection())
+            using (var sqlConnection = dbProvider.CreateConnection())
             {
                 if (sqlConnection == null)
                 {
@@ -109,17 +90,12 @@ namespace Orc.DataAccess.Controls
                 sqlConnection.ConnectionString = connectionString.ToString();
                 sqlConnection.Open();
 
-                using (var command = factory.CreateCommand())
+                using (var command = sqlConnection.CreateCommand())
                 {
-                    if (command == null)
-                    {
-                        return new List<string>();
-                    }
-
                     command.Connection = sqlConnection;
                     command.CommandText = provider.DataBasesQuery;
                     command.CommandType = CommandType.Text;
-                    using (IDataReader dataReader = command.ExecuteReader())
+                    using (var dataReader = command.ExecuteReader())
                     {
                         while (dataReader.Read())
                         {
@@ -140,18 +116,6 @@ namespace Orc.DataAccess.Controls
             }
 
             _providers.Add(invariantName, provider);
-        }
-
-        public IList<string> GetDataSources(DbConnectionString connectionString)
-        {
-            var dbProvider = connectionString.DbProvider?.InvariantName;
-            if (string.IsNullOrWhiteSpace(dbProvider))
-            {
-                return new List<string>();
-            }
-
-            _providers.TryGetValue(dbProvider, out var provider);
-            return provider != null ? provider.GetDataSources() : new List<string>();
         }
         #endregion
     }

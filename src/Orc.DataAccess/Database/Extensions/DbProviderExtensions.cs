@@ -21,7 +21,7 @@ namespace Orc.DataAccess.Database
     {
         #region Fields
         private static readonly CacheStorage<string, CacheStorage<Type, IList<Type>>> ConnectedTypes = new CacheStorage<string, CacheStorage<Type, IList<Type>>>();
-        private static readonly CacheStorage<string, object> ConnectedInstances = new CacheStorage<string, object>();
+        private static readonly CacheStorage<string, CacheStorage<Type, object>> ConnectedInstances = new CacheStorage<string, CacheStorage<Type, object>>();
         #endregion
 
         #region Methods
@@ -29,7 +29,8 @@ namespace Orc.DataAccess.Database
         {
             Argument.IsNotNull(() => dbProvider);
 
-            return (T)ConnectedInstances.GetFromCacheOrFetch(dbProvider.ProviderInvariantName, () => CreateConnectedInstance<T>(dbProvider));
+            var instanceCache = ConnectedInstances.GetFromCacheOrFetch(dbProvider.ProviderInvariantName, () => new CacheStorage<Type, object>());
+            return (T)instanceCache.GetFromCacheOrFetch(typeof(T), () => CreateConnectedInstance<T>(dbProvider));
         }
 
         public static T CreateConnectedInstance<T>(this DbProvider dbProvider, params object[] parameters)
@@ -84,6 +85,14 @@ namespace Orc.DataAccess.Database
                     yield return attributedSqlCompilerType;
                 }
             }
+        }
+
+        public static IList<DbDataSource> GetDataSources(this DbProvider dbProvider)
+        {
+            Argument.IsNotNull(() => dbProvider);
+
+            var dataSourceProvider = dbProvider.GetOrCreateConnectedInstance<IDbDataSourceProvider>();
+            return dataSourceProvider?.GetDataSources() ?? new List<DbDataSource>();
         }
 
         public static DbConnection CreateConnection(this DbProvider dbProvider, DatabaseSource databaseSource)
