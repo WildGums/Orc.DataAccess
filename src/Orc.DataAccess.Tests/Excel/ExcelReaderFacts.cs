@@ -31,8 +31,9 @@ namespace Orc.DataAccess.Tests.Helpers
                         var currentValue = reader[fieldHeader];
                     }
                 }
+
+                Assert.AreEqual(reader.TotalRecordCount, 8);
             }
-            // Assert.AreEqual(project, clonedProject);
         }
 
         private string GetDataDirectory([CallerFilePath] string sourceFilePath = "")
