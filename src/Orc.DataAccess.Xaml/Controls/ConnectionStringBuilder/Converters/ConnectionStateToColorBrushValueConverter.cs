@@ -20,10 +20,13 @@ namespace Orc.DataAccess.Controls
             {
                 case ConnectionState.Undefined:
                     return new SolidColorBrush(Colors.Gray);
+
                 case ConnectionState.Valid:
                     return new SolidColorBrush(Colors.Green);
+
                 case ConnectionState.Invalid:
                     return new SolidColorBrush(Colors.Red);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value), value, null);
             }
