@@ -4,7 +4,7 @@ public class static ModuleInitializer
 {
     public static void Initialize() { }
 }
-namespace Orc.DataAccess
+namespace Orc.DataAccess.Csv
 {
     public class CsvReader : Orc.DataAccess.ReaderBase
     {
@@ -15,132 +15,6 @@ namespace Orc.DataAccess
         public override int TotalRecordCount { get; }
         public override void Dispose() { }
         public override bool Read() { }
-    }
-    public abstract class DataSourceBase : Catel.Data.ModelBase
-    {
-        protected readonly System.Collections.Generic.Dictionary<string, string> Properties;
-        public static readonly Catel.Data.PropertyData ValidationContextProperty;
-        protected DataSourceBase() { }
-        protected DataSourceBase(string location) { }
-        public Catel.Data.IValidationContext ValidationContext { get; }
-        public System.Collections.Generic.IReadOnlyDictionary<string, string> AsDictionary() { }
-        public virtual string GetLocation() { }
-        protected override void OnPropertyChanged(Catel.Data.AdvancedPropertyChangedEventArgs args) { }
-        public void SetProperty(string propertyName, string propertyValueStr) { }
-        public override string ToString() { }
-        protected virtual bool TryConvertFromString(string propertyName, string propertyValueStr, out object propertyValue) { }
-        public virtual void Validate() { }
-    }
-    public class static DataSourceBaseExtensions
-    {
-        public static bool IsValid(this Orc.DataAccess.DataSourceBase dataSource) { }
-    }
-    public class DataSourceParameter
-    {
-        public DataSourceParameter() { }
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public object Value { get; set; }
-    }
-    public class DataSourceParameters : Catel.Data.SavableModelBase<Orc.DataAccess.DataSourceParameters>
-    {
-        public static readonly Catel.Data.PropertyData ParametersProperty;
-        public DataSourceParameters() { }
-        public System.Collections.Generic.List<Orc.DataAccess.DataSourceParameter> Parameters { get; set; }
-    }
-    public class static DataSourceParametersExtensions
-    {
-        public static bool IsEmpty(this Orc.DataAccess.DataSourceParameters databaseQueryParameters) { }
-        public static bool IsSameAs(this Orc.DataAccess.DataSourceParameters databaseQueryParameters, Orc.DataAccess.DataSourceParameters other) { }
-        public static string ToArgsNamesString(this Orc.DataAccess.DataSourceParameters queryParameters, string argsPrefix = "") { }
-        public static string ToArgsValueString(this Orc.DataAccess.DataSourceParameters queryParameters) { }
-    }
-    public class static DbCommandExtensions
-    {
-        public static System.Data.Common.DbCommand AddParameter(this System.Data.Common.DbCommand dbCommand, Orc.DataAccess.DataSourceParameter parameter) { }
-        public static System.Data.Common.DbCommand AddParameter(this System.Data.Common.DbCommand dbCommand, string name, object value) { }
-        public static System.Data.Common.DbCommand AddParameters(this System.Data.Common.DbCommand dbCommand, Orc.DataAccess.DataSourceParameters parameters) { }
-        public static long GetRecordsCount(this System.Data.Common.DbCommand command) { }
-    }
-    public class static DbDataReaderExtensions
-    {
-        public static string[] GetHeaders(this System.Data.Common.DbDataReader reader) { }
-        public static System.Collections.Generic.List<Orc.DataAccess.RecordTable> ReadAll(this System.Data.Common.DbDataReader reader) { }
-    }
-    public class static ICollectionExtensions
-    {
-        public static TTarget FindTypeOrCreateNew<T, TTarget>(this System.Collections.Generic.ICollection<T> collection, System.Func<TTarget> func)
-            where TTarget : T { }
-    }
-    public interface IReader : System.IDisposable
-    {
-        System.Globalization.CultureInfo Culture { get; set; }
-        int FetchCount { get; set; }
-        string[] FieldHeaders { get; }
-        object this[int index] { get; }
-        object this[string name] { get; }
-        int Offset { get; set; }
-        int TotalRecordCount { get; }
-        Catel.Data.IValidationContext ValidationContext { get; }
-        System.Threading.Tasks.Task<bool> NextResultAsync();
-        bool Read();
-    }
-    public class static IReaderExtensions
-    {
-        public static System.Collections.Generic.List<Orc.DataAccess.RecordTable> ReadAll(this Orc.DataAccess.IReader reader) { }
-    }
-    public class static IValidationContextExtensions
-    {
-        public static void AddValidationError(this Catel.Data.IValidationContext validationContext, string message, string tag = null) { }
-    }
-    public class static KeyValueStringParser
-    {
-        public const char KeyValueDelimiter = '=';
-        public const char KeyValuePairsDelimiter = ',';
-        public static string FormatToKeyValueString(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> keyPairs) { }
-        public static string GetValue(string source, string key) { }
-        public static System.Collections.Generic.Dictionary<string, string> Parse(string source) { }
-        public static string SetValue(string source, string key, string value) { }
-    }
-    public abstract class ReaderBase : Orc.DataAccess.IReader, System.IDisposable
-    {
-        protected readonly string Source;
-        protected ReaderBase(string source, int offset = 0, int fetchCount = 0) { }
-        public System.Globalization.CultureInfo Culture { get; set; }
-        public int FetchCount { get; set; }
-        public abstract string[] FieldHeaders { get; }
-        public abstract object this[int index] { get; }
-        public abstract object this[string name] { get; }
-        public int Offset { get; set; }
-        public abstract int TotalRecordCount { get; }
-        public Catel.Data.IValidationContext ValidationContext { get; }
-        protected void AddValidationError(string message) { }
-        public abstract void Dispose();
-        public virtual System.Threading.Tasks.Task<bool> NextResultAsync() { }
-        public abstract bool Read();
-    }
-    public class Record : System.Collections.Generic.Dictionary<string, object>
-    {
-        public Record() { }
-    }
-    public class RecordTable : System.Collections.Generic.List<Orc.DataAccess.Record>
-    {
-        public RecordTable() { }
-        public string[] Headers { get; set; }
-    }
-    public class static RecordTableExtensions
-    {
-        public static bool HasHeaders(this Orc.DataAccess.RecordTable table) { }
-    }
-    public class static StringExtensions
-    {
-        public const string InitVector = "tu89geji340t89u2";
-        public static string Decrypt(this string cipherText) { }
-        public static string Encrypt(this string plainText) { }
-    }
-    public class static TypeExtensions
-    {
-        public static System.Collections.Generic.IList<System.Type> GetAllAssignableFrom(this System.Type type) { }
     }
 }
 namespace Orc.DataAccess.Database
@@ -417,5 +291,167 @@ namespace Orc.DataAccess.Database
         StoredProcedure = 2,
         Function = 3,
         Sql = 4,
+    }
+}
+namespace Orc.DataAccess
+{
+    public abstract class DataSourceBase : Catel.Data.ModelBase
+    {
+        protected readonly System.Collections.Generic.Dictionary<string, string> Properties;
+        public static readonly Catel.Data.PropertyData ValidationContextProperty;
+        protected DataSourceBase() { }
+        protected DataSourceBase(string location) { }
+        public Catel.Data.IValidationContext ValidationContext { get; }
+        public System.Collections.Generic.IReadOnlyDictionary<string, string> AsDictionary() { }
+        public virtual string GetLocation() { }
+        protected override void OnPropertyChanged(Catel.Data.AdvancedPropertyChangedEventArgs args) { }
+        public void SetProperty(string propertyName, string propertyValueStr) { }
+        public override string ToString() { }
+        protected virtual bool TryConvertFromString(string propertyName, string propertyValueStr, out object propertyValue) { }
+        public virtual void Validate() { }
+    }
+    public class static DataSourceBaseExtensions
+    {
+        public static bool IsValid(this Orc.DataAccess.DataSourceBase dataSource) { }
+    }
+    public class DataSourceParameter
+    {
+        public DataSourceParameter() { }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public object Value { get; set; }
+    }
+    public class DataSourceParameters : Catel.Data.SavableModelBase<Orc.DataAccess.DataSourceParameters>
+    {
+        public static readonly Catel.Data.PropertyData ParametersProperty;
+        public DataSourceParameters() { }
+        public System.Collections.Generic.List<Orc.DataAccess.DataSourceParameter> Parameters { get; set; }
+    }
+    public class static DataSourceParametersExtensions
+    {
+        public static bool IsEmpty(this Orc.DataAccess.DataSourceParameters databaseQueryParameters) { }
+        public static bool IsSameAs(this Orc.DataAccess.DataSourceParameters databaseQueryParameters, Orc.DataAccess.DataSourceParameters other) { }
+        public static string ToArgsNamesString(this Orc.DataAccess.DataSourceParameters queryParameters, string argsPrefix = "") { }
+        public static string ToArgsValueString(this Orc.DataAccess.DataSourceParameters queryParameters) { }
+    }
+    public class static DbCommandExtensions
+    {
+        public static System.Data.Common.DbCommand AddParameter(this System.Data.Common.DbCommand dbCommand, Orc.DataAccess.DataSourceParameter parameter) { }
+        public static System.Data.Common.DbCommand AddParameter(this System.Data.Common.DbCommand dbCommand, string name, object value) { }
+        public static System.Data.Common.DbCommand AddParameters(this System.Data.Common.DbCommand dbCommand, Orc.DataAccess.DataSourceParameters parameters) { }
+        public static long GetRecordsCount(this System.Data.Common.DbCommand command) { }
+    }
+    public class static DbDataReaderExtensions
+    {
+        public static string[] GetHeaders(this System.Data.Common.DbDataReader reader) { }
+        public static System.Collections.Generic.List<Orc.DataAccess.RecordTable> ReadAll(this System.Data.Common.DbDataReader reader) { }
+    }
+    public class static ICollectionExtensions
+    {
+        public static TTarget FindTypeOrCreateNew<T, TTarget>(this System.Collections.Generic.ICollection<T> collection, System.Func<TTarget> func)
+            where TTarget : T { }
+    }
+    public interface IReader : System.IDisposable
+    {
+        System.Globalization.CultureInfo Culture { get; set; }
+        int FetchCount { get; set; }
+        string[] FieldHeaders { get; }
+        object this[int index] { get; }
+        object this[string name] { get; }
+        int Offset { get; set; }
+        int TotalRecordCount { get; }
+        Catel.Data.IValidationContext ValidationContext { get; }
+        System.Threading.Tasks.Task<bool> NextResultAsync();
+        bool Read();
+    }
+    public class static IReaderExtensions
+    {
+        public static System.Collections.Generic.List<Orc.DataAccess.RecordTable> ReadAll(this Orc.DataAccess.IReader reader) { }
+    }
+    public class static IValidationContextExtensions
+    {
+        public static void AddValidationError(this Catel.Data.IValidationContext validationContext, string message, string tag = null) { }
+    }
+    public class static KeyValueStringParser
+    {
+        public const char KeyValueDelimiter = '=';
+        public const char KeyValuePairsDelimiter = ',';
+        public static string FormatToKeyValueString(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> keyPairs) { }
+        public static string GetValue(string source, string key) { }
+        public static System.Collections.Generic.Dictionary<string, string> Parse(string source) { }
+        public static string SetValue(string source, string key, string value) { }
+    }
+    public abstract class ReaderBase : Orc.DataAccess.IReader, System.IDisposable
+    {
+        protected readonly string Source;
+        protected ReaderBase(string source, int offset = 0, int fetchCount = 0) { }
+        public System.Globalization.CultureInfo Culture { get; set; }
+        public int FetchCount { get; set; }
+        public abstract string[] FieldHeaders { get; }
+        public abstract object this[int index] { get; }
+        public abstract object this[string name] { get; }
+        public int Offset { get; set; }
+        public abstract int TotalRecordCount { get; }
+        public Catel.Data.IValidationContext ValidationContext { get; }
+        protected void AddValidationError(string message) { }
+        public abstract void Dispose();
+        public virtual System.Threading.Tasks.Task<bool> NextResultAsync() { }
+        public abstract bool Read();
+    }
+    public class Record : System.Collections.Generic.Dictionary<string, object>
+    {
+        public Record() { }
+    }
+    public class RecordTable : System.Collections.Generic.List<Orc.DataAccess.Record>
+    {
+        public RecordTable() { }
+        public string[] Headers { get; set; }
+    }
+    public class static RecordTableExtensions
+    {
+        public static bool HasHeaders(this Orc.DataAccess.RecordTable table) { }
+    }
+    public class static StringExtensions
+    {
+        public const string InitVector = "tu89geji340t89u2";
+        public static string Decrypt(this string cipherText) { }
+        public static string Encrypt(this string plainText) { }
+    }
+    public class static TypeExtensions
+    {
+        public static System.Collections.Generic.IList<System.Type> GetAllAssignableFrom(this System.Type type) { }
+    }
+}
+namespace Orc.DataAccess.Excel
+{
+    public class ExcelReader : Orc.DataAccess.ReaderBase
+    {
+        public ExcelReader(string source, int offset = 0, int fetchCount = 0) { }
+        public override string[] FieldHeaders { get; }
+        public override object this[int index] { get; }
+        public override object this[string name] { get; }
+        public override int TotalRecordCount { get; }
+        public override void Dispose() { }
+        public System.Collections.Generic.List<string> GetWorkseetsList() { }
+        public override bool Read() { }
+    }
+    public class ExcelSource : Orc.DataAccess.DataSourceBase
+    {
+        public static readonly Catel.Data.PropertyData FilePathProperty;
+        public static readonly Catel.Data.PropertyData TopLeftCellProperty;
+        public static readonly Catel.Data.PropertyData WorksheetProperty;
+        public ExcelSource() { }
+        public ExcelSource(string location) { }
+        public string FilePath { get; set; }
+        public string TopLeftCell { get; set; }
+        public string Worksheet { get; set; }
+    }
+    public class static ExcelSourceExtensions
+    {
+        public static System.Collections.Generic.List<string> GetWorkseetsList(this Orc.DataAccess.Excel.ExcelSource excelSource) { }
+    }
+    public class static ReferenceHelper
+    {
+        public static int[] ReferenceToColumnAndRow(string reference) { }
     }
 }
