@@ -51,7 +51,7 @@ namespace Orc.DataAccess.Database
         }
 
 #if NET
-        private IList<string> GetInstalledInstancesInRegistryView(RegistryView registryView)
+        private static IList<string> GetInstalledInstancesInRegistryView(RegistryView registryView)
         {
             var regView = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView);
             using (var sqlServNode = regView.OpenSubKey(MicrosoftSqlServerRegPath, false))
@@ -61,7 +61,7 @@ namespace Orc.DataAccess.Database
         }
 #endif
 
-        private IList<string> GetRemoteSqlServerInstances()
+        private static IList<string> GetRemoteSqlServerInstances()
         {
 #if NETCORE
             throw Log.ErrorAndCreateException<NotSupportedException>($"Not supported on .NET Core, SqlDataSourceEnumerator is not (yet) available. See https://github.com/dotnet/corefx/issues/32874");

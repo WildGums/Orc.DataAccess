@@ -145,6 +145,12 @@ namespace Orc.DataAccess
 }
 namespace Orc.DataAccess.Database
 {
+    public enum ConnectionState
+    {
+        Undefined = 0,
+        Valid = 1,
+        Invalid = 2,
+    }
     [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.All)]
     public class ConnectToProviderAttribute : System.Attribute
     {
@@ -186,6 +192,8 @@ namespace Orc.DataAccess.Database
     }
     public class static DbConnectionStringExtensions
     {
+        public static Orc.DataAccess.Database.ConnectionState GetConnectionState(this Orc.DataAccess.Database.DbConnectionString connectionString) { }
+        public static Orc.DataAccess.Database.DbDataSourceSchema GetDataSourceSchema(this Orc.DataAccess.Database.DbConnectionString connectionString) { }
         public static Orc.DataAccess.Database.DbConnectionStringProperty TryGetProperty(this Orc.DataAccess.Database.DbConnectionString connectionString, string propertyName) { }
     }
     public class DbConnectionStringProperty : Catel.Data.ObservableObject
@@ -194,6 +202,20 @@ namespace Orc.DataAccess.Database
         public bool IsSensitive { get; }
         public string Name { get; }
         public object Value { get; set; }
+    }
+    public class DbDataSource
+    {
+        public DbDataSource(string providerInvariantName, string instanceName) { }
+        public string InstanceName { get; }
+        public string ProviderInvariantName { get; }
+        protected bool Equals(Orc.DataAccess.Database.DbDataSource other) { }
+        public override bool Equals(object obj) { }
+        public override int GetHashCode() { }
+    }
+    public class DbDataSourceSchema
+    {
+        public DbDataSourceSchema() { }
+        public System.Collections.Generic.List<string> Databases { get; set; }
     }
     public class DbObject
     {
@@ -227,6 +249,7 @@ namespace Orc.DataAccess.Database
         public static System.Data.Common.DbConnection CreateConnection(this Orc.DataAccess.Database.DbProvider dbProvider, string connectionString) { }
         public static Orc.DataAccess.Database.DbSourceGatewayBase CreateDbSourceGateway(this Orc.DataAccess.Database.DbProvider dbProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
         public static System.Collections.Generic.IList<System.Type> GetConnectedTypes<T>(this Orc.DataAccess.Database.DbProvider provider) { }
+        public static System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources(this Orc.DataAccess.Database.DbProvider dbProvider) { }
         public static T GetOrCreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider) { }
     }
     public class DbProviderFactoryRepository
@@ -245,6 +268,11 @@ namespace Orc.DataAccess.Database
         protected bool Equals(Orc.DataAccess.Database.DbProviderInfo other) { }
         public override bool Equals(object obj) { }
         public override int GetHashCode() { }
+    }
+    public class static DbProviderInfoExtensions
+    {
+        public static Orc.DataAccess.Database.DbConnectionString CreateConnectionString(this Orc.DataAccess.Database.DbProviderInfo dbProviderInfo, string connectionString = null) { }
+        public static Orc.DataAccess.Database.DbProvider GetProvider(this Orc.DataAccess.Database.DbProviderInfo dbProviderInfo) { }
     }
     public abstract class DbSourceGatewayBase : System.IDisposable
     {
@@ -268,6 +296,26 @@ namespace Orc.DataAccess.Database
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
         protected override System.Data.Common.DbCommand CreateGetTableRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled) { }
         protected override System.Data.Common.DbCommand CreateTableCountCommand(System.Data.Common.DbConnection connection) { }
+    }
+    public interface IDataSourceSchemaProvider
+    {
+        Orc.DataAccess.Database.DbDataSourceSchema GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString);
+    }
+    public interface IDbDataSourceProvider
+    {
+        System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources();
+    }
+    [Orc.DataAccess.Database.ConnectToProviderAttribute("System.Data.SqlClient")]
+    public class MsSqlDataSourceSchemaProvider : Orc.DataAccess.Database.IDataSourceSchemaProvider
+    {
+        public MsSqlDataSourceSchemaProvider() { }
+        public Orc.DataAccess.Database.DbDataSourceSchema GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString) { }
+    }
+    [Orc.DataAccess.Database.ConnectToProviderAttribute("System.Data.SqlClient")]
+    public class MsSqlDbDataSourceProvider : Orc.DataAccess.Database.IDbDataSourceProvider
+    {
+        public MsSqlDbDataSourceProvider() { }
+        public System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
     }
     [Orc.DataAccess.Database.ConnectToProviderAttribute("System.Data.SqlClient")]
     public class MsSqlDbSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
