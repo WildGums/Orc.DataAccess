@@ -62,7 +62,7 @@ namespace Orc.DataAccess.Database
         {
             var connection = GetOpenedConnection();
             var source = Source;
-            var isPagingQuery = offset >= 0 && fetchCount >= 0;
+            var isPagingQuery = offset >= 0 && fetchCount > 0;
 
             var sql = source.Table;
             DbCommand command;
