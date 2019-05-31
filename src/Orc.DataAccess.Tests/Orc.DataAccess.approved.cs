@@ -426,7 +426,7 @@ namespace Orc.DataAccess.Excel
 {
     public class ExcelReader : Orc.DataAccess.ReaderBase
     {
-        public ExcelReader(string source, int offset = 0, int fetchCount = 0) { }
+        public ExcelReader(string source) { }
         public override string[] FieldHeaders { get; }
         public override object this[int index] { get; }
         public override object this[string name] { get; }
