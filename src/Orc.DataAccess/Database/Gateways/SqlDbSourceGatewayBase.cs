@@ -107,7 +107,7 @@ namespace Orc.DataAccess.Database
 
         private DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
-            var isPagingQuery = offset >= 0 && fetchCount >= 0;
+            var isPagingQuery = offset >= 0 && fetchCount > 0;
             return CreateGetTableRecordsCommand(connection, parameters, offset, fetchCount, isPagingQuery);
         }
 
