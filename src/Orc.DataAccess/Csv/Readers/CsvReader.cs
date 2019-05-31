@@ -4,14 +4,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Orc.DataAccess
+namespace Orc.DataAccess.Csv
 {
     using System;
     using System.IO;
     using Catel;
     using Catel.Logging;
     using FileSystem;
-    using Csv;
+    using Orc.Csv;
 
     public class CsvReader : ReaderBase
     {
