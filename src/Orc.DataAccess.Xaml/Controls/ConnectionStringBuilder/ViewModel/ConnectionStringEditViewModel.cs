@@ -164,6 +164,11 @@ namespace Orc.DataAccess.Controls
                 return;
             }
 
+            _isServersInitialized = false;
+            _isDatabasesInitialized = false;
+            Databases.Clear();
+            Servers.Clear();
+
             ConnectionString = dbProvider.CreateConnectionString();
             SetIntegratedSecurityToDefault();
         }
