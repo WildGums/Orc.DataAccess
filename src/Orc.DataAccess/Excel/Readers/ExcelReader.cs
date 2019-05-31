@@ -25,8 +25,8 @@ namespace Orc.DataAccess.Excel
         private int _startRowIndex;
         #endregion
 
-        public ExcelReader(string source, int offset = 0, int fetchCount = 0)
-            : base(source, offset, fetchCount)
+        public ExcelReader(string source)
+            : base(source)
         {
             Initialize(source);
         }
@@ -37,7 +37,7 @@ namespace Orc.DataAccess.Excel
 
         public override object this[string name] => _reader[name]?.ToString();
 
-        public override int TotalRecordCount { get; }
+        public override int TotalRecordCount => _reader.RowCount;
 
         public override bool Read()
         {
