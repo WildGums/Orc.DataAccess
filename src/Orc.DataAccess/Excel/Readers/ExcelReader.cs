@@ -10,6 +10,7 @@ namespace Orc.DataAccess.Excel
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using Catel.Collections;
     using Catel.Logging;
     using ExcelDataReader;
 
@@ -19,6 +20,7 @@ namespace Orc.DataAccess.Excel
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private bool _isFirstRowReaded = true;
+        private bool _isFieldHeaderInitialized = false;
         private string[] _fieldHeaders;
         private IExcelDataReader _reader;
         private int _startColumnIndex;
@@ -31,11 +33,26 @@ namespace Orc.DataAccess.Excel
             Initialize(source);
         }
 
-        public override string[] FieldHeaders => _fieldHeaders;
+        public override string[] FieldHeaders
+        {
+            get
+            {
+                if (_isFieldHeaderInitialized)
+                {
+                    return _fieldHeaders;
+                }
 
-        public override object this[int index] => _reader[GetOriginalColumnIndex(index)]?.ToString();
+                ReadFieldHeaders();
 
-        public override object this[string name] => _reader[name]?.ToString();
+                _isFieldHeaderInitialized = true;
+
+                return _fieldHeaders;
+            }
+        }
+
+        public override object this[int index] => _reader[GetOriginalColumnIndex(index)];
+
+        public override object this[string name] => _reader[GetOriginalColumnIndex(FieldHeaders.IndexOf(name, 0))];
 
         public override int TotalRecordCount => _reader.RowCount;
 
@@ -180,6 +197,11 @@ namespace Orc.DataAccess.Excel
 
         private void ReadFieldHeaders()
         {
+            if (_isFieldHeaderInitialized)
+            {
+                return;
+            }
+
             if (ReferenceEquals(_reader, null))
             {
                 return;

@@ -23,7 +23,7 @@ namespace Orc.DataAccess.Excel
         #region Properties
         public string FilePath { get; set; }
         public string Worksheet { get; set; }
-        public string TopLeftCell { get; set; }
+        public string TopLeftCell { get; set; } = "A1";
         #endregion
     }
 }
