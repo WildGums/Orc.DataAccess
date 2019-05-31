@@ -438,7 +438,6 @@ namespace Orc.DataAccess.Excel
     public class ExcelSource : Orc.DataAccess.DataSourceBase
     {
         public static readonly Catel.Data.PropertyData FilePathProperty;
-        public static readonly Catel.Data.PropertyData TopLeftCellProperty;
         public static readonly Catel.Data.PropertyData WorksheetProperty;
         public ExcelSource() { }
         public ExcelSource(string location) { }
