@@ -27,7 +27,6 @@ namespace Orc.DataAccess.Controls
         #endregion
 
         #region Fields
-        private readonly IConnectionStringBuilderService _connectionStringBuilderService;
         private readonly IDispatcherService _dispatcherService;
 
         private readonly DbProviderInfo _initalDbProvider;
@@ -42,16 +41,14 @@ namespace Orc.DataAccess.Controls
 
         #region Constructors
         public ConnectionStringEditViewModel(string connectionString, DbProviderInfo provider, IMessageService messageService,
-            IConnectionStringBuilderService connectionStringBuilderService, IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory, IDispatcherService dispatcherService)
+            IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory, IDispatcherService dispatcherService)
         {
-            Argument.IsNotNull(() => connectionStringBuilderService);
             Argument.IsNotNull(() => uiVisualizerService);
             Argument.IsNotNull(() => typeFactory);
             Argument.IsNotNull(() => messageService);
             Argument.IsNotNull(() => dispatcherService);
 
             _messageService = messageService;
-            _connectionStringBuilderService = connectionStringBuilderService;
             _uiVisualizerService = uiVisualizerService;
             _typeFactory = typeFactory;
             _dispatcherService = dispatcherService;
@@ -264,7 +261,7 @@ namespace Orc.DataAccess.Controls
 
             return TaskHelper.RunAndWaitAsync(() =>
             {
-                var connectionState = _connectionStringBuilderService.GetConnectionState(ConnectionString);
+                var connectionState = ConnectionString.GetConnectionState();
                 if (connectionState != ConnectionState.Invalid)
                 {
                     var schema = connectionString.GetDataSourceSchema();
