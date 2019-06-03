@@ -50,11 +50,6 @@ namespace Orc.DataAccess.Controls
         public bool IsInEditMode { get; set; }
         public void InitializeComponent() { }
     }
-    public class ConnectionStringBuilderService : Orc.DataAccess.Controls.IConnectionStringBuilderService
-    {
-        public ConnectionStringBuilderService() { }
-        public Orc.DataAccess.Database.ConnectionState GetConnectionState(Orc.DataAccess.Database.DbConnectionString connectionString) { }
-    }
     public class ConnectionStringBuilderViewModel : Catel.MVVM.ViewModelBase
     {
         public static readonly Catel.Data.PropertyData ConnectionStateProperty;
@@ -83,7 +78,7 @@ namespace Orc.DataAccess.Controls
         public static readonly Catel.Data.PropertyData IsDatabasesRefreshingProperty;
         public static readonly Catel.Data.PropertyData IsServerListVisibleProperty;
         public static readonly Catel.Data.PropertyData IsServersRefreshingProperty;
-        public ConnectionStringEditViewModel(string connectionString, Orc.DataAccess.Database.DbProviderInfo provider, Catel.Services.IMessageService messageService, Orc.DataAccess.Controls.IConnectionStringBuilderService connectionStringBuilderService, Catel.Services.IUIVisualizerService uiVisualizerService, Catel.IoC.ITypeFactory typeFactory, Catel.Services.IDispatcherService dispatcherService) { }
+        public ConnectionStringEditViewModel(string connectionString, Orc.DataAccess.Database.DbProviderInfo provider, Catel.Services.IMessageService messageService, Catel.Services.IUIVisualizerService uiVisualizerService, Catel.IoC.ITypeFactory typeFactory, Catel.Services.IDispatcherService dispatcherService) { }
         public bool CanLogOnToServer { get; }
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; }
         public Orc.DataAccess.Database.DbConnectionString ConnectionString { get; }
@@ -151,10 +146,6 @@ namespace Orc.DataAccess.Controls
         public Catel.MVVM.TaskCommand ChangeDbProvider { get; }
         public Orc.DataAccess.Database.DbProviderInfo DbProvider { get; set; }
     }
-    public interface IConnectionStringBuilderService
-    {
-        Orc.DataAccess.Database.ConnectionState GetConnectionState(Orc.DataAccess.Database.DbConnectionString connectionString);
-    }
     public interface IDataSourceProvider
     {
         string DataBasesQuery { get; }
@@ -171,5 +162,17 @@ namespace Orc.DataAccess
     public class static SqlConnectionStringExtensions
     {
         public static Orc.DataAccess.Database.DbConnectionStringProperty TryGetProperty(this Orc.DataAccess.Database.DbConnectionString connectionString, string propertyName) { }
+    }
+}
+namespace XamlGeneratedNamespace
+{
+    public sealed class GeneratedInternalTypeHelper : System.Windows.Markup.InternalTypeHelper
+    {
+        public GeneratedInternalTypeHelper() { }
+        protected override void AddEventHandler(System.Reflection.EventInfo eventInfo, object target, System.Delegate handler) { }
+        protected override System.Delegate CreateDelegate(System.Type delegateType, object target, string handler) { }
+        protected override object CreateInstance(System.Type type, System.Globalization.CultureInfo culture) { }
+        protected override object GetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, System.Globalization.CultureInfo culture) { }
+        protected override void SetPropertyValue(System.Reflection.PropertyInfo propertyInfo, object target, object value, System.Globalization.CultureInfo culture) { }
     }
 }
