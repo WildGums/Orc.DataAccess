@@ -24,7 +24,7 @@ namespace Orc.DataAccess.Excel
             }
 
             var typeFactory = excelSource.GetTypeFactory();
-            using (var reader = typeFactory.CreateInstanceWithParametersAndAutoCompletion<ExcelReader>(source, new ValidationContext()))
+            using (var reader = new ExcelReader(source))
             {
                 return reader.GetWorkseetsList();
             }
