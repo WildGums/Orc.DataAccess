@@ -35,6 +35,7 @@ namespace Orc.DataAccess.Database
     {
         public static readonly Catel.Data.PropertyData ConnectionStringProperty;
         public static readonly Catel.Data.PropertyData ProviderNameProperty;
+        public static readonly Catel.Data.PropertyData SchemaProperty;
         public static readonly Catel.Data.PropertyData TableProperty;
         public static readonly Catel.Data.PropertyData TableTypeProperty;
         public DatabaseSource() { }
@@ -43,6 +44,7 @@ namespace Orc.DataAccess.Database
         public string ConnectionString { get; set; }
         [System.ComponentModel.DataAnnotations.RequiredAttribute()]
         public string ProviderName { get; set; }
+        public string Schema { get; set; }
         public string Table { get; set; }
         public Orc.DataAccess.Database.TableType TableType { get; set; }
         protected override bool TryConvertFromString(string propertyName, string propertyValueStr, out object propertyValue) { }
