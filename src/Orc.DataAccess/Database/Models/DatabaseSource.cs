@@ -26,6 +26,7 @@ namespace Orc.DataAccess.Database
         #endregion
 
         #region Properties
+        public string Schema { get; set; }
         public string Table { get; set; }
         public TableType TableType { get; set; }
 

@@ -38,30 +38,41 @@ namespace Orc.DataAccess.Database
             {TableType.Function, () => GetArgs(GetArgsQuery)},
         };
 
-        private string GetArgsQuery => $"SELECT [name], type_name(user_type_id) as type FROM [sys].[parameters] WHERE [object_id] = object_id('{Source.Table}')";
+        private string GetArgsQuery => $"SELECT [name], type_name(user_type_id) as type FROM [sys].[parameters] WHERE [object_id] = object_id('{GetFullTableName(Source)}')";
         #endregion
 
         #region Methods
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
             var source = Source;
+            var fullTableName = GetFullTableName(source);
             var query = isPagingEnabled
                 ? offset == 0
-                    ? $"SELECT TOP ({fetchCount}) * FROM [{source.Table}]"
-                    : $"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY (SELECT 0)) AS [row_num] FROM [{source.Table}]) AS [results_wrapper] WHERE [row_num] BETWEEN {offset + 1} AND {offset + fetchCount}"
-                : $"SELECT * FROM [{source.Table}]";
+                    ? $"SELECT TOP ({fetchCount}) * FROM {fullTableName}"
+                    : $"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY (SELECT 0)) AS [row_num] FROM {fullTableName}) AS [results_wrapper] WHERE [row_num] BETWEEN {offset + 1} AND {offset + fetchCount}"
+                : $"SELECT * FROM {fullTableName}";
 
             return connection.CreateCommand(query);
         }
 
         protected override DbCommand CreateTableCountCommand(DbConnection connection)
         {
-            return connection.CreateCommand($"SELECT COUNT(*) AS [count] FROM [{Source.Table}]");
+            return connection.CreateCommand($"SELECT COUNT(*) AS [count] FROM {GetFullTableName(Source)}");
         }
 
         private DbCommand CreateGetObjectsCommand(DbConnection connection, string commandParameter)
         {
             return connection.CreateCommand($"SELECT name FROM dbo.sysobjects WHERE uid = 1 AND type = '{commandParameter}' ORDER BY name;");
+        }
+
+        private string GetFullTableName(DatabaseSource source)
+        {
+            if (string.IsNullOrWhiteSpace(source.Schema))
+            {
+                return $"[{source.Table}]";
+            }
+
+            return $"[{source.Schema}].[{source.Table}]";
         }
         #endregion
     }
