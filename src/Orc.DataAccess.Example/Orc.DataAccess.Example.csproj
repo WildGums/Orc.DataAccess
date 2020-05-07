@@ -1,7 +1,8 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>net462</TargetFrameworks>
-    <AssemblyName>Orc.DataAccess.Example.NET</AssemblyName>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <AssemblyName>Orc.DataAccess.Example</AssemblyName>
+    <AssemblyName>Orc.DataAccess.Example</AssemblyName>
     <RootNamespace>Orc.DataAccess.Example</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <SonarQubeExclude>true</SonarQubeExclude>

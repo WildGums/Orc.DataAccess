@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DataAccess", "Orc.DataA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DataAccess.Xaml", "Orc.DataAccess.Xaml\Orc.DataAccess.Xaml.csproj", "{431EF206-5DFD-49C3-8597-371A01E76AB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DataAccess.Example.NET", "Orc.DataAccess.Example.NET\Orc.DataAccess.Example.NET.csproj", "{FC263844-531B-43BF-8BB2-9A20131AF239}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orc.DataAccess.Example", "Orc.DataAccess.Example\Orc.DataAccess.Example.csproj", "{FC263844-531B-43BF-8BB2-9A20131AF239}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F895A492-C4FD-4E4D-B1D3-18C8B29CC122}"
 EndProject
