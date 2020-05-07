@@ -1,9 +1,9 @@
-﻿[assembly: System.Resources.NeutralResourcesLanguageAttribute("en-US")]
-[assembly: System.Runtime.Versioning.TargetFrameworkAttribute(".NETFramework,Version=v4.6", FrameworkDisplayName=".NET Framework 4.6")]
-[assembly: System.Windows.Markup.XmlnsDefinitionAttribute("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess")]
-[assembly: System.Windows.Markup.XmlnsPrefixAttribute("http://schemas.wildgums.com/orc/dataaccess", "orcdataaccess")]
-[assembly: System.Windows.ThemeInfoAttribute(System.Windows.ResourceDictionaryLocation.None, System.Windows.ResourceDictionaryLocation.SourceAssembly)]
-public class static ModuleInitializer
+﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.7", FrameworkDisplayName=".NET Framework 4.7")]
+[assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess")]
+[assembly: System.Windows.Markup.XmlnsPrefix("http://schemas.wildgums.com/orc/dataaccess", "orcdataaccess")]
+[assembly: System.Windows.ThemeInfo(System.Windows.ResourceDictionaryLocation.None, System.Windows.ResourceDictionaryLocation.SourceAssembly)]
+public static class ModuleInitializer
 {
     public static void Initialize() { }
 }
@@ -38,15 +38,15 @@ namespace Orc.DataAccess.Controls
         public static readonly System.Windows.DependencyProperty IsAdvancedOptionsReadOnlyProperty;
         public static readonly System.Windows.DependencyProperty IsInEditModeProperty;
         public ConnectionStringBuilder() { }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; set; }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
         public string ConnectionString { get; set; }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
         public string DatabaseProvider { get; set; }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
         public bool IsAdvancedOptionsReadOnly { get; set; }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
         public bool IsInEditMode { get; set; }
         public void InitializeComponent() { }
     }
@@ -82,14 +82,14 @@ namespace Orc.DataAccess.Controls
         public bool CanLogOnToServer { get; }
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; }
         public Orc.DataAccess.Database.DbConnectionString ConnectionString { get; }
-        public Catel.Collections.FastObservableCollection<string> Databases { get; }
         public Orc.DataAccess.Database.DbConnectionStringProperty DataSource { get; }
+        public Catel.Collections.FastObservableCollection<string> Databases { get; }
         public Orc.DataAccess.Database.DbProviderInfo DbProvider { get; set; }
         public Catel.MVVM.Command InitDatabases { get; }
-        public Orc.DataAccess.Database.DbConnectionStringProperty InitialCatalog { get; }
         public Catel.MVVM.Command InitServers { get; }
+        public Orc.DataAccess.Database.DbConnectionStringProperty InitialCatalog { get; }
         public Orc.DataAccess.Database.DbConnectionStringProperty IntegratedSecurity { get; }
-        public System.Nullable<bool> IntegratedSecurityValue { get; set; }
+        public bool? IntegratedSecurityValue { get; set; }
         public bool IsAdvancedOptionsReadOnly { get; set; }
         public bool IsDatabaseListVisible { get; set; }
         public bool IsDatabasesRefreshing { get; }
@@ -135,7 +135,7 @@ namespace Orc.DataAccess.Controls
     {
         public static readonly System.Windows.DependencyProperty DbProviderProperty;
         public DbProviderPicker() { }
-        [Catel.MVVM.Views.ViewToViewModelAttribute("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayViewModelWins)]
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayViewModelWins)]
         public Orc.DataAccess.Database.DbProviderInfo DbProvider { get; set; }
         public void InitializeComponent() { }
     }
@@ -159,7 +159,7 @@ namespace Orc.DataAccess.Controls
 }
 namespace Orc.DataAccess
 {
-    public class static SqlConnectionStringExtensions
+    public static class SqlConnectionStringExtensions
     {
         public static Orc.DataAccess.Database.DbConnectionStringProperty TryGetProperty(this Orc.DataAccess.Database.DbConnectionString connectionString, string propertyName) { }
     }
