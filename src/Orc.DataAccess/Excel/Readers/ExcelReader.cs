@@ -10,6 +10,7 @@ namespace Orc.DataAccess.Excel
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using Catel.Collections;
     using Catel.Logging;
     using ExcelDataReader;
@@ -85,7 +86,7 @@ namespace Orc.DataAccess.Excel
             catch (Exception ex)
             {
                 Log.Error(ex, $"Failed to read data from '{Source}'");
-                AddValidationError($"Filed to read data: '{ex.Message}'");
+                AddValidationError($"Failed to read data: '{ex.Message}'");
                 return false;
             }           
         }
@@ -129,7 +130,7 @@ namespace Orc.DataAccess.Excel
                 _reader?.Dispose();
                 _reader = null;
 
-                AddValidationError($"Filed to initialize reader: '{ex.Message}'");
+                AddValidationError($"Failed to initialize reader: '{ex.Message}'");
             }
             
         }        
@@ -142,7 +143,12 @@ namespace Orc.DataAccess.Excel
                 AddValidationError($"File '{filePath}' not found");
                 return;
             }
+#if NETCORE
+            // Register additional encodings as they supported by default only in .NET Framework
+            var encodingProvider = CodePagesEncodingProvider.Instance;
+            Encoding.RegisterProvider(encodingProvider);
 
+#endif
             var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var fileExtension = Path.GetExtension(filePath);
             _reader = string.Equals(fileExtension, ".xlsx")
