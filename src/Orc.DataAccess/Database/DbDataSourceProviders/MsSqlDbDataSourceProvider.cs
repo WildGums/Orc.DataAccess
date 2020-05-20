@@ -46,7 +46,7 @@ namespace Orc.DataAccess.Database
             var localSqlInstances64 = GetInstalledInstancesInRegistryView(RegistryView.Registry64);
 
             return localSqlInstances32.Union(localSqlInstances64)
-                .Select(x => $"{machineName}\\{x}");
+                .Select(x => $"{machineName}" + (string.Equals(x, "MSSQLSERVER") ? "" : $"\\{x}"));
 #endif
         }
 
