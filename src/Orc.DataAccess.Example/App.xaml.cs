@@ -51,7 +51,7 @@
             Log.Info("Starting application");
             Log.Info("This log message should show up as debug");
 
-            this.ApplyTheme(true);
+            this.ApplyTheme();
 
             base.OnStartup(e);
         }

@@ -3,13 +3,18 @@
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:catel="http://schemas.catelproject.com"
               xmlns:controls="clr-namespace:Orc.DataAccess.Controls;assembly=Orc.DataAccess.Xaml"
-              xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
+              xmlns:orccontrols="http://schemas.wildgums.com/orc/controls" 
+              xmlns:orctheming="http://schemas.wildgums.com/orc/theming"
               Height="800" Width="1000">
 
-    <catel:Window.Resources>
-    </catel:Window.Resources>
-
     <orccontrols:StackGrid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <orctheming:ThemeSwitcherView />
+
         <orccontrols:TabControl LoadTabItems="LazyLoading"
                                 TabStripPlacement="Left">
             <TabItem Header="Connection string builder" >

@@ -4,7 +4,7 @@
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:catel="http://schemas.catelproject.com"
-                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
                    xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
                    mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400">
     
@@ -17,14 +17,14 @@
         </orccontrols:StackGrid.ColumnDefinitions>
     
         <TextBox Text="{Binding DisplayConnectionString, Mode=OneWay}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
+            <xamlbehaviors:Interaction.Triggers>
+                <xamlbehaviors:EventTrigger EventName="MouseDoubleClick">
                     <catel:EventToCommand Command="{Binding Edit}" 
                                           PassEventArgsToCommand="False"
                                           PreventInvocationIfAssociatedObjectIsDisabled="True" 
                                           DisableAssociatedObjectOnCannotExecute="False" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+                </xamlbehaviors:EventTrigger>
+            </xamlbehaviors:Interaction.Triggers>
         </TextBox>
         
         <Button Margin="0"

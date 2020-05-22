@@ -4,7 +4,7 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:catel="http://schemas.catelproject.com"
-                  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                  xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
                   xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
                   xmlns:controls="clr-namespace:Orc.DataAccess.Controls"
                   MinWidth="439" 
@@ -83,14 +83,14 @@
                               IsDropDownOpen="{Binding IsServerListVisible}"
                               ItemsSource="{Binding Servers}"
                               Text="{Binding DataSource.Value, UpdateSourceTrigger=PropertyChanged}" >
-                        <i:Interaction.Behaviors>
+                        <xamlbehaviors:Interaction.Behaviors>
                           <orccontrols:DoNotShowDropDownOnClickComboboxBehavior/>
-                        </i:Interaction.Behaviors>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="DropDownOpened">
+                        </xamlbehaviors:Interaction.Behaviors>
+                        <xamlbehaviors:Interaction.Triggers>
+                            <xamlbehaviors:EventTrigger EventName="DropDownOpened">
                                 <catel:EventToCommand Command="{Binding InitServers}" DisableAssociatedObjectOnCannotExecute="True"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
+                            </xamlbehaviors:EventTrigger>
+                        </xamlbehaviors:Interaction.Triggers>
                     </ComboBox>
 
                     <orccontrols:WatermarkTextBox Text="{Binding Port.Value, UpdateSourceTrigger=PropertyChanged}" 
@@ -142,9 +142,9 @@
 
                         <Label Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Label_Content_Password}" Visibility="{Binding Password, UpdateSourceTrigger=PropertyChanged, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"/>
                         <PasswordBox Visibility="{Binding Password, Converter={catel:ReferenceToCollapsingVisibilityConverter}}">
-                            <i:Interaction.Behaviors>
+                            <xamlbehaviors:Interaction.Behaviors>
                                 <orccontrols:PasswordBindBehavior Password="{Binding Password.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                            </i:Interaction.Behaviors>
+                            </xamlbehaviors:Interaction.Behaviors>
                         </PasswordBox>
                     </orccontrols:StackGrid>
                 </orccontrols:StackGrid>
@@ -163,15 +163,15 @@
                           IsDropDownOpen="{Binding IsDatabaseListVisible}"
                           ItemsSource="{Binding Databases}"
                           Text="{Binding InitialCatalog.Value, UpdateSourceTrigger=PropertyChanged}" >
-                    <i:Interaction.Behaviors>
+                    <xamlbehaviors:Interaction.Behaviors>
                         <orccontrols:DoNotShowDropDownOnClickComboboxBehavior/>
-                    </i:Interaction.Behaviors>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DropDownOpened">
+                    </xamlbehaviors:Interaction.Behaviors>
+                    <xamlbehaviors:Interaction.Triggers>
+                        <xamlbehaviors:EventTrigger EventName="DropDownOpened">
                             <catel:EventToCommand Command="{Binding InitDatabases}"
                                                   DisableAssociatedObjectOnCannotExecute="True"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
+                        </xamlbehaviors:EventTrigger>
+                    </xamlbehaviors:Interaction.Triggers>
                 </ComboBox>
 
                 <Button Style="{StaticResource RefreshButtonStyle}"
