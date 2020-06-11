@@ -25,7 +25,7 @@ namespace Orc.DataAccess.Database
 
             var gateway = dataSourceCopy.CreateGateway();
 
-            return gateway.GetObjects();
+            return gateway?.GetObjects() ?? new List<DbObject>();
         }
 
         public static DbConnection CreateConnection(this DatabaseSource databaseSource)
