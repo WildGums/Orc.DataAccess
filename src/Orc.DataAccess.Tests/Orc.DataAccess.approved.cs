@@ -45,6 +45,7 @@ namespace Orc.DataAccess
         public string Type { get; set; }
         public object Value { get; set; }
     }
+    [System.Serializable]
     public class DataSourceParameters : Catel.Data.SavableModelBase<Orc.DataAccess.DataSourceParameters>
     {
         public static readonly Catel.Data.PropertyData ParametersProperty;
