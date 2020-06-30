@@ -22,7 +22,6 @@ public static class ModuleInitializer
         var serviceLocator = ServiceLocator.Default;
 
         var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
-        viewModelLocator.Register(typeof(ConnectionStringBuilder), typeof(ConnectionStringBuilderViewModel));
         viewModelLocator.Register(typeof(ConnectionStringEditWindow), typeof(ConnectionStringEditViewModel));
         viewModelLocator.Register(typeof(ConnectionStringAdvancedOptionsWindow), typeof(ConnectionStringAdvancedOptionsViewModel));
         viewModelLocator.Register(typeof(DbConnectionProviderListWindow), typeof(DbConnectionProviderListViewModel));
