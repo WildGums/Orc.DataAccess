@@ -30,7 +30,8 @@ namespace Orc.DataAccess.Controls
         public ConnectionStringAdvancedOptionsWindow() { }
         public void InitializeComponent() { }
     }
-    public sealed class ConnectionStringBuilder : Catel.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector
+    [System.Windows.TemplatePart(Name="PART_ConnectionStringTextBox", Type=typeof(System.Windows.Controls.TextBox))]
+    public class ConnectionStringBuilder : System.Windows.Controls.Control
     {
         public static readonly System.Windows.DependencyProperty ConnectionStateProperty;
         public static readonly System.Windows.DependencyProperty ConnectionStringProperty;
@@ -38,35 +39,14 @@ namespace Orc.DataAccess.Controls
         public static readonly System.Windows.DependencyProperty IsAdvancedOptionsReadOnlyProperty;
         public static readonly System.Windows.DependencyProperty IsInEditModeProperty;
         public ConnectionStringBuilder() { }
-        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; set; }
-        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
         public string ConnectionString { get; set; }
-        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
         public string DatabaseProvider { get; set; }
-        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel)]
-        public bool IsAdvancedOptionsReadOnly { get; set; }
-        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView)]
-        public bool IsInEditMode { get; set; }
-        public void InitializeComponent() { }
-    }
-    public class ConnectionStringBuilderViewModel : Catel.MVVM.ViewModelBase
-    {
-        public static readonly Catel.Data.PropertyData ConnectionStateProperty;
-        public static readonly Catel.Data.PropertyData ConnectionStringProperty;
-        public static readonly Catel.Data.PropertyData DatabaseProviderProperty;
-        public static readonly Catel.Data.PropertyData DisplayConnectionStringProperty;
-        public static readonly Catel.Data.PropertyData IsAdvancedOptionsReadOnlyProperty;
-        public static readonly Catel.Data.PropertyData IsInEditModeProperty;
-        public ConnectionStringBuilderViewModel(Catel.Services.IUIVisualizerService uiVisualizerService, Catel.IoC.ITypeFactory typeFactory) { }
-        public Catel.MVVM.Command Clear { get; }
-        public Orc.DataAccess.Database.ConnectionState ConnectionState { get; set; }
-        public string ConnectionString { get; }
-        public string DatabaseProvider { get; }
-        public string DisplayConnectionString { get; }
-        public Catel.MVVM.TaskCommand Edit { get; }
         public bool IsAdvancedOptionsReadOnly { get; set; }
         public bool IsInEditMode { get; set; }
+        public static System.Windows.Input.RoutedCommand ClearCommand { get; }
+        public static System.Windows.Input.RoutedCommand EditCommand { get; }
+        public override void OnApplyTemplate() { }
     }
     public class ConnectionStringEditViewModel : Catel.MVVM.ViewModelBase
     {
