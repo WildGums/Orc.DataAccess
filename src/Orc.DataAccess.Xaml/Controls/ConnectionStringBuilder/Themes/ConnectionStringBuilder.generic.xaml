@@ -48,7 +48,7 @@
                             <Button x:Name="PART_ClearButton"
                                     Margin="0"
                                     VerticalAlignment="Stretch"
-                                    Visibility="{Binding ConnectionString, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"
+                                    Visibility="{Binding Path=IsEnabled, RelativeSource={RelativeSource Self}, Converter={catel:BooleanToCollapsingVisibilityConverter}}"
                                     Command="{x:Static controls:ConnectionStringBuilder.ClearCommand}"
                                     ToolTip="Clear">
                                 <Button.Content>
