@@ -1,12 +1,14 @@
 ﻿namespace Orc.DataAccess.Example
 {
     using System;
+    using System.Data.Common;
     using System.Globalization;
     using System.Windows;
     using System.Windows.Media;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Services;
+    using Microsoft.Data.SqlClient;
     using Orchestra;
     using Orchestra.Markup;
 
@@ -52,6 +54,10 @@
             Log.Info("This log message should show up as debug");
 
             this.ApplyTheme();
+
+#if NETCORE
+            DbProviderFactories.RegisterFactory("System.Data.SqlClient", SqlClientFactory.Instance);
+#endif
 
             base.OnStartup(e);
         }

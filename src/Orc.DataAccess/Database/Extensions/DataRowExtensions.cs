@@ -17,13 +17,25 @@ namespace Orc.DataAccess.Database
         {
             Argument.IsNotNull(() => row);
 
-            return new DbProviderInfo
+            var providerInfo = new DbProviderInfo
             {
                 Name = row["Name"]?.ToString(),
                 Description = row["Description"]?.ToString(),
                 InvariantName = row["InvariantName"]?.ToString(),
                 AssemblyQualifiedName = row["AssemblyQualifiedName"]?.ToString()
             };
+
+            if (string.IsNullOrWhiteSpace(providerInfo.Name))
+            {
+                providerInfo.Name = row["InvariantName"]?.ToString();
+
+                if (string.IsNullOrWhiteSpace(providerInfo.Name))
+                {
+                    providerInfo.Name = "- nameless -";
+                }
+            }
+
+            return providerInfo;
         }
         #endregion
     }
