@@ -27,7 +27,7 @@
              </xamlbehaviors:Interaction.Triggers>
              
              <ListView.ItemContainerStyle>
-                 <Style TargetType="{x:Type ListViewItem}">
+                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
                      <Style.Setters>
                          <Setter Property="ToolTip" Value="{Binding Description}"/>
                      </Style.Setters>
