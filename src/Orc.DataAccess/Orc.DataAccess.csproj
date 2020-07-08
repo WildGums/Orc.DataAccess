@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Catel.Core" Version="5.12.7" />
     <PackageReference Include="Catel.Fody" Version="4.4.4" PrivateAssets="all" />
-    <PackageReference Include="Costura.Fody" Version="4.1.0" PrivateAssets="all" />
+    <PackageReference Include="Costura.Fody" Version="5.0.0-alpha0277" PrivateAssets="all" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
     <PackageReference Include="Fody" Version="6.2.0" PrivateAssets="all">
