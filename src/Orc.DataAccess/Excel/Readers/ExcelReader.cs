@@ -1,0 +1,248 @@
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ExcelReader.cs" company="WildGums">
+//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Orc.DataAccess.Excel
+{
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using Catel.Collections;
+    using Catel.Logging;
+    using ExcelDataReader;
+
+    public class ExcelReader : ReaderBase
+    {
+        #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+        private bool _isFirstRowReaded = true;
+        private bool _isFieldHeaderInitialized = false;
+        private string[] _fieldHeaders;
+        private IExcelDataReader _reader;
+        private int _startColumnIndex;
+        private int _startRowIndex;
+        #endregion
+
+        public ExcelReader(string source)
+            : base(source)
+        {
+            Initialize(source);
+        }
+
+        public override string[] FieldHeaders
+        {
+            get
+            {
+                if (_isFieldHeaderInitialized)
+                {
+                    return _fieldHeaders;
+                }
+
+                ReadFieldHeaders();
+
+                _isFieldHeaderInitialized = true;
+
+                return _fieldHeaders;
+            }
+        }
+
+        public override object this[int index] => _reader[GetOriginalColumnIndex(index)];
+
+        public override object this[string name] => _reader[GetOriginalColumnIndex(FieldHeaders.IndexOf(name, 0))];
+
+        public override int TotalRecordCount => _reader.RowCount;
+
+        public override bool Read()
+        {
+            if (ReferenceEquals(_reader, null))
+            {
+                return false;
+            }
+
+            try
+            {
+                if (!_isFirstRowReaded)
+                {
+                    var columnIndex = GetOriginalColumnIndex(0);
+                    var readResult = _reader.Read() && _reader[columnIndex] != null;
+
+#if DEBUG
+                    Log.Debug($"Read '{1}' rows with result: '{readResult}'");
+#endif
+
+                    return readResult;
+                }
+
+                ReadFieldHeaders();
+                _isFirstRowReaded = false;
+
+                return _reader.Read();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Failed to read data from '{Source}'");
+                AddValidationError($"Failed to read data: '{ex.Message}'");
+                return false;
+            }           
+        }
+
+        public List<string> GetWorkseetsList()
+        {
+            var result = new List<string>();
+
+            try
+            {
+                do
+                {
+                    result.Add(_reader.Name);
+                } while (_reader.NextResult());
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to get worksheet list");
+            }            
+
+            return result;
+        }
+
+        private void Initialize(string source)
+        {
+            try
+            {
+                var excelSource = new ExcelSource(source);
+
+                InitializeExcelReader(excelSource);
+                ConfigureWorksheet(excelSource);
+                ConfigureStartRange(excelSource);
+
+#if DEBUG
+                Log.Debug($"Reader is initialized with '{source}'");
+#endif
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Failed to initialize reader for data source '{Source}'");
+                _reader?.Dispose();
+                _reader = null;
+
+                AddValidationError($"Failed to initialize reader: '{ex.Message}'");
+            }
+            
+        }        
+
+        private void InitializeExcelReader(ExcelSource excelSource)
+        {
+            var filePath = excelSource.FilePath;
+            if (!File.Exists(filePath))
+            {
+                AddValidationError($"File '{filePath}' not found");
+                return;
+            }
+#if NETCORE
+            // Register additional encodings as they supported by default only in .NET Framework
+            var encodingProvider = CodePagesEncodingProvider.Instance;
+            Encoding.RegisterProvider(encodingProvider);
+
+#endif
+            var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var fileExtension = Path.GetExtension(filePath);
+            _reader = string.Equals(fileExtension, ".xlsx")
+                ? ExcelReaderFactory.CreateOpenXmlReader(stream)
+                : ExcelReaderFactory.CreateBinaryReader(stream);
+
+            _reader.AsDataSet(new ExcelDataSetConfiguration {
+                ConfigureDataTable = (_) => new ExcelDataTableConfiguration() {
+                    UseHeaderRow = false
+                }
+            });
+        }
+
+        private void ConfigureStartRange(ExcelSource excelSource)
+        {
+            var cellRange = excelSource.TopLeftCell;
+
+            var columnRow = ReferenceHelper.ReferenceToColumnAndRow(cellRange);
+            _startColumnIndex = columnRow[1] - 1;
+            _startRowIndex = columnRow[0] - 1;
+        }
+
+        private void ConfigureWorksheet(ExcelSource excelSource)
+        {
+            if (ReferenceEquals(_reader, null))
+            {
+                return;
+            }
+
+            var worksheetName = excelSource.Worksheet;
+            if (string.IsNullOrWhiteSpace(worksheetName))
+            {
+                return;
+            }
+
+            var isWorksheetFound = false;
+            do
+            {
+                isWorksheetFound = string.Equals(_reader.Name, worksheetName);
+            } while (!isWorksheetFound && _reader.NextResult());
+
+            if (!isWorksheetFound)
+            {
+                throw Log.ErrorAndCreateException<Exception>($"No worksheet with name: '{worksheetName}' in project data file");
+            }
+        }
+
+        private int GetOriginalColumnIndex(int relativeColumnIndex)
+        {
+            return relativeColumnIndex + _startColumnIndex;
+        }
+
+        private void ReadFieldHeaders()
+        {
+            if (_isFieldHeaderInitialized)
+            {
+                return;
+            }
+
+            if (ReferenceEquals(_reader, null))
+            {
+                return;
+            }
+
+            ReadFirstRow();
+
+            var fieldCount = _reader.FieldCount - _startColumnIndex;
+            _fieldHeaders = Enumerable.Range(0, fieldCount)
+                .Select(i =>
+                {
+                    var columnIndex = GetOriginalColumnIndex(i);
+                    return _reader[columnIndex]?.ToString();
+                })
+                .TakeWhile(x => !string.IsNullOrEmpty(x))
+                .ToArray();
+
+#if DEBUG
+            Log.Debug($"'{fieldCount}' headers of excel file were read");
+#endif
+        }
+
+        private void ReadFirstRow()
+        {
+            if (ReferenceEquals(_reader, null))
+            {
+                return;
+            }
+
+            for (var i = 0; i <= _startRowIndex; ++i)
+            {
+                _reader.Read();
+            }
+        }
+
+        public override void Dispose() => _reader?.Dispose();
+    }
+}

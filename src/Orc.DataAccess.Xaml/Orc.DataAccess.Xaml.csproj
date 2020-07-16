@@ -1,0 +1,48 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras">
+  <PropertyGroup>
+    <TargetFrameworks>net46;net47;netcoreapp3.1</TargetFrameworks>
+    <AssemblyName>Orc.DataAccess.Xaml</AssemblyName>
+    <RootNamespace>Orc.DataAccess</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <PackageId>Orc.DataAccess.Xaml</PackageId>
+    <PackageVersion>1.0.0-alpha0001</PackageVersion>
+    <Description>DataAccess library.</Description>
+    <PackageTags>orc;data;access;xaml</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <UseWpf>true</UseWpf>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ExtrasEnableImplicitWpfReferences>true</ExtrasEnableImplicitWpfReferences>
+    <ExtrasEnableImplicitWinFormsReferences>true</ExtrasEnableImplicitWinFormsReferences>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- SonarQube requires a project guid -->
+    <ProjectGuid>431EF206-5DFD-49C3-8597-371A01E76AB5</ProjectGuid>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Catel.Fody" Version="4.4.4" PrivateAssets="all" />
+    <PackageReference Include="Catel.MVVM" Version="5.12.7" />
+    <PackageReference Include="Costura.Fody" Version="5.0.0-alpha0281" PrivateAssets="all" />
+    <PackageReference Include="Fody" Version="6.2.0" PrivateAssets="all">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MethodTimer.Fody" Version="3.1.2" PrivateAssets="all" />
+    <PackageReference Include="ModuleInit.Fody" Version="2.1.0" PrivateAssets="all" />
+    <PackageReference Include="Obsolete.Fody" Version="5.2.1" PrivateAssets="all" />
+    <PackageReference Include="Orc.Controls" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="NETStandard.Library" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Orc.DataAccess\Orc.DataAccess.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
+  <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props')" />
+</Project>

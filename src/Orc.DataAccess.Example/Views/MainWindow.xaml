@@ -1,0 +1,52 @@
+﻿<catel:Window x:Class="Orc.DataAccess.Example.Views.MainWindow"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:catel="http://schemas.catelproject.com"
+              xmlns:controls="clr-namespace:Orc.DataAccess.Controls;assembly=Orc.DataAccess.Xaml"
+              xmlns:orccontrols="http://schemas.wildgums.com/orc/controls" 
+              xmlns:orctheming="http://schemas.wildgums.com/orc/theming"
+              Height="800" Width="1000">
+
+    <orccontrols:StackGrid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <orctheming:ThemeSwitcherView />
+
+        <orccontrols:TabControl LoadTabItems="LazyLoading"
+                                TabStripPlacement="Left">
+            <TabItem Header="Connection string builder" >
+                <orccontrols:StackGrid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+        
+                    <CheckBox Content="Advanced options readonly" 
+                              IsChecked="{Binding ElementName=ConnectionStringBuilderControl, Path=IsAdvancedOptionsReadOnly}"/>
+
+                    <orccontrols:StackGrid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Connection string" VerticalAlignment="Center"/>
+                        <controls:ConnectionStringBuilder x:Name="ConnectionStringBuilderControl"/>
+
+                    </orccontrols:StackGrid>
+
+                    <TextBlock Text="Result:" Margin="0 10 0 0" FontWeight="Bold"/>
+                    <GridSplitter Height="1" HorizontalAlignment="Stretch" Background="Black" Margin="0 0 0 2" BorderBrush="Black" BorderThickness="1"/>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=ConnectionStringBuilderControl, Path=ConnectionString}"/>
+
+                </orccontrols:StackGrid>
+            </TabItem>
+        </orccontrols:TabControl>
+    </orccontrols:StackGrid>
+</catel:Window>

@@ -1,0 +1,64 @@
+<catel:DataWindow x:Class="Orc.DataAccess.Controls.DbConnectionProviderListWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:catel="http://schemas.catelproject.com"
+                  xmlns:xamlbehaviors="http://schemas.microsoft.com/xaml/behaviors"
+                  xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
+                  ResizeMode="CanResizeWithGrip"
+                  MinHeight="300"
+                  MinWidth="300"
+                  mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400">
+    
+    <orccontrols:StackGrid>
+        <orccontrols:StackGrid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </orccontrols:StackGrid.RowDefinitions>
+
+         <ListView ItemsSource="{Binding DbProviders}"
+                   SelectedItem="{Binding DbProvider, Mode=TwoWay}">
+             <xamlbehaviors:Interaction.Triggers>
+                 <xamlbehaviors:EventTrigger EventName="MouseDoubleClick">
+                     <catel:EventToCommand Command="{Binding Open}" 
+                                           DisableAssociatedObjectOnCannotExecute="False" />
+                 </xamlbehaviors:EventTrigger>
+             </xamlbehaviors:Interaction.Triggers>
+             
+             <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                     <Style.Setters>
+                         <Setter Property="ToolTip" Value="{Binding Description}"/>
+                     </Style.Setters>
+                 </Style>
+             </ListView.ItemContainerStyle>
+
+             <ListView.ItemTemplate>
+                 <DataTemplate>
+                     <TextBlock Text="{Binding Name}"/>
+                 </DataTemplate>
+             </ListView.ItemTemplate>
+         </ListView>
+
+        <Button Command="{Binding Refresh}" 
+                Width="100"
+                Content="{catel:LanguageBinding Controls_DbConnectionProviderListWindow_Button_Content_Refresh}" 
+                HorizontalAlignment="Right"/>
+    </orccontrols:StackGrid>
+</catel:DataWindow>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
