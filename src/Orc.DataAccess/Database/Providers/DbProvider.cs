@@ -46,8 +46,8 @@ namespace Orc.DataAccess.Database
         #endregion
 
         #region Properties
-        protected DbProviderFactory DbProviderFactory => _dbProviderFactory ?? (_dbProviderFactory = DbProviderFactories.GetFactory(ProviderInvariantName));
-        public virtual Type ConnectionType => _connectionType ?? (_connectionType = DbProviderFactory.CreateConnection()?.GetType());
+        protected DbProviderFactory DbProviderFactory => _dbProviderFactory ??= DbProviderFactories.GetFactory(ProviderInvariantName);
+        public virtual Type ConnectionType => _connectionType ??= DbProviderFactory.CreateConnection()?.GetType();
         public virtual DbProviderInfo Info => GetInfo();
         public string Dialect { get; }
         public string ProviderInvariantName { get; }

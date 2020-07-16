@@ -98,7 +98,17 @@ namespace Orc.DataAccess.Controls
         }
 
         public static readonly DependencyProperty ConnectionStringProperty = DependencyProperty.Register(
-            nameof(ConnectionString), typeof(string), typeof(ConnectionStringBuilder), new PropertyMetadata(default(string)));
+            nameof(ConnectionString), typeof(string), typeof(ConnectionStringBuilder), new PropertyMetadata(default(string),
+                (sender, args) => ((ConnectionStringBuilder)sender). OnConnectionStringChanged(args)));
+
+        private void OnConnectionStringChanged(DependencyPropertyChangedEventArgs args)
+        {
+            var connectionString = ConnectionString;
+            var provider = DbProvider.GetRegisteredProviders();
+           // var displayedConnectionsString = provider.CreateConnectionString(connectionString);
+
+           // _connectionStringTextBox.SetCurrentValue(TextBox.TextProperty, displayedConnectionsString?.ToDisplayString());
+        }
 
         public string DatabaseProvider
         {

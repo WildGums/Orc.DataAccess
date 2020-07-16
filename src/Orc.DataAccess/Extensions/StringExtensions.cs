@@ -9,10 +9,8 @@ namespace Orc.DataAccess
 {
     using System;
     using System.IO;
-    using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
-    using Catel;
 
     public static class StringExtensions
     {
