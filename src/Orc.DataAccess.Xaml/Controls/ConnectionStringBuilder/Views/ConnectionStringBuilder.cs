@@ -11,6 +11,7 @@ namespace Orc.DataAccess.Controls
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
+    using Catel;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Services;
@@ -23,21 +24,21 @@ namespace Orc.DataAccess.Controls
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly ITypeFactory _typeFactory;
-        private readonly IServiceLocator _serviceLocator;
         private readonly IUIVisualizerService _uiVisualizerService;
 
         private DbProviderInfo _dbProvider;
-
         private TextBox _connectionStringTextBox;
+
+        private bool _isConnectionStringUpdating = false;
         #endregion
 
         #region Constructors
         public ConnectionStringBuilder()
         {
             _typeFactory = this.GetTypeFactory();
-            _serviceLocator = this.GetServiceLocator();
+            var serviceLocator = this.GetServiceLocator();
 
-            _uiVisualizerService = _serviceLocator.ResolveType<IUIVisualizerService>();
+            _uiVisualizerService = serviceLocator.ResolveType<IUIVisualizerService>();
 
             var editCommandBinding = new CommandBinding {Command = EditCommand};
             editCommandBinding.Executed += OnEditCommandExecuted;
@@ -55,23 +56,27 @@ namespace Orc.DataAccess.Controls
 
         private async void OnEditCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            SetCurrentValue(IsInEditModeProperty, true);
-
-            var connectionStringEditViewModel = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
-            connectionStringEditViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
-
-            if (await _uiVisualizerService.ShowDialogAsync(connectionStringEditViewModel) ?? false)
+            using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance.SetCurrentValue(IsInEditModeProperty, true), 
+                x => x.Instance.SetCurrentValue(IsInEditModeProperty, false)))
             {
-                _dbProvider = connectionStringEditViewModel.DbProvider;
-                var connectionString = connectionStringEditViewModel.ConnectionString;
+                var connectionStringEditViewModel = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
+                connectionStringEditViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
 
-                SetCurrentValue(ConnectionStringProperty, connectionString?.ToString());
-                _connectionStringTextBox.SetCurrentValue(TextBox.TextProperty, connectionString?.ToDisplayString());
-                SetCurrentValue(ConnectionStateProperty, connectionStringEditViewModel.ConnectionState);
-                SetCurrentValue(DatabaseProviderProperty, connectionString?.DbProvider.InvariantName);
+                if (await _uiVisualizerService.ShowDialogAsync(connectionStringEditViewModel) ?? false)
+                {
+                    using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance._isConnectionStringUpdating = true,
+                        x => x.Instance._isConnectionStringUpdating = false))
+                    {
+                        _dbProvider = connectionStringEditViewModel.DbProvider;
+                        var connectionString = connectionStringEditViewModel.ConnectionString;
+
+                        SetCurrentValue(ConnectionStringProperty, connectionString?.ToString());
+                        _connectionStringTextBox.SetCurrentValue(TextBox.TextProperty, connectionString?.ToDisplayString());
+                        SetCurrentValue(ConnectionStateProperty, connectionStringEditViewModel.ConnectionState);
+                        SetCurrentValue(DatabaseProviderProperty, connectionString?.DbProvider.InvariantName);
+                    }
+                }
             }
-
-            SetCurrentValue(IsInEditModeProperty, false);
         }
 
         public static RoutedCommand ClearCommand { get; } = new RoutedCommand(nameof(ClearCommand), typeof(ConnectionStringBuilder));
@@ -101,15 +106,6 @@ namespace Orc.DataAccess.Controls
             nameof(ConnectionString), typeof(string), typeof(ConnectionStringBuilder), new PropertyMetadata(default(string),
                 (sender, args) => ((ConnectionStringBuilder)sender). OnConnectionStringChanged(args)));
 
-        private void OnConnectionStringChanged(DependencyPropertyChangedEventArgs args)
-        {
-            var connectionString = ConnectionString;
-            var provider = DbProvider.GetRegisteredProviders();
-           // var displayedConnectionsString = provider.CreateConnectionString(connectionString);
-
-           // _connectionStringTextBox.SetCurrentValue(TextBox.TextProperty, displayedConnectionsString?.ToDisplayString());
-        }
-
         public string DatabaseProvider
         {
             get { return (string)GetValue(DatabaseProviderProperty); }
@@ -117,7 +113,8 @@ namespace Orc.DataAccess.Controls
         }
 
         public static readonly DependencyProperty DatabaseProviderProperty = DependencyProperty.Register(
-            nameof(DatabaseProvider), typeof(string), typeof(ConnectionStringBuilder), new PropertyMetadata(default(string)));
+            nameof(DatabaseProvider), typeof(string), typeof(ConnectionStringBuilder), new PropertyMetadata(default(string),
+                (sender, args) => ((ConnectionStringBuilder)sender).OnDatabaseProviderChanged(args)));
 
         public bool IsInEditMode
         {
@@ -157,6 +154,65 @@ namespace Orc.DataAccess.Controls
             if (_connectionStringTextBox is null)
             {
                 throw Log.ErrorAndCreateException<InvalidOperationException>("Can't find template part 'PART_ConnectionStringTextBox'");
+            }
+        }
+
+        private void OnConnectionStringChanged(DependencyPropertyChangedEventArgs args)
+        {
+            UpdateConnectionString();
+        }
+
+        private void OnDatabaseProviderChanged(DependencyPropertyChangedEventArgs args)
+        {
+            UpdateConnectionString();
+        }
+
+        private void UpdateConnectionString()
+        {
+            if (_isConnectionStringUpdating)
+            {
+                return;
+            }
+
+            using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance._isConnectionStringUpdating = true, 
+                x => x.Instance._isConnectionStringUpdating = false))
+            {
+                var providerName = DatabaseProvider;
+                var connectionString = ConnectionString;
+
+                var providers = DbProvider.GetRegisteredProviders();
+                DbConnectionString displayedConnectionsString = null;
+                DbProvider dbProvider = null;
+                if (string.IsNullOrEmpty(providerName))
+                {
+                    foreach (var providerKeyValue in providers)
+                    {
+                        var currentProvider = providerKeyValue.Value;
+
+                        try
+                        {
+                            displayedConnectionsString = currentProvider.CreateConnectionString(connectionString);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+
+                        dbProvider = currentProvider;
+                        break;
+                    }
+                }
+                else
+                {
+                    if (providers.TryGetValue(providerName, out dbProvider))
+                    {
+                        displayedConnectionsString = dbProvider.CreateConnectionString(connectionString);
+                    }
+                }
+
+                _connectionStringTextBox.SetCurrentValue(TextBox.TextProperty, displayedConnectionsString?.ToDisplayString());
+                SetCurrentValue(DatabaseProviderProperty, dbProvider?.ProviderInvariantName);
+                _dbProvider = dbProvider?.Info;
             }
         }
         #endregion
