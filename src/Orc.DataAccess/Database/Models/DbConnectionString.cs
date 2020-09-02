@@ -103,6 +103,5 @@ namespace Orc.DataAccess.Database
             return _connectionStringBuilder.ConnectionString;
         }
         #endregion
-
     }
 }
