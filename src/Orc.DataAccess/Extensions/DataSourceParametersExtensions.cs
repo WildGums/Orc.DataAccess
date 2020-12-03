@@ -9,7 +9,6 @@ namespace Orc.DataAccess
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DataAccess;
 
     public static class DataSourceParametersExtensions
     {

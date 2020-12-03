@@ -27,13 +27,6 @@ namespace Orc.DataAccess
             var initVectorBytes = Encoding.UTF8.GetBytes(InitVector);
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-            //var salt1 = new byte[8];
-            //using (var rngCsp = new RNGCryptoServiceProvider())
-            //{
-            //    // Fill the array with a random value.
-            //    rngCsp.GetBytes(salt1);
-            //}
-
             var password = new Rfc2898DeriveBytes(passPhrase, new byte[] {1, 2, 3, 4, 5, 6, 7, 8});
             var keyBytes = password.GetBytes(Keysize / 8);
             var symmetricKey = new RijndaelManaged
