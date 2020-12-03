@@ -27,10 +27,10 @@ namespace Orc.DataAccess.Database
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
             new Dictionary<TableType, Func<DbConnection, DbCommand>>
             {
-                {TableType.Table, c => c.CreateCommand($"SELECT table_name FROM user_tables")},
-                {TableType.View, c => c.CreateCommand($"SELECT view_name from user_views")},
-                {TableType.StoredProcedure, c => c.CreateCommand($"SELECT * FROM User_Procedures WHERE OBJECT_TYPE = 'PROCEDURE'")},
-                {TableType.Function, c => c.CreateCommand($"SELECT * FROM User_Procedures WHERE OBJECT_TYPE = 'FUNCTION'")},
+                {TableType.Table, c => c.CreateCommand("SELECT table_name FROM user_tables")},
+                {TableType.View, c => c.CreateCommand("SELECT view_name from user_views")},
+                {TableType.StoredProcedure, c => c.CreateCommand("SELECT * FROM User_Procedures WHERE OBJECT_TYPE = 'PROCEDURE'")},
+                {TableType.Function, c => c.CreateCommand("SELECT * FROM User_Procedures WHERE OBJECT_TYPE = 'FUNCTION'")},
             };
 
         protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new Dictionary<TableType, Func<DataSourceParameters>>
@@ -63,7 +63,7 @@ namespace Orc.DataAccess.Database
                 }
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new NotSupportedException($"'{source}' not supported in GetQueryParameters");
             }
 
             return new DataSourceParameters();

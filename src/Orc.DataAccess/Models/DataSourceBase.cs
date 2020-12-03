@@ -25,7 +25,7 @@ namespace Orc.DataAccess
         #region Fields
         private static readonly CacheStorage<Type, PropertyInfo[]> PropertiesCache = new CacheStorage<Type, PropertyInfo[]>();
 
-        protected readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
+        protected readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
         #endregion
 
         #region Constructors
@@ -41,23 +41,23 @@ namespace Orc.DataAccess
         #endregion
 
         #region Methods
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs args)
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
-            var propertyName = args.PropertyName;
+            var propertyName = e.PropertyName;
             if (propertyName == nameof(IsDirty) || propertyName == nameof(ValidationContext))
             {
                 return;
             }
 
-            base.OnPropertyChanged(args);
+            base.OnPropertyChanged(e);
 
-            if (args.NewValue == null)
+            if (e.NewValue == null)
             {
-                Properties.Remove(propertyName);
+                _properties.Remove(propertyName);
             }
             else
             {
-                Properties[propertyName] = args.NewValue?.ToString();
+                _properties[propertyName] = e.NewValue?.ToString();
             }
 
             Validate();
@@ -65,7 +65,7 @@ namespace Orc.DataAccess
 
         public IReadOnlyDictionary<string, string> AsDictionary()
         {
-            return Properties;
+            return _properties;
         }
 
         public void SetProperty(string propertyName, string propertyValueStr)
@@ -136,7 +136,7 @@ namespace Orc.DataAccess
             if (TryConvertFromString(propertyName, propertyValueStr, out var propertyValue))
             {
                 property.SetValue(this, propertyValue);
-                Properties[propertyName] = propertyValueStr;
+                _properties[propertyName] = propertyValueStr;
             }
             else
             {
@@ -158,7 +158,7 @@ namespace Orc.DataAccess
                 return string.Empty;
             }
 
-            return KeyValueStringParser.FormatToKeyValueString(Properties);
+            return KeyValueStringParser.FormatToKeyValueString(_properties);
         }
 
         public override string ToString()

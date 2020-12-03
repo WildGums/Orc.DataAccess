@@ -46,11 +46,17 @@ namespace Orc.DataAccess.Database
         {
             var source = Source;
             var fullTableName = GetFullTableName(source);
-            var query = isPagingEnabled
-                ? offset == 0
+            string query;
+            if (isPagingEnabled)
+            {
+                query = offset == 0
                     ? $"SELECT TOP ({fetchCount}) * FROM {fullTableName}"
-                    : $"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY (SELECT 0)) AS [row_num] FROM {fullTableName}) AS [results_wrapper] WHERE [row_num] BETWEEN {offset + 1} AND {offset + fetchCount}"
-                : $"SELECT * FROM {fullTableName}";
+                    : $"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY (SELECT 0)) AS [row_num] FROM {fullTableName}) AS [results_wrapper] WHERE [row_num] BETWEEN {offset + 1} AND {offset + fetchCount}";
+            }
+            else
+            {
+                query = $"SELECT * FROM {fullTableName}";
+            }
 
             return connection.CreateCommand(query);
         }

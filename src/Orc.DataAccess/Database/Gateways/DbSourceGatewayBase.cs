@@ -8,7 +8,6 @@ namespace Orc.DataAccess.Database
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Data.Common;
     using Catel;
 
@@ -22,7 +21,7 @@ namespace Orc.DataAccess.Database
         #endregion
 
         #region Constructors
-        public DbSourceGatewayBase(DatabaseSource source)
+        protected DbSourceGatewayBase(DatabaseSource source)
         {
             Argument.IsNotNull(() => source);
 
@@ -46,8 +45,8 @@ namespace Orc.DataAccess.Database
 
         #region Properties
         public DatabaseSource Source { get; }
-        public virtual DbProvider Provider => _provider ?? (_provider = Source.GetProvider());
-        public virtual DbConnection Connection => _connection ?? (_connection = Provider?.CreateConnection(Source));
+        public virtual DbProvider Provider => _provider ??= Source.GetProvider();
+        public virtual DbConnection Connection => _connection ??= Provider?.CreateConnection(Source);
         #endregion
 
         #region Methods

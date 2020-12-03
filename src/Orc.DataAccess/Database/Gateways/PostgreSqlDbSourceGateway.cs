@@ -53,11 +53,17 @@ namespace Orc.DataAccess.Database
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
             var source = Source;
-            var query = isPagingEnabled
-                ? offset == 0
+            string query;
+            if (isPagingEnabled)
+            {
+                query = offset == 0
                     ? $"SELECT * FROM \"{source.Table}\" LIMIT {fetchCount}"
-                    : $"SELECT * FROM \"{source.Table}\" LIMIT {fetchCount} OFFSET {offset}"
-                : $"SELECT * FROM \"{source.Table}\"";
+                    : $"SELECT * FROM \"{source.Table}\" LIMIT {fetchCount} OFFSET {offset}";
+            }
+            else
+            {
+                query = $"SELECT * FROM \"{source.Table}\"";
+            }
 
             return connection.CreateCommand(query);
         }
@@ -81,27 +87,25 @@ namespace Orc.DataAccess.Database
                     var query = $"SELECT pg_get_function_identity_arguments('{source.Table}'::regproc);";
 
                     var connection = GetOpenedConnection();
-                    using (var reader = connection.GetReaderSql(query))
+                    using var reader = connection.GetReaderSql(query);
+                    if (!reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            var result = reader.GetString(0);
-                            if (string.IsNullOrEmpty(result))
-                            {
-                                return new DataSourceParameters();
-                            }
-
-                            var parameters = result.Split(',').Select(x => x.Trim().Split(' ')).Select(x => new DataSourceParameter
-                            {
-                                Name = $"@{x[0]}",
-                                Type = x[1]
-                            }).ToList();
-
-                            return new DataSourceParameters {Parameters = parameters};
-                        }
+                        return new DataSourceParameters();
                     }
 
-                    return new DataSourceParameters();
+                    var result = reader.GetString(0);
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        return new DataSourceParameters();
+                    }
+
+                    var parameters = result.Split(',').Select(x => x.Trim().Split(' ')).Select(x => new DataSourceParameter
+                    {
+                        Name = $"@{x[0]}",
+                        Type = x[1]
+                    }).ToList();
+
+                    return new DataSourceParameters {Parameters = parameters};
                 }
 
                 default:

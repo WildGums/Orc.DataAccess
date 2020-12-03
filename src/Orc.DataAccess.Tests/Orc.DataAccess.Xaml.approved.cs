@@ -139,6 +139,10 @@ namespace Orc.DataAccess.Controls
 }
 namespace Orc.DataAccess
 {
+    public static class DataSourcePath
+    {
+        public const string MicrosoftSqlServerRegPath = "SOFTWARE\\Microsoft\\Microsoft SQL Server";
+    }
     public static class SqlConnectionStringExtensions
     {
         public static Orc.DataAccess.Database.DbConnectionStringProperty TryGetProperty(this Orc.DataAccess.Database.DbConnectionString connectionString, string propertyName) { }

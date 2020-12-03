@@ -22,7 +22,7 @@ namespace Orc.DataAccess.Controls
     public class ConnectionStringEditViewModel : ViewModelBase
     {
         #region Constants
-        private static bool _isServersInitialized = false;
+        private static bool IsServersInitialized = false;
         private static readonly FastObservableCollection<string> CachedServers = new FastObservableCollection<string>();
         #endregion
 
@@ -107,10 +107,10 @@ namespace Orc.DataAccess.Controls
         public bool CanLogOnToServer => Password != null || UserId != null;
         public bool IsLogOnEnabled => CanLogOnToServer && !(IntegratedSecurityValue ?? false);
 
-        public bool IsServerListVisible { get; set; } = false;
-        public bool IsDatabaseListVisible { get; set; } = false;
-        public bool IsServersRefreshing { get; private set; } = false;
-        public bool IsDatabasesRefreshing { get; private set; } = false;
+        public bool IsServerListVisible { get; set; }
+        public bool IsDatabaseListVisible { get; set; }
+        public bool IsServersRefreshing { get; private set; }
+        public bool IsDatabasesRefreshing { get; private set; }
         public ConnectionState ConnectionState { get; private set; } = ConnectionState.Undefined;
         public override string Title => "Connection properties";
         public DbConnectionString ConnectionString { get; private set; }
@@ -161,7 +161,7 @@ namespace Orc.DataAccess.Controls
                 return;
             }
 
-            _isServersInitialized = false;
+            IsServersInitialized = false;
             _isDatabasesInitialized = false;
             Databases.Clear();
             Servers.Clear();
@@ -216,7 +216,7 @@ namespace Orc.DataAccess.Controls
 
         private Task InitServersAsync()
         {
-            if (_isServersInitialized)
+            if (IsServersInitialized)
             {
                 return TaskHelper.Completed;
             }
@@ -237,7 +237,7 @@ namespace Orc.DataAccess.Controls
                 Servers.AddItems(dataSources.Select(x => x.InstanceName));
 
                 IsServersRefreshing = false;
-                _isServersInitialized = true;
+                IsServersInitialized = true;
                 IsServerListVisible = true;
             });
         }

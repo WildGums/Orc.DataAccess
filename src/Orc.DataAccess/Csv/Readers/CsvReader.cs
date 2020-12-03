@@ -15,16 +15,7 @@ namespace Orc.DataAccess.Csv
 
     public class CsvReader : ReaderBase
     {
-        #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-        private readonly ICsvReaderService _csvReaderService;
-        private readonly IFileService _fileService;
-
-        private int _currentOffset;
-        private int _fetchedCount;
-        private CsvHelper.CsvReader _reader;
-        #endregion
+        private bool _isFieldHeaderInitialized;
 
         #region Constructors
         public CsvReader(string source, ICsvReaderService csvReaderService, IFileService fileService)
@@ -41,6 +32,17 @@ namespace Orc.DataAccess.Csv
         }
         #endregion
 
+        #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+        private readonly ICsvReaderService _csvReaderService;
+        private readonly IFileService _fileService;
+
+        private int _currentOffset;
+        private int _fetchedCount;
+        private CsvHelper.CsvReader _reader;
+        #endregion
+
         #region Properties
         public override string[] FieldHeaders
         {
@@ -51,12 +53,14 @@ namespace Orc.DataAccess.Csv
                     return _reader.Context.HeaderRecord;
                 }
 
-                if (_reader.Read())
+                if (!_reader.Read())
                 {
-                    _reader.ReadHeader();
-
-                    _isFieldHeaderInitialized = true;
+                    return _reader.Context.HeaderRecord;
                 }
+
+                _reader.ReadHeader();
+
+                _isFieldHeaderInitialized = true;
 
                 return _reader.Context.HeaderRecord;
             }
@@ -66,8 +70,6 @@ namespace Orc.DataAccess.Csv
         public override object this[string name] => _reader[name];
         public override int TotalRecordCount => GetRecordCount();
         #endregion
-
-        private bool _isFieldHeaderInitialized = false;
 
         #region Methods
         public override bool Read()
@@ -114,12 +116,10 @@ namespace Orc.DataAccess.Csv
         private int GetRecordCount()
         {
             var lineCount = 0;
-            using (var reader = File.OpenText(Source))
+            using var reader = File.OpenText(Source);
+            while (reader.ReadLine() != null)
             {
-                while (reader.ReadLine() != null)
-                {
-                    lineCount++;
-                }
+                lineCount++;
             }
 
             return lineCount;
@@ -135,10 +135,7 @@ namespace Orc.DataAccess.Csv
 
             try
             {
-                var csvContext = new CsvContext<object>
-                {
-                    Culture = Culture
-                };
+                var csvContext = new CsvContext<object> {Culture = Culture};
 
                 _reader = _csvReaderService.CreateReader(source, csvContext);
             }
@@ -153,5 +150,4 @@ namespace Orc.DataAccess.Csv
         }
         #endregion
     }
-
 }

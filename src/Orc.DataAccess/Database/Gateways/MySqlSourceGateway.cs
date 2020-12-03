@@ -43,11 +43,17 @@ namespace Orc.DataAccess.Database
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
             var source = Source;
-            var query = isPagingEnabled
-                ? offset == 0
+            string query;
+            if (isPagingEnabled)
+            {
+                query = offset == 0
                     ? $"SELECT * FROM `{source.Table}` LIMIT {fetchCount}"
-                    : $"SELECT * FROM `{source.Table}` LIMIT {fetchCount} OFFSET {offset}"
-                : $"SELECT * FROM `{source.Table}`";
+                    : $"SELECT * FROM `{source.Table}` LIMIT {fetchCount} OFFSET {offset}";
+            }
+            else
+            {
+                query = $"SELECT * FROM `{source.Table}`";
+            }
 
             return connection.CreateCommand(query);
         }
