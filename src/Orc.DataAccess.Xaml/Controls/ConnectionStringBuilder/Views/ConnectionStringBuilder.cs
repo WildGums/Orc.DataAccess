@@ -104,7 +104,7 @@ namespace Orc.DataAccess.Controls
 
         public static readonly DependencyProperty ConnectionStringProperty = DependencyProperty.Register(
             nameof(ConnectionString), typeof(string), typeof(ConnectionStringBuilder), new PropertyMetadata(default(string),
-                (sender, args) => ((ConnectionStringBuilder)sender). OnConnectionStringChanged(args)));
+                (sender, args) => ((ConnectionStringBuilder)sender). OnConnectionStringChanged()));
 
         public string DatabaseProvider
         {
@@ -114,7 +114,7 @@ namespace Orc.DataAccess.Controls
 
         public static readonly DependencyProperty DatabaseProviderProperty = DependencyProperty.Register(
             nameof(DatabaseProvider), typeof(string), typeof(ConnectionStringBuilder), new PropertyMetadata(default(string),
-                (sender, args) => ((ConnectionStringBuilder)sender).OnDatabaseProviderChanged(args)));
+                (sender, args) => ((ConnectionStringBuilder)sender).OnDatabaseProviderChanged()));
 
         public bool IsInEditMode
         {
@@ -157,12 +157,12 @@ namespace Orc.DataAccess.Controls
             }
         }
 
-        private void OnConnectionStringChanged(DependencyPropertyChangedEventArgs args)
+        private void OnConnectionStringChanged()
         {
             UpdateConnectionString();
         }
 
-        private void OnDatabaseProviderChanged(DependencyPropertyChangedEventArgs args)
+        private void OnDatabaseProviderChanged()
         {
             UpdateConnectionString();
         }

@@ -15,16 +15,21 @@ namespace Orc.DataAccess.Excel
             var regex = new Regex("([a-zA-Z]*)([0-9]*)");
             var upper = regex.Match(reference).Groups[1].Value.ToUpper();
             var s = regex.Match(reference).Groups[2].Value;
+
             var num1 = 0;
             var num2 = 1;
-            for (var index = upper.Length - 1; index >= 0; --index)
+
+            unchecked
             {
-                var num3 = upper[index] - 65 + 1;
-                num1 += num2 * num3;
-                num2 *= 26;
+                for (var index = upper.Length - 1; index >= 0; --index)
+                {
+                    var num3 = upper[index] - 65 + 1;
+                    num1 += num2 * num3;
+                    num2 *= 26;
+                }
             }
 
-            return new int[2] {int.Parse(s), num1};
+            return new[] {int.Parse(s), num1};
         }
     }
 }

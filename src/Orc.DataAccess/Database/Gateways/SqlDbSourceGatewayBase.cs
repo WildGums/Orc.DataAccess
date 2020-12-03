@@ -44,18 +44,9 @@ namespace Orc.DataAccess.Database
         public override DataSourceParameters GetQueryParameters()
         {
             var source = Source;
-            if (!DataSourceParametersFactory.TryGetValue(source.TableType, out var parametersFactory))
-            {
-                return new DataSourceParameters();
-            }
-
-            var parameters = parametersFactory();
-            foreach (var dataSourceParameter in parameters.Parameters)
-            {
-                dataSourceParameter.Name = dataSourceParameter.Name;
-            }
-
-            return parametersFactory();
+            return DataSourceParametersFactory.TryGetValue(source.TableType, out var parametersFactory) 
+                ? parametersFactory() 
+                : new DataSourceParameters();
         }
 
         public override DbDataReader GetRecords(DataSourceParameters queryParameters = null, int offset = 0, int fetchCount = -1)
@@ -89,7 +80,7 @@ namespace Orc.DataAccess.Database
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new NotSupportedException($"'{source.TableType}' not supported");
             }
 
             command.AddParameters(queryParameters);
@@ -210,18 +201,16 @@ namespace Orc.DataAccess.Database
         {
             var connection = GetOpenedConnection();
             var queryParameters = new DataSourceParameters();
-            using (var reader = connection.GetReader(query))
+            using var reader = connection.GetReader(query);
+            while (reader.Read())
             {
-                while (reader.Read())
+                var args = new DataSourceParameter
                 {
-                    var args = new DataSourceParameter
-                    {
-                        Name = reader.GetValue(0)?.ToString(),
-                        Type = reader.GetValue(1)?.ToString()
-                    };
+                    Name = reader.GetValue(0)?.ToString(),
+                    Type = reader.GetValue(1)?.ToString()
+                };
 
-                    queryParameters.Parameters.Add(args);
-                }
+                queryParameters.Parameters.Add(args);
             }
 
             return queryParameters;

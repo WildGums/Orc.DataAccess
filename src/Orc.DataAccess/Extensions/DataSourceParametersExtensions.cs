@@ -9,7 +9,6 @@ namespace Orc.DataAccess
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DataAccess;
 
     public static class DataSourceParametersExtensions
     {
@@ -74,10 +73,13 @@ namespace Orc.DataAccess
 
             public int GetHashCode(DataSourceParameter obj)
             {
-                var hashCode = 1168257605;
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Name);
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Type);
-                return hashCode;
+                unchecked
+                {
+                    var hashCode = 1168257605;
+                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Name);
+                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Type);
+                    return hashCode;
+                }
             }
             #endregion
         }

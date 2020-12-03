@@ -9,9 +9,6 @@ namespace Orc.DataAccess.Controls
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
-    using System.Data.Sql;
-    using System.Globalization;
     using System.Linq;
     using Catel.Logging;
     using Microsoft.Win32;
@@ -20,8 +17,6 @@ namespace Orc.DataAccess.Controls
     {
         #region Constants
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-        private const string MicrosoftSqlServerRegPath = @"SOFTWARE\Microsoft\Microsoft SQL Server";
         #endregion
 
         #region Properties
@@ -56,10 +51,8 @@ namespace Orc.DataAccess.Controls
         private IList<string> GetInstalledInstancesInRegistryView(RegistryView registryView)
         {
             var regView = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView);
-            using (var sqlServNode = regView.OpenSubKey(MicrosoftSqlServerRegPath, false))
-            {
-                return sqlServNode?.GetValue("InstalledInstances") as IList<string> ?? new List<string>();
-            }
+            using var sqlServNode = regView.OpenSubKey(DataSourcePath.MicrosoftSqlServerRegPath, false);
+            return sqlServNode?.GetValue("InstalledInstances") as IList<string> ?? new List<string>();
         }
 
         private IList<string> GetRemoteSqlServerInstances()

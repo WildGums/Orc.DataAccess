@@ -120,7 +120,7 @@ namespace Orc.DataAccess.Database
                 return null;
             }
 
-            connection.ConnectionString = connectionString;//.DecryptConnectionString(dbProvider.ProviderInvariantName);
+            connection.ConnectionString = connectionString;
 
             return connection;
         }

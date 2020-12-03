@@ -1,5 +1,5 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v3.1", FrameworkDisplayName="")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v5.0", FrameworkDisplayName="")]
 public static class ModuleInitializer
 {
     public static void Initialize() { }
@@ -21,14 +21,14 @@ namespace Orc.DataAccess
 {
     public abstract class DataSourceBase : Catel.Data.ModelBase
     {
-        protected readonly System.Collections.Generic.Dictionary<string, string> Properties;
+        protected readonly System.Collections.Generic.Dictionary<string, string> _properties;
         public static readonly Catel.Data.PropertyData ValidationContextProperty;
         protected DataSourceBase() { }
         protected DataSourceBase(string location) { }
         public Catel.Data.IValidationContext ValidationContext { get; }
         public System.Collections.Generic.IReadOnlyDictionary<string, string> AsDictionary() { }
         public virtual string GetLocation() { }
-        protected override void OnPropertyChanged(Catel.Data.AdvancedPropertyChangedEventArgs args) { }
+        protected override void OnPropertyChanged(Catel.Data.AdvancedPropertyChangedEventArgs e) { }
         public void SetProperty(string propertyName, string propertyValueStr) { }
         public override string ToString() { }
         protected virtual bool TryConvertFromString(string propertyName, string propertyValueStr, out object propertyValue) { }
@@ -282,7 +282,7 @@ namespace Orc.DataAccess.Database
     }
     public abstract class DbSourceGatewayBase : System.IDisposable
     {
-        public DbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source) { }
+        protected DbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source) { }
         public virtual System.Data.Common.DbConnection Connection { get; }
         public virtual Orc.DataAccess.Database.DbProvider Provider { get; }
         public Orc.DataAccess.Database.DatabaseSource Source { get; }

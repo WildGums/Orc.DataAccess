@@ -14,8 +14,6 @@ namespace Orc.DataAccess.Database
         #region Methods
         public static DbConnectionStringProperty TryGetProperty(this DbConnectionString connectionString, string propertyName)
         {
-            //Argument.IsNotNull(() => connectionString);
-
             var properties = connectionString?.Properties;
             if (properties == null)
             {

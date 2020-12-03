@@ -1,5 +1,5 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v3.1", FrameworkDisplayName="")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v5.0", FrameworkDisplayName="")]
 [assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess")]
 [assembly: System.Windows.Markup.XmlnsPrefix("http://schemas.wildgums.com/orc/dataaccess", "orcdataaccess")]
 [assembly: System.Windows.ThemeInfo(System.Windows.ResourceDictionaryLocation.None, System.Windows.ResourceDictionaryLocation.SourceAssembly)]
@@ -139,6 +139,10 @@ namespace Orc.DataAccess.Controls
 }
 namespace Orc.DataAccess
 {
+    public static class DataSourcePath
+    {
+        public const string MicrosoftSqlServerRegPath = "SOFTWARE\\Microsoft\\Microsoft SQL Server";
+    }
     public static class SqlConnectionStringExtensions
     {
         public static Orc.DataAccess.Database.DbConnectionStringProperty TryGetProperty(this Orc.DataAccess.Database.DbConnectionString connectionString, string propertyName) { }
