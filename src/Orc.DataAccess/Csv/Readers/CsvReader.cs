@@ -50,19 +50,19 @@ namespace Orc.DataAccess.Csv
             {
                 if (_isFieldHeaderInitialized)
                 {
-                    return _reader.Context.HeaderRecord;
+                    return _reader.HeaderRecord;
                 }
 
                 if (!_reader.Read())
                 {
-                    return _reader.Context.HeaderRecord;
+                    return _reader.HeaderRecord;
                 }
 
                 _reader.ReadHeader();
 
                 _isFieldHeaderInitialized = true;
 
-                return _reader.Context.HeaderRecord;
+                return _reader.HeaderRecord;
             }
         }
 
