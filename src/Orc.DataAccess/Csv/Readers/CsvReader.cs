@@ -117,7 +117,7 @@ namespace Orc.DataAccess.Csv
         {
             var lineCount = 0;
             using var reader = File.OpenText(Source);
-            while (reader.ReadLine() != null)
+            while (reader.ReadLine() is not null)
             {
                 lineCount++;
             }

@@ -46,7 +46,7 @@ namespace Orc.DataAccess.Database
         #region Methods
         private void UpdateProperties()
         {
-            if (_connectionStringBuilder == null)
+            if (_connectionStringBuilder is null)
             {
                 Properties = null;
                 return;
@@ -90,7 +90,7 @@ namespace Orc.DataAccess.Database
 
             var displayConnectionString = _connectionStringBuilder.ConnectionString;
 
-            foreach (var prop in removedProperties.Where(prop => prop.Item2 != null))
+            foreach (var prop in removedProperties.Where(prop => prop.Item2 is not null))
             {
                 _connectionStringBuilder[prop.Item1] = prop.Item2;
             }

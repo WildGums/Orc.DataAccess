@@ -15,14 +15,14 @@ namespace Orc.DataAccess.Database
         public DbDataSourceSchema GetSchema(DbConnectionString connectionString)
         {
             var provider = DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
-            if (provider == null)
+            if (provider is null)
             {
                 return null;
             }
 
             var databases = new List<string>();
             using var sqlConnection = provider.CreateConnection();
-            if (sqlConnection == null)
+            if (sqlConnection is null)
             {
                 return null;
             }

@@ -30,7 +30,7 @@ namespace Orc.DataAccess.Database
 
             var provider = DbProvider.GetRegisteredProviders()[providerName];
             var dbConnectionString = provider.CreateConnectionString(connectionString);
-            if (dbConnectionString == null)
+            if (dbConnectionString is null)
             {
                 return connectionString;
             }
@@ -56,7 +56,7 @@ namespace Orc.DataAccess.Database
 
             var provider = DbProvider.GetRegisteredProviders()[providerName];
             var dbConnectionString = provider.CreateConnectionString(connectionString);
-            if (dbConnectionString == null)
+            if (dbConnectionString is null)
             {
                 return connectionString;
             }

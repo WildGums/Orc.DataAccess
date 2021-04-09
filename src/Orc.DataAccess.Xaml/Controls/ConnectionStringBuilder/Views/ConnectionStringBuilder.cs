@@ -91,7 +91,7 @@ namespace Orc.DataAccess.Controls
 
         private void CanClearCommandExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = ConnectionString != null;
+            e.CanExecute = ConnectionString is not null;
         }
         #endregion
 

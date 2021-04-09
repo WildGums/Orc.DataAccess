@@ -38,7 +38,7 @@ namespace Orc.DataAccess.Database
             Argument.IsNotNull(() => providerInfo);
 
             var providerTable = GetProviderTable();
-            if (providerTable == null)
+            if (providerTable is null)
             {
                 return;
             }
@@ -58,9 +58,9 @@ namespace Orc.DataAccess.Database
             var providerTable = GetProviderTable();
 
             var row = providerTable?.Rows.Cast<DataRow>()
-                .FirstOrDefault(o => o[2] != null && o[2].ToString() == providerInfo.InvariantName);
+                .FirstOrDefault(o => o[2] is not null && o[2].ToString() == providerInfo.InvariantName);
 
-            if (row != null)
+            if (row is not null)
             {
                 providerTable.Rows.Remove(row);
             }
@@ -68,7 +68,7 @@ namespace Orc.DataAccess.Database
 
         private DataTable GetProviderTable()
         {
-            if (_dbProviderFactoryTable != null)
+            if (_dbProviderFactoryTable is not null)
             {
                 return _dbProviderFactoryTable;
             }

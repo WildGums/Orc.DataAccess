@@ -58,7 +58,7 @@ namespace Orc.DataAccess.Database
         protected DbConnection GetOpenedConnection()
         {
             var connection = Connection;
-            if (connection == null)
+            if (connection is null)
             {
                 return null;
             }

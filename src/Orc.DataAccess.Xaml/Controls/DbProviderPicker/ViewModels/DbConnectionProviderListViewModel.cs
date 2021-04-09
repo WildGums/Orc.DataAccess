@@ -49,7 +49,7 @@ namespace Orc.DataAccess.Controls
 
         private void OnOpen()
         {
-            if (DbProvider == null)
+            if (DbProvider is null)
             {
                 return;
             }

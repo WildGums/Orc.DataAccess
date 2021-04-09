@@ -63,7 +63,7 @@ namespace Orc.DataAccess.Controls
             RefreshDatabases = new Command(() => RefreshDatabasesAsync(), CanInitDatabases);
 
             TestConnection = new Command(OnTestConnection);
-            ShowAdvancedOptions = new TaskCommand(OnShowAdvancedOptionsAsync, () => ConnectionString != null);
+            ShowAdvancedOptions = new TaskCommand(OnShowAdvancedOptionsAsync, () => ConnectionString is not null);
 
             _initializeTimer.Elapsed += OnInitializeTimerElapsed;
         }
@@ -90,7 +90,7 @@ namespace Orc.DataAccess.Controls
             get => IntegratedSecurity?.Value as bool?;
             set
             {
-                if (IntegratedSecurity == null)
+                if (IntegratedSecurity is null)
                 {
                     return;
                 }
@@ -104,7 +104,7 @@ namespace Orc.DataAccess.Controls
                 RaisePropertyChanged(nameof(IntegratedSecurityValue));
             }
         }
-        public bool CanLogOnToServer => Password != null || UserId != null;
+        public bool CanLogOnToServer => Password is not null || UserId is not null;
         public bool IsLogOnEnabled => CanLogOnToServer && !(IntegratedSecurityValue ?? false);
 
         public bool IsServerListVisible { get; set; }
@@ -156,7 +156,7 @@ namespace Orc.DataAccess.Controls
         private void OnDbProviderChanged()
         {
             var dbProvider = DbProvider;
-            if (dbProvider == null)
+            if (dbProvider is null)
             {
                 return;
             }
@@ -173,7 +173,7 @@ namespace Orc.DataAccess.Controls
         private void SetIntegratedSecurityToDefault()
         {
             var integratedSecurityProperty = IntegratedSecurity;
-            if (integratedSecurityProperty == null)
+            if (integratedSecurityProperty is null)
             {
                 return;
             }
@@ -185,7 +185,7 @@ namespace Orc.DataAccess.Controls
         private async Task OnShowAdvancedOptionsAsync()
         {
             var connectionString = ConnectionString;
-            if (connectionString == null)
+            if (connectionString is null)
             {
                 return;
             }
@@ -265,7 +265,7 @@ namespace Orc.DataAccess.Controls
                 if (connectionState != ConnectionState.Invalid)
                 {
                     var schema = connectionString.GetDataSourceSchema();
-                    if (schema != null)
+                    if (schema is not null)
                     {
                         Databases.AddItems(schema.Databases);
                     }

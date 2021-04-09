@@ -15,7 +15,7 @@ namespace Orc.DataAccess
         public static DbConnectionStringProperty TryGetProperty(this DbConnectionString connectionString, string propertyName)
         {
             var properties = connectionString?.Properties;
-            if (properties == null)
+            if (properties is null)
             {
                 return null;
             }

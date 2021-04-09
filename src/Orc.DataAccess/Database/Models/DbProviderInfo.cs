@@ -44,7 +44,7 @@ namespace Orc.DataAccess.Database
 
         public override int GetHashCode()
         {
-            return (InvariantName != null ? InvariantName.GetHashCode() : 0);
+            return (InvariantName is not null ? InvariantName.GetHashCode() : 0);
         }
         #endregion
     }

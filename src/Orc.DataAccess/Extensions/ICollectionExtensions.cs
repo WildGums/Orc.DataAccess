@@ -18,7 +18,7 @@ namespace Orc.DataAccess
             where TTarget : T
         {
             var result = collection.OfType<TTarget>().FirstOrDefault();
-            if (result != null)
+            if (result is not null)
             {
                 return result;
             }

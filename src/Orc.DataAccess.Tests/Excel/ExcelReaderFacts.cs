@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Orc.DataAccess.Tests.Helpers
+namespace Orc.DataAccess.Tests
 {
     using System.IO;
     using System.Runtime.CompilerServices;
