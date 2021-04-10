@@ -67,14 +67,6 @@ private static void RestoreNuGetPackages(BuildContext buildContext, Cake.Core.IO
 
 private static void RestoreNuGetPackagesUsingNuGet(BuildContext buildContext, Cake.Core.IO.FilePath solutionOrProjectFileName, List<string> sources)
 {
-<<<<<<< HEAD
-    if (!buildContext.General.NuGet.RestoreUsingNuGet)
-    {
-        return;
-    }
-
-=======
->>>>>>> 4.1.2
     buildContext.CakeContext.LogSeparator("Restoring packages for '{0}' using 'NuGet'", solutionOrProjectFileName);
     
     try
@@ -102,14 +94,6 @@ private static void RestoreNuGetPackagesUsingNuGet(BuildContext buildContext, Ca
 
 private static void RestoreNuGetPackagesUsingDotnetRestore(BuildContext buildContext, Cake.Core.IO.FilePath solutionOrProjectFileName, List<string> sources, List<string> runtimeIdentifiers)
 {
-<<<<<<< HEAD
-    if (!buildContext.General.NuGet.RestoreUsingDotNetRestore)
-    {
-        return;
-    }
-
-=======
->>>>>>> 4.1.2
     buildContext.CakeContext.LogSeparator("Restoring packages for '{0}' using 'dotnet restore'", solutionOrProjectFileName);
         
     var projectFileContents = System.IO.File.ReadAllText(solutionOrProjectFileName.FullPath)?.ToLower();
@@ -149,22 +133,13 @@ private static void RestoreNuGetPackagesUsingDotnetRestore(BuildContext buildCon
                 ForceEvaluate = false,
                 IgnoreFailedSources = true,
                 NoCache = false,
-<<<<<<< HEAD
-                NoDependencies = buildContext.General.NuGet.NoDependencies, // use true to speed up things
-=======
                 NoDependencies = false, // use true to speed up things
->>>>>>> 4.1.2
                 Verbosity = DotNetCoreVerbosity.Normal
             };
     
             if (!string.IsNullOrWhiteSpace(runtimeIdentifier))
             {
-<<<<<<< HEAD
-                buildContext.CakeContext.Information("Project restore uses explicit runtime identifier, forcing re-evaluation");
-
-=======
                 // This is a explicit supported runtime identifier, force re-evaluation
->>>>>>> 4.1.2
                 restoreSettings.Force = true;
                 restoreSettings.ForceEvaluate = true;
                 restoreSettings.Runtime = runtimeIdentifier;

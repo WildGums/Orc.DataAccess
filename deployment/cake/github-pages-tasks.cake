@@ -1,10 +1,6 @@
 #l "github-pages-variables.cake"
 
-<<<<<<< HEAD
-#addin "nuget:?package=Cake.Git&version=1.0.1"
-=======
 #addin "nuget:?package=Cake.Git&version=1.0.0"
->>>>>>> 4.1.2
 
 //-------------------------------------------------------------
 

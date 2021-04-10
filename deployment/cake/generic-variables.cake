@@ -1,10 +1,6 @@
 #l "buildserver.cake"
 
-<<<<<<< HEAD
-#tool "nuget:?package=GitVersion.CommandLine&version=5.6.8"
-=======
 #tool "nuget:?package=GitVersion.CommandLine&version=5.6.6"
->>>>>>> 4.1.2
 
 //-------------------------------------------------------------
 
@@ -211,10 +207,6 @@ public class NuGetContext : BuildContextBase
     public string Executable { get; set; }
     public string LocalPackagesDirectory { get; set; }
 
-    public bool RestoreUsingNuGet { get; set; }
-    public bool RestoreUsingDotNetRestore { get; set; }
-    public bool NoDependencies { get; set; }
-
     protected override void ValidateContext()
     {
     
@@ -222,8 +214,7 @@ public class NuGetContext : BuildContextBase
     
     protected override void LogStateInfoForContext()
     {
-        CakeContext.Information($"Restore using NuGet: '{RestoreUsingNuGet}'");
-        CakeContext.Information($"Restore using dotnet restore: '{RestoreUsingDotNetRestore}'");
+    
     }
 }
 
@@ -404,10 +395,7 @@ private GeneralContext InitializeGeneralContext(BuildContext buildContext, IBuil
     {
         PackageSources = buildContext.BuildServer.GetVariable("NuGetPackageSources", showValue: true),
         Executable = "./tools/nuget.exe",
-        LocalPackagesDirectory = "c:\\source\\_packages",
-        RestoreUsingNuGet = buildContext.BuildServer.GetVariableAsBool("NuGet_RestoreUsingNuGet", false, showValue: true),
-        RestoreUsingDotNetRestore = buildContext.BuildServer.GetVariableAsBool("NuGet_RestoreUsingDotNetRestore", true, showValue: true),
-        NoDependencies = buildContext.BuildServer.GetVariableAsBool("NuGet_NoDependencies", true, showValue: true)
+        LocalPackagesDirectory = "c:\\source\\_packages"
     };
 
     var solutionName = buildContext.BuildServer.GetVariable("SolutionName", showValue: true);

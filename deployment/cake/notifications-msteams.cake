@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-#addin "nuget:?package=Cake.MicrosoftTeams&version=1.0.1"
-=======
 #addin "nuget:?package=Cake.MicrosoftTeams&version=1.0.0"
->>>>>>> 4.1.2
 
 //-------------------------------------------------------------
 
