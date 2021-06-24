@@ -48,21 +48,23 @@ namespace Orc.DataAccess.Csv
         {
             get
             {
+                var context = _reader.Context;
+
                 if (_isFieldHeaderInitialized)
                 {
-                    return _reader.HeaderRecord;
+                    return context.Reader.HeaderRecord;
                 }
 
                 if (!_reader.Read())
                 {
-                    return _reader.HeaderRecord;
+                    return context.Reader.HeaderRecord;
                 }
 
                 _reader.ReadHeader();
 
                 _isFieldHeaderInitialized = true;
-
-                return _reader.HeaderRecord;
+                
+                return context.Reader.HeaderRecord;
             }
         }
 
