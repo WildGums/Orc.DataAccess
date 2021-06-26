@@ -69,7 +69,7 @@ namespace Orc.DataAccess.Excel
                 if (!_isFirstRowReaded)
                 {
                     var columnIndex = GetOriginalColumnIndex(0);
-                    var readResult = _reader.Read() && _reader[columnIndex] != null;
+                    var readResult = _reader.Read() && _reader[columnIndex] is not null;
 
 #if DEBUG
                     Log.Debug($"Read '{1}' rows with result: '{readResult}'");

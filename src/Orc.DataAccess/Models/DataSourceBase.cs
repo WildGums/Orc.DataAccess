@@ -51,7 +51,7 @@ namespace Orc.DataAccess
 
             base.OnPropertyChanged(e);
 
-            if (e.NewValue == null)
+            if (e.NewValue is null)
             {
                 _properties.Remove(propertyName);
             }
@@ -92,7 +92,7 @@ namespace Orc.DataAccess
                     }
 
                     var propertyValue = property.GetValue(this);
-                    if (propertyValue == null)
+                    if (propertyValue is null)
                     {
                         ValidationContext.AddValidationError($"Required field '{property.Name}' is empty");
                     }

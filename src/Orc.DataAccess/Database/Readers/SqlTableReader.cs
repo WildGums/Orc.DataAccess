@@ -101,7 +101,7 @@ namespace Orc.DataAccess.Database
             try
             {
                 TryInitialize();
-                if (_reader == null)
+                if (_reader is null)
                 {
                     return false;
                 }
@@ -128,7 +128,7 @@ namespace Orc.DataAccess.Database
             {
                 TryInitialize();
 
-                if (_reader == null)
+                if (_reader is null)
                 {
                     return false;
                 }
@@ -151,13 +151,13 @@ namespace Orc.DataAccess.Database
 
         public override void Dispose()
         {
-            if (_reader != null)
+            if (_reader is not null)
             {
                 _reader.Close();
                 _reader.Dispose();
             }
 
-            if (_gateway == null)
+            if (_gateway is null)
             {
                 return;
             }

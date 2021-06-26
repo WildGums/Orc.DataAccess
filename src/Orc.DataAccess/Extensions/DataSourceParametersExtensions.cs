@@ -15,17 +15,17 @@ namespace Orc.DataAccess
         #region Methods
         public static string ToArgsValueString(this DataSourceParameters queryParameters)
         {
-            return queryParameters != null ? string.Join(",", queryParameters.Parameters?.Select(x => $"'{x.Value}'") ?? new List<string>()) : string.Empty;
+            return queryParameters is not null ? string.Join(",", queryParameters.Parameters?.Select(x => $"'{x.Value}'") ?? new List<string>()) : string.Empty;
         }
 
         public static string ToArgsNamesString(this DataSourceParameters queryParameters, string argsPrefix = "")
         {
-            return queryParameters != null ? string.Join(",", queryParameters.Parameters?.Select(x => $"{argsPrefix}{x.Name}") ?? new List<string>()) : string.Empty;
+            return queryParameters is not null ? string.Join(",", queryParameters.Parameters?.Select(x => $"{argsPrefix}{x.Name}") ?? new List<string>()) : string.Empty;
         }
 
         public static bool IsEmpty(this DataSourceParameters databaseQueryParameters)
         {
-            return databaseQueryParameters?.Parameters == null || !databaseQueryParameters.Parameters.Any();
+            return databaseQueryParameters?.Parameters is null || !databaseQueryParameters.Parameters.Any();
         }
 
         public static bool IsSameAs(this DataSourceParameters databaseQueryParameters, DataSourceParameters other)
@@ -43,7 +43,7 @@ namespace Orc.DataAccess
             var parameters = databaseQueryParameters?.Parameters;
             var otherParameters = other?.Parameters;
 
-            if (parameters == null || otherParameters == null)
+            if (parameters is null || otherParameters is null)
             {
                 return false;
             }
@@ -63,7 +63,7 @@ namespace Orc.DataAccess
                     return true;
                 }
 
-                if (x == null || y == null)
+                if (x is null || y is null)
                 {
                     return false;
                 }

@@ -50,7 +50,7 @@ namespace Orc.DataAccess.Database
         {
             unchecked
             {
-                return InstanceName != null ? InstanceName.GetHashCode() : 0;
+                return InstanceName is not null ? InstanceName.GetHashCode() : 0;
             }
         }
     }

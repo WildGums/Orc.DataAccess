@@ -38,7 +38,7 @@ namespace Orc.DataAccess.Database
             Argument.IsNotNull(() => dbProvider);
 
             var connectedType = dbProvider.GetConnectedTypes<T>().FirstOrDefault();
-            if (connectedType == null)
+            if (connectedType is null)
             {
                 return default;
             }
@@ -75,7 +75,7 @@ namespace Orc.DataAccess.Database
             foreach (var attributedSqlCompilerType in attributedSqlCompilerTypes)
             {
                 var connectToProviderAttribute = attributedSqlCompilerType.GetCustomAttributeEx(typeof(ConnectToProviderAttribute), true) as ConnectToProviderAttribute;
-                if (connectToProviderAttribute == null)
+                if (connectToProviderAttribute is null)
                 {
                     continue;
                 }
@@ -115,7 +115,7 @@ namespace Orc.DataAccess.Database
             Argument.IsNotNull(() => dbProvider);
 
             var connection = dbProvider.CreateConnection();
-            if (connection == null)
+            if (connection is null)
             {
                 return null;
             }

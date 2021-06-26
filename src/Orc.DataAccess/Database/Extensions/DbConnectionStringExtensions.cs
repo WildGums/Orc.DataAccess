@@ -15,7 +15,7 @@ namespace Orc.DataAccess.Database
         public static DbConnectionStringProperty TryGetProperty(this DbConnectionString connectionString, string propertyName)
         {
             var properties = connectionString?.Properties;
-            if (properties == null)
+            if (properties is null)
             {
                 return null;
             }
@@ -52,7 +52,7 @@ namespace Orc.DataAccess.Database
             }
 
             var connection = connectionString.DbProvider.GetProvider()?.CreateConnection();
-            if (connection == null)
+            if (connection is null)
             {
                 return ConnectionState.Invalid;
             }

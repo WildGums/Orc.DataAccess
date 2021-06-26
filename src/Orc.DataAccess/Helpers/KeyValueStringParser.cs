@@ -69,7 +69,7 @@ namespace Orc.DataAccess
         public static string SetValue(string source, string key, string value)
         {
             var oldValue = GetValue(source, key);
-            return oldValue != null ? source.Replace(oldValue, value) : $"{source}{KeyValuePairsDelimiter} {FormatKeyValue(key, value)}";
+            return oldValue is not null ? source.Replace(oldValue, value) : $"{source}{KeyValuePairsDelimiter} {FormatKeyValue(key, value)}";
         }
 
         private static string FormatKeyValue(string key, string value)

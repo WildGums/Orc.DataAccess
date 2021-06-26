@@ -108,7 +108,7 @@ namespace Orc.DataAccess.Database
         public virtual DbConnection CreateConnection()
         {
             var connection = DbProviderFactory.CreateConnection();
-            if (_connectionType == null)
+            if (_connectionType is null)
             {
                 _connectionType = connection?.GetType();
                 this.ConnectType<DbConnection>(_connectionType);
@@ -120,7 +120,7 @@ namespace Orc.DataAccess.Database
         public virtual DbConnectionString CreateConnectionString(string connectionString = null)
         {
             var connectionStringBuilder = DbProviderFactory.CreateConnectionStringBuilder();
-            if (connectionStringBuilder == null)
+            if (connectionStringBuilder is null)
             {
                 return null;
             }
@@ -135,7 +135,7 @@ namespace Orc.DataAccess.Database
 
         protected virtual DbProviderInfo GetInfo()
         {
-            if (_info != null)
+            if (_info is not null)
             {
                 return _info;
             }
@@ -144,7 +144,7 @@ namespace Orc.DataAccess.Database
                 .Rows.OfType<DataRow>()
                 .FirstOrDefault(x => x["InvariantName"]?.ToString() == ProviderInvariantName);
 
-            if (infoRow == null)
+            if (infoRow is null)
             {
                 return null;
             }

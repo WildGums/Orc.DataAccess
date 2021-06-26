@@ -48,21 +48,23 @@ namespace Orc.DataAccess.Csv
         {
             get
             {
+                var context = _reader.Context;
+
                 if (_isFieldHeaderInitialized)
                 {
-                    return _reader.Context.HeaderRecord;
+                    return context.Reader.HeaderRecord;
                 }
 
                 if (!_reader.Read())
                 {
-                    return _reader.Context.HeaderRecord;
+                    return context.Reader.HeaderRecord;
                 }
 
                 _reader.ReadHeader();
 
                 _isFieldHeaderInitialized = true;
-
-                return _reader.Context.HeaderRecord;
+                
+                return context.Reader.HeaderRecord;
             }
         }
 
@@ -117,7 +119,7 @@ namespace Orc.DataAccess.Csv
         {
             var lineCount = 0;
             using var reader = File.OpenText(Source);
-            while (reader.ReadLine() != null)
+            while (reader.ReadLine() is not null)
             {
                 lineCount++;
             }
