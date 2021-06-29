@@ -15,7 +15,18 @@ namespace Orc.DataAccess.Csv
 
     public class CsvReader : ReaderBase
     {
+        #region Fields
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+        private readonly ICsvReaderService _csvReaderService;
+        private readonly IFileService _fileService;
+
+        private int _currentOffset;
+        private int _fetchedCount;
+        private CsvHelper.CsvReader _reader;
+
         private bool _isFieldHeaderInitialized;
+        #endregion
 
         #region Constructors
         public CsvReader(string source, ICsvReaderService csvReaderService, IFileService fileService)
@@ -31,18 +42,7 @@ namespace Orc.DataAccess.Csv
             Initialize(source);
         }
         #endregion
-
-        #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-        private readonly ICsvReaderService _csvReaderService;
-        private readonly IFileService _fileService;
-
-        private int _currentOffset;
-        private int _fetchedCount;
-        private CsvHelper.CsvReader _reader;
-        #endregion
-
+        
         #region Properties
         public override string[] FieldHeaders
         {
@@ -104,8 +104,9 @@ namespace Orc.DataAccess.Csv
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Failed to read file '{Source}'");
+                Log.Warning(ex, $"Failed to read file '{Source}'");
                 AddValidationError($"Failed to read data: '{ex.Message}'");
+
                 return false;
             }
         }
@@ -117,11 +118,22 @@ namespace Orc.DataAccess.Csv
 
         private int GetRecordCount()
         {
+            var source = Source;
             var lineCount = 0;
-            using var reader = File.OpenText(Source);
-            while (reader.ReadLine() is not null)
+
+            try
             {
-                lineCount++;
+                using var reader = File.OpenText(source);
+                while (reader.ReadLine() is not null)
+                {
+                    lineCount++;
+                }
+            }
+            catch (Exception e)
+            {
+                AddValidationError($"Can't read file: '{source}'. {e.Message}");
+
+                return 0;
             }
 
             return lineCount;
