@@ -50,7 +50,7 @@ namespace Orc.DataAccess.Csv
             {
                 if (_reader is null)
                 {
-                    return new string[] { };
+                    return Array.Empty<string>();
                 }
 
                 var context = _reader.Context;
