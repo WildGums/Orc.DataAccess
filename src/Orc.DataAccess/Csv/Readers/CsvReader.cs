@@ -42,12 +42,17 @@ namespace Orc.DataAccess.Csv
             Initialize(source);
         }
         #endregion
-        
+
         #region Properties
         public override string[] FieldHeaders
         {
             get
             {
+                if (_reader is null)
+                {
+                    return Array.Empty<string>();
+                }
+
                 var context = _reader.Context;
 
                 if (_isFieldHeaderInitialized)
@@ -63,7 +68,7 @@ namespace Orc.DataAccess.Csv
                 _reader.ReadHeader();
 
                 _isFieldHeaderInitialized = true;
-                
+
                 return context.Reader.HeaderRecord;
             }
         }
@@ -76,7 +81,7 @@ namespace Orc.DataAccess.Csv
         #region Methods
         public override bool Read()
         {
-            if (ReferenceEquals(_reader, null))
+            if (_reader is null)
             {
                 return false;
             }
