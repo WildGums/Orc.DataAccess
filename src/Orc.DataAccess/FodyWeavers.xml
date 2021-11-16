@@ -9,4 +9,5 @@
   <ModuleInit />
   <Obsolete />
   <Catel />
+  <MethodTimer />
 </Weavers>

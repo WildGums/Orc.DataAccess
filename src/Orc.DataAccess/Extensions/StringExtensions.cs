@@ -29,10 +29,7 @@ namespace Orc.DataAccess
 
             var password = new Rfc2898DeriveBytes(passPhrase, new byte[] {1, 2, 3, 4, 5, 6, 7, 8});
             var keyBytes = password.GetBytes(Keysize / 8);
-            var symmetricKey = new RijndaelManaged
-            {
-                Mode = CipherMode.CBC
-            };
+            var symmetricKey = Aes.Create();
             var encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes); ////To encrypt
             var memoryStream = new MemoryStream();
             var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
@@ -55,10 +52,7 @@ namespace Orc.DataAccess
 
                 var password = new Rfc2898DeriveBytes(passPhrase, new byte[] {1, 2, 3, 4, 5, 6, 7, 8});
                 var keyBytes = password.GetBytes(Keysize / 8);
-                var symmetricKey = new RijndaelManaged
-                {
-                    Mode = CipherMode.CBC
-                };
+                var symmetricKey = Aes.Create();
                 var decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
                 var memoryStream = new MemoryStream(cipherTextBytes);
                 var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
