@@ -11,7 +11,9 @@ namespace Orc.DataAccess.Database
     using System.Data.Common;
     using Catel;
 
+#pragma warning disable IDISP025 // Class with no virtual dispose method should be sealed.
     public abstract class DbSourceGatewayBase : IDisposable
+#pragma warning restore IDISP025 // Class with no virtual dispose method should be sealed.
     {
         #region Fields
         private DbConnection _connection;

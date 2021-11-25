@@ -149,17 +149,26 @@ namespace Orc.DataAccess.Excel
             Encoding.RegisterProvider(encodingProvider);
 
 #endif
-            var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var fileExtension = Path.GetExtension(filePath);
-            _reader = string.Equals(fileExtension, ".xlsx")
-                ? ExcelReaderFactory.CreateOpenXmlReader(stream)
-                : ExcelReaderFactory.CreateBinaryReader(stream);
+            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                var fileExtension = Path.GetExtension(filePath);
 
-            _reader.AsDataSet(new ExcelDataSetConfiguration {
-                ConfigureDataTable = (_) => new ExcelDataTableConfiguration() {
-                    UseHeaderRow = false
+                _reader?.Dispose();
+
+                _reader = string.Equals(fileExtension, ".xlsx")
+                    ? ExcelReaderFactory.CreateOpenXmlReader(stream)
+                    : ExcelReaderFactory.CreateBinaryReader(stream);
+
+                using (_reader.AsDataSet(new ExcelDataSetConfiguration
+                    {
+                        ConfigureDataTable = (_) => new ExcelDataTableConfiguration
+                        {
+                            UseHeaderRow = false
+                        }
+                    }))
+                {
                 }
-            });
+            }
         }
 
         private void ConfigureStartRange(ExcelSource excelSource)

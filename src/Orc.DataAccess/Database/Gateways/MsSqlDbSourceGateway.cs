@@ -23,6 +23,7 @@ namespace Orc.DataAccess.Database
         #endregion
 
         #region Properties
+#pragma warning disable IDISP012 // Property should not return created disposable.
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
             new Dictionary<TableType, Func<DbConnection, DbCommand>>
             {
@@ -31,6 +32,7 @@ namespace Orc.DataAccess.Database
                 {TableType.StoredProcedure, c => CreateGetObjectsCommand(c, "P")},
                 {TableType.Function, c => CreateGetObjectsCommand(c, "IF")},
             };
+#pragma warning restore IDISP012 // Property should not return created disposable.
 
         protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new Dictionary<TableType, Func<DataSourceParameters>>
         {

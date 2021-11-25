@@ -24,11 +24,12 @@ namespace Orc.DataAccess.Database
         #endregion
 
         #region Properties
+#pragma warning disable IDISP012 // Property should not return created disposable.
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
             new Dictionary<TableType, Func<DbConnection, DbCommand>>
             {
-                {TableType.Table, c => c.CreateCommand($"SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")},
-                {TableType.View, c => c.CreateCommand($"SELECT table_name FROM information_schema.views WHERE table_schema = 'public';")},
+                { TableType.Table, c => c.CreateCommand($"SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")},
+                { TableType.View, c => c.CreateCommand($"SELECT table_name FROM information_schema.views WHERE table_schema = 'public';")},
                 {
                     TableType.StoredProcedure, c => c.CreateCommand(@"SELECT  p.proname
                                 FROM    pg_catalog.pg_namespace n
@@ -47,6 +48,7 @@ namespace Orc.DataAccess.Database
                                 Where 	 r.data_type = 'record' AND pg_n.nspname = 'public'")
                 },
             };
+#pragma warning restore IDISP012 // Property should not return created disposable.
         #endregion
 
         #region Methods
@@ -71,42 +73,50 @@ namespace Orc.DataAccess.Database
         public override DataSourceParameters GetQueryParameters()
         {
             var source = Source;
+
             switch (source.TableType)
             {
                 case TableType.Table:
                     break;
+
                 case TableType.View:
                     break;
+
                 case TableType.Sql:
                     //TODO: parse sql string
                     break;
 
                 case TableType.StoredProcedure:
                 case TableType.Function:
-                {
-                    var query = $"SELECT pg_get_function_identity_arguments('{source.Table}'::regproc);";
-
-                    var connection = GetOpenedConnection();
-                    using var reader = connection.GetReaderSql(query);
-                    if (!reader.Read())
                     {
-                        return new DataSourceParameters();
+                        var query = $"SELECT pg_get_function_identity_arguments('{source.Table}'::regproc);";
+
+                        using (var connection = GetOpenedConnection())
+                        {
+                            using var reader = connection.GetReaderSql(query);
+                            if (!reader.Read())
+                            {
+                                return new DataSourceParameters();
+                            }
+
+                            var result = reader.GetString(0);
+                            if (string.IsNullOrEmpty(result))
+                            {
+                                return new DataSourceParameters();
+                            }
+
+                            var parameters = result.Split(',').Select(x => x.Trim().Split(' ')).Select(x => new DataSourceParameter
+                            {
+                                Name = $"@{x[0]}",
+                                Type = x[1]
+                            }).ToList();
+
+                            return new DataSourceParameters
+                            {
+                                Parameters = parameters
+                            };
+                        }
                     }
-
-                    var result = reader.GetString(0);
-                    if (string.IsNullOrEmpty(result))
-                    {
-                        return new DataSourceParameters();
-                    }
-
-                    var parameters = result.Split(',').Select(x => x.Trim().Split(' ')).Select(x => new DataSourceParameter
-                    {
-                        Name = $"@{x[0]}",
-                        Type = x[1]
-                    }).ToList();
-
-                    return new DataSourceParameters {Parameters = parameters};
-                }
 
                 default:
                     return new DataSourceParameters();

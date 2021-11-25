@@ -156,15 +156,17 @@ namespace Orc.DataAccess.Csv
             {
                 var csvContext = new CsvContext<object> {Culture = Culture};
 
+                _reader?.Dispose();
                 _reader = _csvReaderService.CreateReader(source, csvContext);
             }
             catch (Exception ex)
             {
                 Log.Error(ex, $"Failed to initialize reader for data source '{Source}'");
+
                 _reader?.Dispose();
                 _reader = null;
 
-                AddValidationError($"Filed to initialize reader: '{ex.Message}'");
+                AddValidationError($"Failed to initialize reader: '{ex.Message}'");
             }
         }
         #endregion
