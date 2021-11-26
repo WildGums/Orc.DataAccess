@@ -36,7 +36,7 @@
     <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="all" />
     <PackageReference Include="Obsolete.Fody" Version="5.2.1" PrivateAssets="all" />
     <PackageReference Include="Orc.Csv" Version="4.4.0-alpha0120" />
-    <PackageReference Include="Orc.FileSystem" Version="4.2.0-alpha0379" />
+    <PackageReference Include="Orc.FileSystem" Version="4.2.0-alpha0396" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
   </ItemGroup>
 
