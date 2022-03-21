@@ -1,5 +1,5 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v5.0", FrameworkDisplayName="")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName="")]
 public static class ModuleInitializer
 {
     public static void Initialize() { }
@@ -149,7 +149,7 @@ namespace Orc.DataAccess
 }
 namespace Orc.DataAccess.Database
 {
-    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.All)]
+    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct)]
     public class ConnectToProviderAttribute : System.Attribute
     {
         public ConnectToProviderAttribute(string providerInvariantName) { }

@@ -24,6 +24,7 @@ namespace Orc.DataAccess.Tests
             using (var reader = new ExcelReader($"FilePath={testDataFilePath}"))
             {
                 var fieldHeaders = reader.FieldHeaders;
+
                 while (reader.Read())
                 {
                     foreach (var fieldHeader in fieldHeaders)

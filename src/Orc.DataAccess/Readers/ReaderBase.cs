@@ -14,7 +14,9 @@ namespace Orc.DataAccess
     public abstract class ReaderBase : IReader
     {
         #region Fields
+#pragma warning disable IDE1006 // Naming Styles
         protected readonly string Source;
+#pragma warning restore IDE1006 // Naming Styles
         #endregion
 
         #region Constructors

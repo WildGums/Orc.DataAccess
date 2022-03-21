@@ -10,7 +10,7 @@ namespace Orc.DataAccess.Tests
     using System.IO;
     using Catel.Logging;
 
-    public class TemporaryFilesContext : IDisposable
+    public sealed class TemporaryFilesContext : IDisposable
     {
         #region Constructors
         public TemporaryFilesContext(string name = null)

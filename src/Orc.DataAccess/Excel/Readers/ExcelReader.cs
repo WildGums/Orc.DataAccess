@@ -88,7 +88,7 @@ namespace Orc.DataAccess.Excel
                 Log.Error(ex, $"Failed to read data from '{Source}'");
                 AddValidationError($"Failed to read data: '{ex.Message}'");
                 return false;
-            }           
+            }
         }
 
         public List<string> GetWorkseetsList()
@@ -105,7 +105,7 @@ namespace Orc.DataAccess.Excel
             catch (Exception ex)
             {
                 Log.Warning(ex, "Failed to get worksheet list");
-            }            
+            }
 
             return result;
         }
@@ -132,8 +132,8 @@ namespace Orc.DataAccess.Excel
 
                 AddValidationError($"Failed to initialize reader: '{ex.Message}'");
             }
-            
-        }        
+
+        }
 
         private void InitializeExcelReader(ExcelSource excelSource)
         {
@@ -149,17 +149,29 @@ namespace Orc.DataAccess.Excel
             Encoding.RegisterProvider(encodingProvider);
 
 #endif
+#pragma warning disable IDISP001 // Dispose created.
+            // Note: need to keep this stream open as long as the reader lives
             var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+#pragma warning restore IDISP001 // Dispose created.
+
             var fileExtension = Path.GetExtension(filePath);
+
+            _reader?.Dispose();
+
             _reader = string.Equals(fileExtension, ".xlsx")
                 ? ExcelReaderFactory.CreateOpenXmlReader(stream)
                 : ExcelReaderFactory.CreateBinaryReader(stream);
 
-            _reader.AsDataSet(new ExcelDataSetConfiguration {
-                ConfigureDataTable = (_) => new ExcelDataTableConfiguration() {
+#pragma warning disable IDISP004 // Don't ignore created IDisposable.
+            _reader.AsDataSet(new ExcelDataSetConfiguration
+            {
+                ConfigureDataTable = (_) => new ExcelDataTableConfiguration
+                {
                     UseHeaderRow = false
                 }
             });
+#pragma warning restore IDISP004 // Don't ignore created IDisposable.
+
         }
 
         private void ConfigureStartRange(ExcelSource excelSource)

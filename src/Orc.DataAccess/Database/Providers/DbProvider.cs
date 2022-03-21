@@ -47,7 +47,9 @@ namespace Orc.DataAccess.Database
 
         #region Properties
         protected DbProviderFactory DbProviderFactory => _dbProviderFactory ??= DbProviderFactories.GetFactory(ProviderInvariantName);
+#pragma warning disable IDISP004 // Don't ignore created IDisposable.
         public virtual Type ConnectionType => _connectionType ??= DbProviderFactory.CreateConnection()?.GetType();
+#pragma warning restore IDISP004 // Don't ignore created IDisposable.
         public virtual DbProviderInfo Info => GetInfo();
         public string Dialect { get; }
         public string ProviderInvariantName { get; }
@@ -94,15 +96,18 @@ namespace Orc.DataAccess.Database
                 return providers;
             }
 
-            DbProviderFactories.GetFactoryClasses().Rows.OfType<DataRow>()
-                .Select(x => x.ToDbProviderInfo())
-                .OrderBy(x => x.Name)
-                .Select(x => new DbProvider(x))
-                .ForEach(x => providers[x.ProviderInvariantName] = x);
+            using (var dataTable = DbProviderFactories.GetFactoryClasses())
+            {
+                dataTable.Rows.OfType<DataRow>()
+                                .Select(x => x.ToDbProviderInfo())
+                                .OrderBy(x => x.Name)
+                                .Select(x => new DbProvider(x))
+                                .ForEach(x => providers[x.ProviderInvariantName] = x);
 
-            IsProvidersInitialized = true;
+                IsProvidersInitialized = true;
 
-            return providers;
+                return providers;
+            }
         }
 
         public virtual DbConnection CreateConnection()
@@ -140,18 +145,21 @@ namespace Orc.DataAccess.Database
                 return _info;
             }
 
-            var infoRow = DbProviderFactories.GetFactoryClasses()
-                .Rows.OfType<DataRow>()
-                .FirstOrDefault(x => x["InvariantName"]?.ToString() == ProviderInvariantName);
-
-            if (infoRow is null)
+            using (var dataTable = DbProviderFactories.GetFactoryClasses())
             {
-                return null;
+                var infoRow = dataTable
+                    .Rows.OfType<DataRow>()
+                    .FirstOrDefault(x => x["InvariantName"]?.ToString() == ProviderInvariantName);
+
+                if (infoRow is null)
+                {
+                    return null;
+                }
+
+                _info = infoRow.ToDbProviderInfo();
+
+                return _info;
             }
-
-            _info = infoRow.ToDbProviderInfo();
-
-            return _info;
         }
         #endregion
     }

@@ -36,7 +36,10 @@ namespace Orc.DataAccess.Database
                 return new List<DbObject>();
             }
 
+#pragma warning disable IDISP001 // Dispose created.
             var connection = GetOpenedConnection();
+#pragma warning restore IDISP001 // Dispose created.
+
             var command = commandFactory(connection);
             return ReadAllDbObjects(command);
         }
@@ -44,14 +47,16 @@ namespace Orc.DataAccess.Database
         public override DataSourceParameters GetQueryParameters()
         {
             var source = Source;
-            return DataSourceParametersFactory.TryGetValue(source.TableType, out var parametersFactory) 
-                ? parametersFactory() 
+            return DataSourceParametersFactory.TryGetValue(source.TableType, out var parametersFactory)
+                ? parametersFactory()
                 : new DataSourceParameters();
         }
 
         public override DbDataReader GetRecords(DataSourceParameters queryParameters = null, int offset = 0, int fetchCount = -1)
         {
+#pragma warning disable IDISP001 // Dispose created.
             var connection = GetOpenedConnection();
+#pragma warning restore IDISP001 // Dispose created.
             var source = Source;
             var isPagingQuery = offset >= 0 && fetchCount > 0;
 
@@ -132,50 +137,58 @@ namespace Orc.DataAccess.Database
         public override long GetCount(DataSourceParameters queryParameters = null)
         {
             var source = Source;
-            var connection = GetOpenedConnection();
 
-            switch (source.TableType)
+            using (var connection = GetOpenedConnection())
             {
-                case TableType.Table:
+                switch (source.TableType)
                 {
-                    return Convert.ToInt64(CreateTableCountCommand(connection).ExecuteScalar());
-                }
+                    case TableType.Table:
+                        {
+                            return Convert.ToInt64(CreateTableCountCommand(connection).ExecuteScalar());
+                        }
 
-                case TableType.View:
-                {
-                    return Convert.ToInt64(CreateViewCountCommand(connection).ExecuteScalar());
-                }
+                    case TableType.View:
+                        {
+                            return Convert.ToInt64(CreateViewCountCommand(connection).ExecuteScalar());
+                        }
 
-                case TableType.Function:
-                {
-                    var command = CreateGetFunctionRecordsCommand(connection, queryParameters, -1, -1);
-                    command.AddParameters(queryParameters);
-                    var count = command.GetRecordsCount();
+                    case TableType.Function:
+                        {
+                            using (var command = CreateGetFunctionRecordsCommand(connection, queryParameters, -1, -1))
+                            {
+                                command.AddParameters(queryParameters);
+                                var count = command.GetRecordsCount();
 
-                    return count;
-                }
+                                return count;
+                            }
+                        }
 
-                case TableType.StoredProcedure:
-                {
-                    var command = CreateGetStoredProcedureRecordsCommand(connection, queryParameters, -1, -1);
-                    command.AddParameters(queryParameters);
-                    var count = command.GetRecordsCount();
+                    case TableType.StoredProcedure:
+                        {
+                            using (var command = CreateGetStoredProcedureRecordsCommand(connection, queryParameters, -1, -1))
+                            {
+                                command.AddParameters(queryParameters);
+                                var count = command.GetRecordsCount();
 
-                    return count;
-                }
+                                return count;
+                            }
+                        }
 
-                case TableType.Sql:
-                {
-                    var command = connection.CreateCommand(source.Table);
-                    command.AddParameters(queryParameters);
-                    var count = command.GetRecordsCount();
+                    case TableType.Sql:
+                        {
+                            using (var command = connection.CreateCommand(source.Table))
+                            {
+                                command.AddParameters(queryParameters);
+                                var count = command.GetRecordsCount();
 
-                    return count;
-                }
+                                return count;
+                            }
+                        }
 
-                default:
-                {
-                    return 0;
+                    default:
+                        {
+                            return 0;
+                        }
                 }
             }
         }
@@ -189,7 +202,7 @@ namespace Orc.DataAccess.Database
             {
                 while (reader.Read())
                 {
-                    var dbObject = new DbObject(tableType) {Name = reader.GetString(0)};
+                    var dbObject = new DbObject(tableType) { Name = reader.GetString(0) };
                     dbObjects.Add(dbObject);
                 }
             }
@@ -199,21 +212,24 @@ namespace Orc.DataAccess.Database
 
         protected DataSourceParameters GetArgs(string query)
         {
-            var connection = GetOpenedConnection();
-            var queryParameters = new DataSourceParameters();
-            using var reader = connection.GetReader(query);
-            while (reader.Read())
+            using (var connection = GetOpenedConnection())
             {
-                var args = new DataSourceParameter
+                var queryParameters = new DataSourceParameters();
+                using var reader = connection.GetReader(query);
+
+                while (reader.Read())
                 {
-                    Name = reader.GetValue(0)?.ToString(),
-                    Type = reader.GetValue(1)?.ToString()
-                };
+                    var args = new DataSourceParameter
+                    {
+                        Name = reader.GetValue(0)?.ToString(),
+                        Type = reader.GetValue(1)?.ToString()
+                    };
 
-                queryParameters.Parameters.Add(args);
+                    queryParameters.Parameters.Add(args);
+                }
+
+                return queryParameters;
             }
-
-            return queryParameters;
         }
         #endregion
     }

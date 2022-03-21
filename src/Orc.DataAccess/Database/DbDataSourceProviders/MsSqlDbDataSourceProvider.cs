@@ -48,10 +48,12 @@ namespace Orc.DataAccess.Database
 
         private static IList<string> GetInstalledInstancesInRegistryView(RegistryView registryView)
         {
-            var regView = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView);
-            using (var sqlServNode = regView.OpenSubKey(MicrosoftSqlServerRegPath, false))
+            using (var regView = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
             {
-                return sqlServNode?.GetValue("InstalledInstances") as IList<string> ?? new List<string>();
+                using (var sqlServNode = regView.OpenSubKey(MicrosoftSqlServerRegPath, false))
+                {
+                    return sqlServNode?.GetValue("InstalledInstances") as IList<string> ?? Array.Empty<string>();
+                }
             }
         }
 
@@ -63,24 +65,26 @@ namespace Orc.DataAccess.Database
             if (sqlFactory.CanCreateDataSourceEnumerator)
             {
                 var dataSourceEnumerator = sqlFactory.CreateDataSourceEnumerator();
-                var dataTable = dataSourceEnumerator?.GetDataSources() ?? new DataTable();
 
-                var serversCount = dataTable.Rows.Count;
-                var servers = new string[serversCount];
-
-                for (var i = 0; i < serversCount; i++)
+                using (var dataTable = dataSourceEnumerator?.GetDataSources() ?? new DataTable())
                 {
-                    var name = dataTable.Rows[i]["ServerName"].ToString();
-                    var instance = dataTable.Rows[i]["InstanceName"].ToString();
+                    var serversCount = dataTable.Rows.Count;
+                    var servers = new string[serversCount];
 
-                    servers[i] = name;
-                    if (instance.Any())
+                    for (var i = 0; i < serversCount; i++)
                     {
-                        servers[i] += "\\" + instance;
-                    }
-                }
+                        var name = dataTable.Rows[i]["ServerName"].ToString();
+                        var instance = dataTable.Rows[i]["InstanceName"].ToString();
 
-                return servers;
+                        servers[i] = name;
+                        if (instance.Any())
+                        {
+                            servers[i] += "\\" + instance;
+                        }
+                    }
+
+                    return servers;
+                }
             }
 
             return new List<string>();

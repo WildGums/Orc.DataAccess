@@ -23,12 +23,14 @@ namespace Orc.DataAccess.Database
         #endregion
 
         #region Properties
+#pragma warning disable IDISP012 // Property should not return created disposable.
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
             new Dictionary<TableType, Func<DbConnection, DbCommand>>
             {
                 {TableType.Table, c => c.CreateCommand($"SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';")},
                 {TableType.View, c => c.CreateCommand($"SELECT name FROM sqlite_master WHERE type ='view' AND name NOT LIKE 'sqlite_%';")}
             };
+#pragma warning restore IDISP012 // Property should not return created disposable.
         #endregion
 
         #region Methods

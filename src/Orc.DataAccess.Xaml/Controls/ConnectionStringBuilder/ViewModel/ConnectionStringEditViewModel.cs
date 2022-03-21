@@ -34,7 +34,9 @@ namespace Orc.DataAccess.Controls
         private readonly IMessageService _messageService;
         private readonly ITypeFactory _typeFactory;
         private readonly IUIVisualizerService _uiVisualizerService;
+#pragma warning disable IDISP006 // Implement IDisposable.
         private readonly Timer _initializeTimer = new Timer(200);
+#pragma warning restore IDISP006 // Implement IDisposable.
 
         private bool _isDatabasesInitialized = false;
         #endregion

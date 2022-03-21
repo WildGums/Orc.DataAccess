@@ -50,9 +50,11 @@ namespace Orc.DataAccess.Controls
 
         private IList<string> GetInstalledInstancesInRegistryView(RegistryView registryView)
         {
-            var regView = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView);
-            using var sqlServNode = regView.OpenSubKey(DataSourcePath.MicrosoftSqlServerRegPath, false);
-            return sqlServNode?.GetValue("InstalledInstances") as IList<string> ?? new List<string>();
+            using (var regView = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
+            {
+                using var sqlServNode = regView.OpenSubKey(DataSourcePath.MicrosoftSqlServerRegPath, false);
+                return sqlServNode?.GetValue("InstalledInstances") as IList<string> ?? new List<string>();
+            }
         }
 
         private IList<string> GetRemoteSqlServerInstances()

@@ -36,7 +36,9 @@ namespace Orc.DataAccess.Controls
         public ConnectionStringBuilder()
         {
             _typeFactory = this.GetTypeFactory();
+#pragma warning disable IDISP001 // Dispose created.
             var serviceLocator = this.GetServiceLocator();
+#pragma warning restore IDISP001 // Dispose created.
 
             _uiVisualizerService = serviceLocator.ResolveType<IUIVisualizerService>();
 
