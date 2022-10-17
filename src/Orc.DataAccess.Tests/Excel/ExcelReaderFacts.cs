@@ -1,10 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="KeyValueStringParser.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Orc.DataAccess.Tests
+﻿namespace Orc.DataAccess.Tests
 {
     using System.IO;
     using System.Runtime.CompilerServices;

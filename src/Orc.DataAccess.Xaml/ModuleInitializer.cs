@@ -1,10 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ModuleInitializer.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-using Catel.IoC;
+﻿using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
 using Orc.DataAccess.Controls;
