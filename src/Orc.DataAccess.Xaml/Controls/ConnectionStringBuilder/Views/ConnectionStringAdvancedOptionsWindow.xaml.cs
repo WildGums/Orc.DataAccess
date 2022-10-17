@@ -4,12 +4,10 @@
 
     public sealed partial class ConnectionStringAdvancedOptionsWindow
     {
-        #region Constructors
         public ConnectionStringAdvancedOptionsWindow()
             : base(DataWindowMode.Close)
         {
             InitializeComponent();
         }
-        #endregion
     }
 }

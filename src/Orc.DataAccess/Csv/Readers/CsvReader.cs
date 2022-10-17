@@ -9,7 +9,6 @@
 
     public class CsvReader : ReaderBase
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly ICsvReaderService _csvReaderService;
@@ -20,9 +19,7 @@
         private CsvHelper.CsvReader _reader;
 
         private bool _isFieldHeaderInitialized;
-        #endregion
 
-        #region Constructors
         public CsvReader(string source, ICsvReaderService csvReaderService, IFileService fileService)
             : base(source)
         {
@@ -35,9 +32,7 @@
 
             Initialize(source);
         }
-        #endregion
 
-        #region Properties
         public override string[] FieldHeaders
         {
             get
@@ -70,9 +65,7 @@
         public override object this[int index] => _reader[index];
         public override object this[string name] => _reader[name];
         public override int TotalRecordCount => GetRecordCount();
-        #endregion
 
-        #region Methods
         public override bool Read()
         {
             if (_reader is null)
@@ -163,6 +156,5 @@
                 AddValidationError($"Failed to initialize reader: '{ex.Message}'");
             }
         }
-        #endregion
     }
 }

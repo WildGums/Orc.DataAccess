@@ -8,20 +8,15 @@
 
     public class DbProviderFactoryRepository
     {
-        #region Constants
         /// <summary>
         /// Name of the configuration element.
         /// </summary>
         private const string DbProviderFactoriesElement = "DbProviderFactories";
-        #endregion
 
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private DataTable _dbProviderFactoryTable;
-        #endregion
 
-        #region Methods
         /// <summary>
         /// Adds the specified provider.
         /// </summary>
@@ -86,6 +81,5 @@
 
             return _dbProviderFactoryTable;
         }
-        #endregion
     }
 }

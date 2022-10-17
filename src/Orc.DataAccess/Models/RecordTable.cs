@@ -4,8 +4,6 @@
 
     public class RecordTable : List<Record>
     {
-        #region Properties
         public string[] Headers { get; set; }
-        #endregion
     }
 }

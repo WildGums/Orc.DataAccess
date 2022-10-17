@@ -4,10 +4,9 @@
 
     public static class SqlConnectionStringExtensions
     {
-        #region Methods
-        public static DbConnectionStringProperty TryGetProperty(this DbConnectionString connectionString, string propertyName)
+        public static DbConnectionStringProperty? TryGetProperty(this DbConnectionString connectionString, string propertyName)
         {
-            var properties = connectionString?.Properties;
+            var properties = connectionString.Properties;
             if (properties is null)
             {
                 return null;
@@ -26,7 +25,6 @@
 
             return null;
         }
-        #endregion
     }
 }
 

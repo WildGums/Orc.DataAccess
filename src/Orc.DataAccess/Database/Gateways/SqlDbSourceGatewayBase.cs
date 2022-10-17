@@ -8,19 +8,14 @@
 
     public abstract class SqlDbSourceGatewayBase : DbSourceGatewayBase
     {
-        #region Constructors
         protected SqlDbSourceGatewayBase(DatabaseSource source)
             : base(source)
         {
         }
-        #endregion
 
-        #region Properties
-        protected virtual Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory => new Dictionary<TableType, Func<DbConnection, DbCommand>>();
-        protected virtual Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new Dictionary<TableType, Func<DataSourceParameters>>();
-        #endregion
+        protected virtual Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory => new();
+        protected virtual Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new();
 
-        #region Methods
         public override IList<DbObject> GetObjects()
         {
             var source = Source;
@@ -45,7 +40,7 @@
                 : new DataSourceParameters();
         }
 
-        public override DbDataReader GetRecords(DataSourceParameters queryParameters = null, int offset = 0, int fetchCount = -1)
+        public override DbDataReader GetRecords(DataSourceParameters queryParameters, int offset = 0, int fetchCount = -1)
         {
 #pragma warning disable IDISP001 // Dispose created.
             var connection = GetOpenedConnection();
@@ -127,7 +122,7 @@
             return CreateTableCountCommand(connection);
         }
 
-        public override long GetCount(DataSourceParameters queryParameters = null)
+        public override long GetCount(DataSourceParameters queryParameters)
         {
             var source = Source;
 
@@ -214,8 +209,8 @@
                 {
                     var args = new DataSourceParameter
                     {
-                        Name = reader.GetValue(0)?.ToString(),
-                        Type = reader.GetValue(1)?.ToString()
+                        Name = reader.GetValue(0).ToString(),
+                        Type = reader.GetValue(1).ToString()
                     };
 
                     queryParameters.Parameters.Add(args);
@@ -224,6 +219,5 @@
                 return queryParameters;
             }
         }
-        #endregion
     }
 }

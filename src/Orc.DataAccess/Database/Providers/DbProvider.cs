@@ -10,18 +10,15 @@
 
     public class DbProvider
     {
-        #region Fields
-        private static readonly Dictionary<string, DbProvider> Providers = new Dictionary<string, DbProvider>();
-        private static readonly DbProviderFactoryRepository ProviderFactoryRepository = new DbProviderFactoryRepository();
+        private static readonly Dictionary<string, DbProvider> Providers = new();
+        private static readonly DbProviderFactoryRepository ProviderFactoryRepository = new();
 
         private static bool IsProvidersInitialized = false;
 
         private Type _connectionType;
         private DbProviderFactory _dbProviderFactory;
         private DbProviderInfo _info;
-        #endregion
 
-        #region Constructors
         public DbProvider(DbProviderInfo info)
             : this(info.InvariantName)
         {
@@ -36,9 +33,7 @@
 
             ProviderInvariantName = providerInvariantName;
         }
-        #endregion
 
-        #region Properties
         protected DbProviderFactory DbProviderFactory => _dbProviderFactory ??= DbProviderFactories.GetFactory(ProviderInvariantName);
 #pragma warning disable IDISP004 // Don't ignore created IDisposable.
         public virtual Type ConnectionType => _connectionType ??= DbProviderFactory.CreateConnection()?.GetType();
@@ -46,9 +41,7 @@
         public virtual DbProviderInfo Info => GetInfo();
         public string Dialect { get; }
         public string ProviderInvariantName { get; }
-        #endregion
 
-        #region Methods
         public static void RegisterProvider(DbProviderInfo providerInfo)
         {
             Argument.IsNotNull(() => providerInfo);
@@ -154,6 +147,5 @@
                 return _info;
             }
         }
-        #endregion
     }
 }

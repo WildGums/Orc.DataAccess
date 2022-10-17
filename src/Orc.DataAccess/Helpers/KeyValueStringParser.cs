@@ -6,21 +6,16 @@
 
     public static class KeyValueStringParser
     {
-        #region Constants
         public const char KeyValuePairsDelimiter = ',';
         public const char KeyValueDelimiter = '=';
         private static readonly Regex KeyValueGroupRegex;
-        #endregion
 
-        #region Constructors
         static KeyValueStringParser()
         {
             //NOTE: regex is not compiled because this operation is very rare
             KeyValueGroupRegex = new Regex($@"(?<key>\w+)\s*{KeyValueDelimiter}\s*(?<value>.+)(?:\s|$)");
         }
-        #endregion
 
-        #region Methods
         public static Dictionary<string, string> Parse(string source)
         {
             if (string.IsNullOrWhiteSpace(source))
@@ -70,6 +65,5 @@
         {
             return $"{key}{KeyValueDelimiter}{value}";
         }
-        #endregion
     }
 }

@@ -9,17 +9,14 @@
     [ConnectToProvider("Npgsql")]
     public class PostgreSqlDbSourceGateway : SqlDbSourceGatewayBase
     {
-        #region Constructors
         public PostgreSqlDbSourceGateway(DatabaseSource source)
             : base(source)
         {
         }
-        #endregion
 
-        #region Properties
 #pragma warning disable IDISP012 // Property should not return created disposable.
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
-            new Dictionary<TableType, Func<DbConnection, DbCommand>>
+            new()
             {
                 { TableType.Table, c => c.CreateCommand($"SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")},
                 { TableType.View, c => c.CreateCommand($"SELECT table_name FROM information_schema.views WHERE table_schema = 'public';")},
@@ -42,9 +39,7 @@
                 },
             };
 #pragma warning restore IDISP012 // Property should not return created disposable.
-        #endregion
 
-        #region Methods
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
             var source = Source;
@@ -127,6 +122,5 @@
         {
             return connection.CreateCommand($"SELECT COUNT(*) AS \"count\" FROM \"{Source.Table}\"");
         }
-        #endregion
     }
 }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Reflection;
@@ -12,17 +13,12 @@
 
     public abstract class DataSourceBase : ModelBase
     {
-        #region Properties
         public IValidationContext ValidationContext { get; private set; }
-        #endregion
 
-        #region Fields
-        private static readonly CacheStorage<Type, PropertyInfo[]> PropertiesCache = new CacheStorage<Type, PropertyInfo[]>();
+        private static readonly CacheStorage<Type, PropertyInfo[]> PropertiesCache = new();
 
-        protected readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
-        #endregion
+        protected readonly Dictionary<string, string> _properties = new();
 
-        #region Constructors
         protected DataSourceBase()
             : this(string.Empty)
         {
@@ -31,11 +27,10 @@
         protected DataSourceBase(string location)
         {
             ParseLocation(location);
+            ValidationContext = new ValidationContext();
         }
-        #endregion
 
-        #region Methods
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             var propertyName = e.PropertyName;
             if (propertyName == nameof(IsDirty) || propertyName == nameof(ValidationContext))
@@ -66,7 +61,7 @@
         {
             var type = GetType();
             var properties = PropertiesCache.GetFromCacheOrFetch(type, () => type.GetPropertiesEx());
-            var property = properties.FirstOrDefault(x => x.Name == propertyName);
+            var property = properties.First(x => x.Name == propertyName);
             SetPropertyValue(property, propertyValueStr);
         }
 
@@ -159,6 +154,5 @@
         {
             return GetLocation();
         }
-        #endregion
     }
 }

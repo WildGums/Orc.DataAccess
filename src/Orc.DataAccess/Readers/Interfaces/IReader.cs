@@ -7,7 +7,6 @@
 
     public interface IReader : IDisposable
     {
-        #region Properties
         IValidationContext ValidationContext { get; }
         string[] FieldHeaders { get; }
         object this[int index] { get; }
@@ -16,11 +15,8 @@
         CultureInfo Culture { get; set; }
         int Offset { get; set; }
         int FetchCount { get; set; }
-        #endregion
 
-        #region Methods
         bool Read();
         Task<bool> NextResultAsync();
-        #endregion
     }
 }

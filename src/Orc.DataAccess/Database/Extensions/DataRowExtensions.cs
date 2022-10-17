@@ -5,7 +5,6 @@
 
     internal static class DataRowExtensions
     {
-        #region Methods
         public static DbProviderInfo ToDbProviderInfo(this DataRow row)
         {
             Argument.IsNotNull(() => row);
@@ -30,6 +29,5 @@
 
             return providerInfo;
         }
-        #endregion
     }
 }

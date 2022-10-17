@@ -11,7 +11,6 @@
 
     public class ExcelReader : ReaderBase
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private bool _isFirstRowReaded = true;
@@ -20,7 +19,6 @@
         private IExcelDataReader _reader;
         private int _startColumnIndex;
         private int _startRowIndex;
-        #endregion
 
         public ExcelReader(string source)
             : base(source)

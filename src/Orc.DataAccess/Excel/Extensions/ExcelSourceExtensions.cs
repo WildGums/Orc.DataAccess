@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using Catel;
-    using Catel.Data;
     using Catel.IoC;
 
     public static class ExcelSourceExtensions
@@ -17,7 +16,9 @@
                 return new List<string>();
             }
 
+#pragma warning disable IDISP001 // Dispose created
             var typeFactory = excelSource.GetTypeFactory();
+#pragma warning restore IDISP001 // Dispose created
             using (var reader = new ExcelReader(source))
             {
                 return reader.GetWorkseetsList();

@@ -11,11 +11,9 @@
     [ConnectToProvider("System.Data.SqlClient")]
     public class MsSqlDbDataSourceProvider : IDbDataSourceProvider
     {
-        #region Constants
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private const string MicrosoftSqlServerRegPath = @"SOFTWARE\Microsoft\Microsoft SQL Server";
-        #endregion
 
         public IList<DbDataSource> GetDataSources()
         {

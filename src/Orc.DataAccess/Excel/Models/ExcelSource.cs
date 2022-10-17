@@ -4,7 +4,6 @@
     {
         private string _topLeftCell = "A1";
 
-        #region Constructors
         public ExcelSource()
             : this(string.Empty)
         {
@@ -14,9 +13,7 @@
             : base(location)
         {
         }
-        #endregion
 
-        #region Properties
         public string FilePath { get; set; }
         public string Worksheet { get; set; }
 
@@ -34,6 +31,5 @@
                 RaisePropertyChanged(nameof(TopLeftCell));
             }
         }
-        #endregion
     }
 }

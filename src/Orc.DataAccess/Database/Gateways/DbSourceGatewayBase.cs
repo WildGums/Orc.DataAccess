@@ -4,28 +4,26 @@
     using System.Collections.Generic;
     using System.Data.Common;
     using Catel;
+    using Catel.Logging;
 
 #pragma warning disable IDISP025 // Class with no virtual dispose method should be sealed.
     public abstract class DbSourceGatewayBase : IDisposable
 #pragma warning restore IDISP025 // Class with no virtual dispose method should be sealed.
     {
-        #region Fields
-        private DbConnection _connection;
-        private DbProvider _provider;
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private readonly List<DbConnection> _openedConnections = new List<DbConnection>();
-        #endregion
+        private DbConnection? _connection;
+        private DbProvider? _provider;
 
-        #region Constructors
+        private readonly List<DbConnection> _openedConnections = new();
+
         protected DbSourceGatewayBase(DatabaseSource source)
         {
             Argument.IsNotNull(() => source);
 
             Source = source;
         }
-        #endregion
 
-        #region IDisposable Members
         public void Dispose()
         {
             Close();
@@ -37,21 +35,17 @@
                 openedConnection.Dispose();
             }
         }
-        #endregion
 
-        #region Properties
         public DatabaseSource Source { get; }
-        public virtual DbProvider Provider => _provider ??= Source.GetProvider();
-        public virtual DbConnection Connection => _connection ??= Provider?.CreateConnection(Source);
-        #endregion
+        public virtual DbProvider? Provider => _provider ??= Source.GetProvider();
+        public virtual DbConnection? Connection => _connection ??= Provider?.CreateConnection(Source);
 
-        #region Methods
-        public abstract DbDataReader GetRecords(DataSourceParameters queryParameters = null, int offset = 0, int fetchCount = -1);
-        public abstract long GetCount(DataSourceParameters queryParameters = null);
+        public abstract DbDataReader GetRecords(DataSourceParameters queryParameters, int offset = 0, int fetchCount = -1);
+        public abstract long GetCount(DataSourceParameters queryParameters);
         public abstract DataSourceParameters GetQueryParameters();
         public abstract IList<DbObject> GetObjects();
 
-        protected DbConnection GetOpenedConnection()
+        protected DbConnection? GetOpenedConnection()
         {
             var connection = Connection;
             if (connection is null)
@@ -62,7 +56,12 @@
             if (connection.State.HasFlag(System.Data.ConnectionState.Open))
             {
                 var newConnection = Provider?.CreateConnection(Source);
-                newConnection?.Open();
+                if (newConnection is null)
+                {
+                    Log.Warning($"Failed to create connection to '{Source}'");
+                    return null;
+                }
+                newConnection.Open();
 
                 _openedConnections.Add(newConnection);
                 return newConnection;
@@ -85,6 +84,5 @@
                 openedConnection.Close();
             }
         }
-        #endregion
     }
 }

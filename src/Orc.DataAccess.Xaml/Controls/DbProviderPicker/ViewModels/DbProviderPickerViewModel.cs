@@ -9,12 +9,9 @@
 
     public class DbProviderPickerViewModel : ViewModelBase
     {
-        #region Fields
         private readonly ITypeFactory _typeFactory;
         private readonly IUIVisualizerService _uiVisualizerService;
-        #endregion
 
-        #region Constructors
         public DbProviderPickerViewModel(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
         {
             Argument.IsNotNull(() => uiVisualizerService);
@@ -25,14 +22,10 @@
 
             ChangeDbProvider = new TaskCommand(OnChangeDbProviderAsync);
         }
-        #endregion
 
-        #region Properties
         public DbProviderInfo DbProvider { get; set; }
         public TaskCommand ChangeDbProvider { get; }
-        #endregion
 
-        #region Methods
         private async Task OnChangeDbProviderAsync()
         {
             var dbProviderListViewModel = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<DbConnectionProviderListViewModel>(DbProvider);
@@ -41,6 +34,5 @@
                 DbProvider = dbProviderListViewModel.DbProvider;
             }
         }
-        #endregion
     }
 }

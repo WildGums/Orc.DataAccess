@@ -8,11 +8,8 @@
 
     internal static class SqlConnectionExtensions
     {
-        #region Fields
-        private static readonly Dictionary<Type, DbProvider> ConnectionTypeToProvider = new Dictionary<Type, DbProvider>();
-        #endregion
+        private static readonly Dictionary<Type, DbProvider> ConnectionTypeToProvider = new();
 
-        #region Methods
         public static DbDataReader GetReaderSql(this DbConnection connection, string sql, int? commandTimeout = null)
         {
             Argument.IsNotNull(() => connection);
@@ -74,6 +71,5 @@
 
             return null;
         }
-        #endregion
     }
 }

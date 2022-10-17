@@ -9,17 +9,14 @@
     [ConnectToProvider("Oracle.ManagedDataAccess.Client")]
     public class OracleSourceGateway : SqlDbSourceGatewayBase
     {
-        #region Constructors
         public OracleSourceGateway(DatabaseSource source)
             : base(source)
         {
         }
-        #endregion
 
-        #region Properties
 #pragma warning disable IDISP012 // Property should not return created disposable.
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
-            new Dictionary<TableType, Func<DbConnection, DbCommand>>
+            new()
             {
                 {TableType.Table, c => c.CreateCommand("SELECT table_name FROM user_tables")},
                 {TableType.View, c => c.CreateCommand("SELECT view_name from user_views")},
@@ -28,16 +25,14 @@
             };
 #pragma warning restore IDISP012 // Property should not return created disposable.
 
-        protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new Dictionary<TableType, Func<DataSourceParameters>>
+        protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new()
         {
             {TableType.StoredProcedure, () => GetArgs(GetArgsQuery)},
             {TableType.Function, () => GetArgs(GetArgsQuery)},
         };
 
         private string GetArgsQuery => $"SELECT ARGUMENT_NAME AS NAME, DATA_TYPE AS TYPE FROM USER_ARGUMENTS WHERE OBJECT_NAME = UPPER('{Source.Table}') AND IN_OUT = 'IN'";
-        #endregion
 
-        #region Methods
         public override DataSourceParameters GetQueryParameters()
         {
             var source = Source;
@@ -89,6 +84,5 @@
         {
             return connection.CreateCommand($"SELECT COUNT(*) \"count\" FROM \"{Source.Table}\"");
         }
-        #endregion
     }
 }

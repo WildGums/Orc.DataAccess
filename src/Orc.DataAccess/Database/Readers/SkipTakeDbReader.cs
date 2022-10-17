@@ -7,13 +7,10 @@
 
     internal class SkipTakeDbReader : DbDataReader
     {
-        #region Fields
         private readonly DbDataReader _reader;
 
         private int _readCount;
-        #endregion
 
-        #region Constructors
         public SkipTakeDbReader(DbDataReader reader, int offset, int fetch)
         {
             Argument.IsNotNull(() => reader);
@@ -25,9 +22,7 @@
 
             _readCount = 0;
         }
-        #endregion
 
-        #region Properties
         public int Offset { get; }
         public int Fetch { get; }
         public override int FieldCount => _reader.FieldCount;
@@ -37,18 +32,16 @@
         public override bool HasRows => _reader.HasRows;
         public override bool IsClosed => _reader.IsClosed;
         public override int Depth => _reader.Depth;
-        #endregion
 
-        #region Methods
         public override bool GetBoolean(int ordinal) => _reader.GetBoolean(ordinal);
         public override byte GetByte(int ordinal) => _reader.GetByte(ordinal);
 
-        public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length) =>
+        public override long GetBytes(int ordinal, long dataOffset, byte[]? buffer, int bufferOffset, int length) =>
             _reader.GetBytes(ordinal, dataOffset, buffer, bufferOffset, length);
 
         public override char GetChar(int ordinal) => _reader.GetChar(ordinal);
 
-        public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length) =>
+        public override long GetChars(int ordinal, long dataOffset, char[]? buffer, int bufferOffset, int length) =>
             _reader.GetChars(ordinal, dataOffset, buffer, bufferOffset, length);
 
         public override string GetDataTypeName(int ordinal) => _reader.GetDataTypeName(ordinal);
@@ -93,6 +86,5 @@
         }
 
         public override IEnumerator GetEnumerator() => new DbEnumerator(this);
-        #endregion
     }
 }

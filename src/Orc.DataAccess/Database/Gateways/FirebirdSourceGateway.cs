@@ -8,17 +8,14 @@
     [ConnectToProvider("FirebirdSql.Data.FirebirdClient")]
     public class FirebirdSourceGateway : SqlDbSourceGatewayBase
     {
-        #region Constructors
         public FirebirdSourceGateway(DatabaseSource source)
             : base(source)
         {
         }
-        #endregion
 
-        #region Properties
 #pragma warning disable IDISP012 // Property should not return created disposable.
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
-            new Dictionary<TableType, Func<DbConnection, DbCommand>>
+            new()
             {
                 {TableType.Table, c => c.CreateCommand($"SELECT rdb$relation_name FROM rdb$relations WHERE rdb$view_blr is null AND (rdb$system_flag is null OR rdb$system_flag = 0);")},
                 {TableType.View, c => c.CreateCommand($"SELECT rdb$relation_name FROM rdb$relations WHERE rdb$view_blr is not null AND (rdb$system_flag is null OR rdb$system_flag = 0);")},
@@ -27,14 +24,12 @@
             };
 #pragma warning restore IDISP012 // Property should not return created disposable.
 
-        protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new Dictionary<TableType, Func<DataSourceParameters>>()
+        protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new()
         {
             {TableType.StoredProcedure, () => GetArgs($"SELECT rdb$parameter_name, rdb$parameter_type FROM rdb$procedure_parameters WHERE rdb$procedure_name = '{Source.Table}'")},
             {TableType.Function, () => GetArgs($"SELECT rdb$argument_name, rdb$field_type FROM rdb$procedure_parameters WHERE rdb$procedure_name = '{Source.Table}'")},
         };
-        #endregion
 
-        #region Methods
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
             var source = Source;
@@ -57,6 +52,5 @@
         {
             return connection.CreateCommand($"SELECT COUNT(*) AS \"COUNT\" FROM \"{Source.Table}\"");
         }
-        #endregion
     }
 }

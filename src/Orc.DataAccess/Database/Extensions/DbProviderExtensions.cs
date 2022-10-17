@@ -12,12 +12,9 @@
 
     public static class DbProviderExtensions
     {
-        #region Fields
-        private static readonly CacheStorage<string, CacheStorage<Type, IList<Type>>> ConnectedTypes = new CacheStorage<string, CacheStorage<Type, IList<Type>>>();
-        private static readonly CacheStorage<string, CacheStorage<Type, object>> ConnectedInstances = new CacheStorage<string, CacheStorage<Type, object>>();
-        #endregion
+        private static readonly CacheStorage<string, CacheStorage<Type, IList<Type>>> ConnectedTypes = new();
+        private static readonly CacheStorage<string, CacheStorage<Type, object>> ConnectedInstances = new();
 
-        #region Methods
         public static T GetOrCreateConnectedInstance<T>(this DbProvider dbProvider)
         {
             Argument.IsNotNull(() => dbProvider);
@@ -117,6 +114,5 @@
 
             return connection;
         }
-        #endregion
     }
 }

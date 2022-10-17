@@ -6,7 +6,6 @@
 
     public class DatabaseSource : DataSourceBase
     {
-        #region Constructors
         public DatabaseSource()
             : this(string.Empty)
         {
@@ -16,9 +15,7 @@
             : base(location)
         {
         }
-        #endregion
 
-        #region Properties
         public string Schema { get; set; }
         public string Table { get; set; }
         public TableType TableType { get; set; }
@@ -28,9 +25,7 @@
 
         [Required]
         public string ProviderName { get; set; }
-        #endregion
 
-        #region Methods
         protected override bool TryConvertFromString(string propertyName, string propertyValueStr, out object propertyValue)
         {
             if (propertyName != nameof(TableType))
@@ -48,6 +43,5 @@
             propertyValue = null;
             return false;
         }
-        #endregion
     }
 }

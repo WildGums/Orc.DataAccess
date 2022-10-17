@@ -6,7 +6,6 @@
 
     public static class ICollectionExtensions
     {
-        #region Methods
         public static TTarget FindTypeOrCreateNew<T, TTarget>(this ICollection<T> collection, Func<TTarget> func)
             where TTarget : T
         {
@@ -20,6 +19,5 @@
             collection.Add(result);
             return result;
         }
-        #endregion
     }
 }

@@ -8,7 +8,6 @@
 
     public static class DbDataReaderExtensions
     {
-        #region Methods
         public static string[] GetHeaders(this DbDataReader reader)
         {
             Argument.IsNotNull(() => reader);
@@ -59,6 +58,5 @@
 
             return results;
         }
-        #endregion
     }
 }

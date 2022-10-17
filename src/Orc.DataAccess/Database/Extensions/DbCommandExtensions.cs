@@ -5,7 +5,6 @@
 
     public static class DbCommandExtensions
     {
-        #region Methods
         public static DbCommand AddParameters(this DbCommand dbCommand, DataSourceParameters parameters)
         {
             Argument.IsNotNull(() => dbCommand);
@@ -62,7 +61,5 @@
 
             return count;
         }
-
-        #endregion
     }
 }

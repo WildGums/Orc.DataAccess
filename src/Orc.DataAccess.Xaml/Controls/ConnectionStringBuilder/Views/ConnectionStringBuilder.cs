@@ -13,7 +13,6 @@
     [TemplatePart(Name = "PART_ConnectionStringTextBox", Type = typeof(TextBox))]
     public class ConnectionStringBuilder : Control
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly ITypeFactory _typeFactory;
@@ -23,9 +22,7 @@
         private TextBox _connectionStringTextBox;
 
         private bool _isConnectionStringUpdating = false;
-        #endregion
 
-        #region Constructors
         public ConnectionStringBuilder()
         {
             _typeFactory = this.GetTypeFactory();
@@ -33,7 +30,7 @@
             var serviceLocator = this.GetServiceLocator();
 #pragma warning restore IDISP001 // Dispose created.
 
-            _uiVisualizerService = serviceLocator.ResolveType<IUIVisualizerService>();
+            _uiVisualizerService = serviceLocator.ResolveRequiredType<IUIVisualizerService>();
 
             var editCommandBinding = new CommandBinding {Command = EditCommand};
             editCommandBinding.Executed += OnEditCommandExecuted;
@@ -44,7 +41,6 @@
             clearCommandBinding.CanExecute += CanClearCommandExecute;
             CommandBindings.Add(clearCommandBinding);
         }
-        #endregion
 
         #region Routed Commands
         public static RoutedCommand EditCommand { get; } = new RoutedCommand(nameof(EditCommand), typeof(ConnectionStringBuilder));
@@ -140,7 +136,6 @@
             nameof(IsAdvancedOptionsReadOnly), typeof(bool), typeof(ConnectionStringBuilder), new PropertyMetadata(false));
         #endregion
 
-        #region Methods
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -210,6 +205,5 @@
                 _dbProvider = dbProvider?.Info;
             }
         }
-        #endregion
     }
 }

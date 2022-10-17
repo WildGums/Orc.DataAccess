@@ -6,7 +6,6 @@
 
     public static class DatabaseSourceExtensions
     {
-        #region Methods
         public static IList<DbObject> GetObjectsOfType(this DatabaseSource databaseSource, TableType tableType)
         {
             Argument.IsNotNull(() => databaseSource);
@@ -43,6 +42,5 @@
 
             return DbProvider.GetRegisteredProvider(databaseSource.ProviderName);
         }
-        #endregion
     }
 }

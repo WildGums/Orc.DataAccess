@@ -7,13 +7,9 @@
 
     public static class StringExtensions
     {
-        #region Constants
         private const int Keysize = 256; // This constant is used to determine the keysize of the encryption algorithm.
         public const string InitVector = "tu89geji340t89u2";
-        #endregion
 
-        #region Methods       
-        //TODO:Remove
         public static string Encrypt(this string plainText) /////to encrypt password
         {
             var passPhrase = "FG_EncryptionKey"; /////encryption Key text
@@ -77,6 +73,5 @@
                 return null;
             }
         }
-        #endregion
     }
 }

@@ -8,15 +8,10 @@
 
     public class MsSqlDataSourceProvider : IDataSourceProvider
     {
-        #region Constants
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        #endregion
 
-        #region Properties
         public string DataBasesQuery => "SELECT name from sys.databases";
-        #endregion
 
-        #region IDataSourceProvider Members
         public IList<string> GetDataSources()
         {
             var localServers = GetLocalSqlServerInstances();
@@ -27,9 +22,7 @@
                 .OrderBy(x => x)
                 .ToList();
         }
-        #endregion
 
-        #region Methods
         private IEnumerable<string> GetLocalSqlServerInstances()
         {
             var machineName = Environment.MachineName;
@@ -84,6 +77,5 @@
             return servers;
 #endif
         }
-        #endregion
     }
 }

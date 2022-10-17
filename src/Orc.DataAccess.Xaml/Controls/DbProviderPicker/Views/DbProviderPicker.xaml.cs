@@ -6,12 +6,9 @@
 
     public sealed partial class DbProviderPicker
     {
-        #region Constants
         public static readonly DependencyProperty DbProviderProperty = DependencyProperty.Register(
             nameof(DbProvider), typeof(DbProviderInfo), typeof(DbProviderPicker), new PropertyMetadata(default(DbProviderInfo)));
-        #endregion
 
-        #region Constructors
         static DbProviderPicker()
         {
             typeof(DbProviderPicker).AutoDetectViewPropertiesToSubscribe();
@@ -21,15 +18,12 @@
         {
             InitializeComponent();
         }
-        #endregion
 
-        #region Properties
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
         public DbProviderInfo DbProvider
         {
             get { return (DbProviderInfo)GetValue(DbProviderProperty); }
             set { SetValue(DbProviderProperty, value); }
         }
-        #endregion
     }
 }

@@ -8,25 +8,20 @@
     [ConnectToProvider("System.Data.SQLite")]
     public class SqLiteSourceGateway : SqlDbSourceGatewayBase
     {
-        #region Constructors
         public SqLiteSourceGateway(DatabaseSource source)
             : base(source)
         {
         }
-        #endregion
 
-        #region Properties
 #pragma warning disable IDISP012 // Property should not return created disposable.
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
-            new Dictionary<TableType, Func<DbConnection, DbCommand>>
+            new()
             {
                 {TableType.Table, c => c.CreateCommand($"SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';")},
                 {TableType.View, c => c.CreateCommand($"SELECT name FROM sqlite_master WHERE type ='view' AND name NOT LIKE 'sqlite_%';")}
             };
 #pragma warning restore IDISP012 // Property should not return created disposable.
-        #endregion
 
-        #region Methods
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
             var source = Source;
@@ -55,6 +50,5 @@
             //Note:Vladimir: Not supported by SqLite
             return new DataSourceParameters();
         }
-        #endregion
     }
 }

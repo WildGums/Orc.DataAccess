@@ -14,12 +14,9 @@
 
     public class ConnectionStringEditViewModel : ViewModelBase
     {
-        #region Constants
         private static bool IsServersInitialized = false;
         private static readonly FastObservableCollection<string> CachedServers = new FastObservableCollection<string>();
-        #endregion
 
-        #region Fields
         private readonly IDispatcherService _dispatcherService;
 
         private readonly DbProviderInfo _initalDbProvider;
@@ -32,9 +29,7 @@
 #pragma warning restore IDISP006 // Implement IDisposable.
 
         private bool _isDatabasesInitialized = false;
-        #endregion
 
-        #region Constructors
         public ConnectionStringEditViewModel(string connectionString, DbProviderInfo provider, IMessageService messageService,
             IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory, IDispatcherService dispatcherService)
         {
@@ -62,9 +57,7 @@
 
             _initializeTimer.Elapsed += OnInitializeTimerElapsed;
         }
-        #endregion
 
-        #region Properties
         public DbConnectionStringProperty DataSource => ConnectionString.TryGetProperty("Data Source")
                                                       ?? ConnectionString.TryGetProperty("Server")
                                                       ?? ConnectionString.TryGetProperty("Host");
@@ -72,7 +65,7 @@
                                                   ?? ConnectionString.TryGetProperty("User name");
         public DbConnectionStringProperty Password => ConnectionString.TryGetProperty("Password");
 
-        public DbConnectionStringProperty Port => ConnectionString.TryGetProperty("Port");
+        public DbConnectionStringProperty Port => ConnectionString.TryGetProperty("Part");
         public DbConnectionStringProperty IntegratedSecurity => ConnectionString.TryGetProperty("Integrated Security");
 
         public DbConnectionStringProperty InitialCatalog => ConnectionString.TryGetProperty("Initial Catalog")
@@ -121,10 +114,8 @@
 
         public FastObservableCollection<string> Servers => CachedServers;
         public FastObservableCollection<string> Databases { get; } = new FastObservableCollection<string>();
-        #endregion
 
-        #region Methods
-        private void OnInitializeTimerElapsed(object sender, ElapsedEventArgs args)
+        private void OnInitializeTimerElapsed(object? sender, ElapsedEventArgs args)
         {
             _dispatcherService.Invoke(SetInitialState);
         }
@@ -213,7 +204,7 @@
         {
             if (IsServersInitialized)
             {
-                return TaskHelper.Completed;
+                return Task.CompletedTask;
             }
 
             return RefreshServersAsync();
@@ -239,7 +230,7 @@
 
         private Task InitDatabasesAsync()
         {
-            return _isDatabasesInitialized ? TaskHelper.Completed : RefreshDatabasesAsync();
+            return _isDatabasesInitialized ? Task.CompletedTask : RefreshDatabasesAsync();
         }
 
         private Task RefreshDatabasesAsync()
@@ -247,7 +238,7 @@
             var connectionString = ConnectionString;
             if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
             {
-                return TaskHelper.Completed;
+                return Task.CompletedTask;
             }
 
             IsDatabasesRefreshing = true;
@@ -275,6 +266,5 @@
                 IsDatabaseListVisible = true;
             });
         }
-        #endregion
     }
 }

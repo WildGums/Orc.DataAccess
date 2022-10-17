@@ -5,7 +5,6 @@
 
     public static class DataSourceParametersExtensions
     {
-        #region Methods
         public static string ToArgsValueString(this DataSourceParameters queryParameters)
         {
             return queryParameters is not null ? string.Join(",", queryParameters.Parameters?.Select(x => $"'{x.Value}'") ?? new List<string>()) : string.Empty;
@@ -43,13 +42,11 @@
 
             return parameters.SequenceEqual(otherParameters, new NameAndTypeEqualsEqualyComparer());
         }
-        #endregion
 
         #region Nested type: NameAndTypeEqualsEqualyComparer
         private class NameAndTypeEqualsEqualyComparer : IEqualityComparer<DataSourceParameter>
         {
-            #region IEqualityComparer<DataSourceParameter> Members
-            public bool Equals(DataSourceParameter x, DataSourceParameter y)
+            public bool Equals(DataSourceParameter? x, DataSourceParameter? y)
             {
                 if (ReferenceEquals(x, y))
                 {
@@ -74,7 +71,6 @@
                     return hashCode;
                 }
             }
-            #endregion
         }
         #endregion
     }

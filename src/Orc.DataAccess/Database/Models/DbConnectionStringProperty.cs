@@ -7,12 +7,9 @@
 
     public class DbConnectionStringProperty : ObservableObject
     {
-        #region Fields
         private readonly DbConnectionStringBuilder _dbConnectionStringBuilder;
         private readonly PropertyDescriptor _propertyDescriptor;
-        #endregion
 
-        #region Constructors
         public DbConnectionStringProperty(bool isSensitive, DbConnectionStringBuilder dbConnectionStringBuilder, PropertyDescriptor propertyDescriptor)
         {
             Argument.IsNotNull(() => dbConnectionStringBuilder);
@@ -23,9 +20,7 @@
             Name = propertyDescriptor.DisplayName.ToUpperInvariant();
             IsSensitive = isSensitive;
         }
-        #endregion
 
-        #region Properties
         public string Name { get; }
         public bool IsSensitive { get; }
 
@@ -45,6 +40,5 @@
                 RaisePropertyChanged(nameof(Value));
             }
         }
-        #endregion
     }
 }

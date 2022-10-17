@@ -8,17 +8,14 @@
     [ConnectToProvider("System.Data.SqlClient")]
     public class MsSqlDbSourceGateway : SqlDbSourceGatewayBase
     {
-        #region Constructors
         public MsSqlDbSourceGateway(DatabaseSource source)
             : base(source)
         {
         }
-        #endregion
 
-        #region Properties
 #pragma warning disable IDISP012 // Property should not return created disposable.
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
-            new Dictionary<TableType, Func<DbConnection, DbCommand>>
+            new()
             {
                 {TableType.Table, c => CreateGetObjectsCommand(c, "U")},
                 {TableType.View, c => CreateGetObjectsCommand(c, "V")},
@@ -27,16 +24,14 @@
             };
 #pragma warning restore IDISP012 // Property should not return created disposable.
 
-        protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new Dictionary<TableType, Func<DataSourceParameters>>
+        protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new()
         {
             {TableType.StoredProcedure, () => GetArgs(GetArgsQuery)},
             {TableType.Function, () => GetArgs(GetArgsQuery)},
         };
 
         private string GetArgsQuery => $"SELECT [name], type_name(user_type_id) as type FROM [sys].[parameters] WHERE [object_id] = object_id('{GetFullTableName(Source)}')";
-        #endregion
 
-        #region Methods
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
             var source = Source;
@@ -75,6 +70,5 @@
 
             return $"[{source.Schema}].[{source.Table}]";
         }
-        #endregion
     }
 }

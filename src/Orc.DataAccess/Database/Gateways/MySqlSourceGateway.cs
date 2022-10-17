@@ -8,16 +8,13 @@
     [ConnectToProvider("MySql.Data.MySqlClient")]
     public class MySqlSourceGateway : SqlDbSourceGatewayBase
     {
-        #region Constructors
         public MySqlSourceGateway(DatabaseSource source) : base(source)
         {
         }
-        #endregion
 
-        #region Properties
 #pragma warning disable IDISP012 // Property should not return created disposable.
         protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
-            new Dictionary<TableType, Func<DbConnection, DbCommand>>
+            new()
             {
                 {TableType.Table, c => c.CreateCommand($"SELECT TABLE_NAME AS NAME FROM information_schema.tables where Table_schema = database() and Table_type = 'BASE TABLE';")},
                 {TableType.View, c => c.CreateCommand($"SELECT TABLE_NAME AS NAME FROM information_schema.tables where Table_schema = database() and Table_type = 'VIEW';")},
@@ -25,16 +22,14 @@
             };
 #pragma warning restore IDISP012 // Property should not return created disposable.
 
-        protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new Dictionary<TableType, Func<DataSourceParameters>>
+        protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new()
         {
             {TableType.StoredProcedure, () => GetArgs(GetArgsQuery)},
             {TableType.Function, () => GetArgs(GetArgsQuery)},
         };
 
         private string GetArgsQuery => $"SELECT PARAMETER_NAME AS NAME, DATA_TYPE AS TYPE FROM information_schema.parameters WHERE SPECIFIC_NAME = '{Source.Table}' and PARAMETER_MODE = 'IN';";
-        #endregion
 
-        #region Methods
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
             var source = Source;
@@ -62,6 +57,5 @@
         {
             return connection.CreateCommand($"SELECT COUNT(*) AS `count` FROM `{Source.Table}`");
         }
-        #endregion
     }
 }

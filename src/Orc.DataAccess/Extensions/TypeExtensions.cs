@@ -7,7 +7,6 @@
 
     public static class TypeExtensions
     {
-        #region Methods
         public static IList<Type> GetAllAssignableFrom(this Type type)
         {
             var descendantTypes = new List<Type>();
@@ -30,6 +29,5 @@
 
             return descendantTypes;
         }
-        #endregion
     }
 }

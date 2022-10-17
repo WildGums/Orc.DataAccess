@@ -11,28 +11,25 @@
 
     public class SqlTableReader : ReaderBase
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private readonly DatabaseSource _databaseSource;
-        
-        private DbSourceGatewayBase _gateway;
-        private DbDataReader _reader;
 
-        private string[] _fieldHeaders = new string[0];
+        private DbSourceGatewayBase? _gateway;
+        private DbDataReader? _reader;
+
+        private string[] _fieldHeaders = Array.Empty<string>();
         private bool _isFieldHeadersInitialized;
         private bool _isInitialized;
         private bool _isTotalRecordCountInitialized = false;
         private int _totalRecordCount;
-        #endregion
 
-        #region Constructors
-        public SqlTableReader(string source, int offset = 0, int fetchCount = 0, DataSourceParameters parameters = null)
+        public SqlTableReader(string source, int offset = 0, int fetchCount = 0, DataSourceParameters? parameters = null)
             : this(new DatabaseSource(source), offset, fetchCount, parameters)
         {
         }
 
-        public SqlTableReader(DatabaseSource source, int offset = 0, int fetchCount = 0, DataSourceParameters parameters = null)
+        public SqlTableReader(DatabaseSource source, int offset = 0, int fetchCount = 0, DataSourceParameters? parameters = null)
             : base(source.ToString(), offset, fetchCount)
         {
             Argument.IsNotNull(() => source);
@@ -41,9 +38,7 @@
             _totalRecordCount = 0;
             QueryParameters = parameters;
         }
-        #endregion
 
-        #region Properties
         public override string[] FieldHeaders
         {
             get
@@ -75,7 +70,7 @@
                     Initialize();
                 }
 
-                _totalRecordCount = (int)_gateway.GetCount(QueryParameters);
+                _totalRecordCount = QueryParameters is null || _gateway is null ? 0 : (int)_gateway.GetCount(QueryParameters);
 
                 _isTotalRecordCountInitialized = true;
                 return _totalRecordCount;
@@ -84,11 +79,9 @@
 
         public int ReadCount { get; private set; } = 0;
         public int ResultIndex { get; private set; } = 0;
-        public DataSourceParameters QueryParameters { get; set; }
-        public bool HasRows => _reader.HasRows;
-        #endregion
+        public DataSourceParameters? QueryParameters { get; set; }
+        public bool HasRows => _reader?.HasRows ?? false;
 
-        #region Methods
         public async Task<bool> ReadAsync()
         {
             try
@@ -159,11 +152,32 @@
             _gateway.Dispose();
         }
 
-        public object GetValue(int index) => _reader[index];
-        public object GetValue(string name) => _reader[name];
+        public object GetValue(int index)
+        {
+            if (_reader is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"Cannot get value from source. '{nameof(_reader)}' was null");
+            }
+            return _reader[index];
+        }
+
+        public object GetValue(string name)
+        {
+            if (_reader is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>($"Cannot get value from source. '{nameof(_reader)}' was null");
+            }
+
+            return _reader[name];
+        }
 
         public override async Task<bool> NextResultAsync()
         {
+            if (_reader is null)
+            {
+                return false;
+            }
+
             var result = await _reader.NextResultAsync();
             if (result)
             {
@@ -222,17 +236,18 @@
             try
             {
                 var userParameters = QueryParameters?.Parameters.ToDictionary(x => x.Name.ToUpperInvariant()) ?? new Dictionary<string, DataSourceParameter>();
-                var queryParameters = _gateway.GetQueryParameters();
-                queryParameters.Parameters.ForEach(x =>x.Name = x.Name.ToUpperInvariant());
-                foreach (var parameter in queryParameters.Parameters)
-                {
-                    if (userParameters.TryGetValue(parameter.Name, out var userParameter))
+                var queryParameters = _gateway?.GetQueryParameters() ?? new();
+                queryParameters.Parameters.ForEach(x => x.Name = x.Name.ToUpperInvariant());
+    
+                    foreach (var parameter in queryParameters.Parameters)
                     {
-                        parameter.Value = userParameter.Value;
+                        if (userParameters.TryGetValue(parameter.Name, out var userParameter))
+                        {
+                            parameter.Value = userParameter.Value;
+                        }
                     }
-                }
 
-                _reader = _gateway.GetRecords(queryParameters, Offset, FetchCount);
+                _reader = _gateway?.GetRecords(queryParameters, Offset, FetchCount);
             }
             catch (Exception ex)
             {
@@ -257,6 +272,5 @@
             Log.Debug($"'{_fieldHeaders.Length}' headers of table were read");
 #endif
         }
-        #endregion
     }
 }

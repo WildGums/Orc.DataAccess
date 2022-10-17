@@ -12,16 +12,10 @@
     using Orchestra;
     using Orchestra.Markup;
 
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        #region Fields
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        #endregion
 
-        #region Methods
         protected override void OnStartup(StartupEventArgs e)
         {
             //var sqLiteProviderInfo = new DbProviderInfo
@@ -61,6 +55,5 @@
 
             base.OnStartup(e);
         }
-        #endregion
     }
 }

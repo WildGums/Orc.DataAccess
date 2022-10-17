@@ -4,7 +4,6 @@
 
     public static class DbConnectionStringExtensions
     {
-        #region Methods
         public static DbConnectionStringProperty TryGetProperty(this DbConnectionString connectionString, string propertyName)
         {
             var properties = connectionString?.Properties;
@@ -67,6 +66,5 @@
 
             return ConnectionState.Valid;
         }
-        #endregion
     }
 }

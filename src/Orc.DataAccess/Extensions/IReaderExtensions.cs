@@ -6,7 +6,6 @@
 
     public static class IReaderExtensions
     {
-        #region Methods
         public static List<RecordTable> ReadAll(this IReader reader)
         {
             Argument.IsNotNull(() => reader);
@@ -43,6 +42,5 @@
 
             return results;
         }
-        #endregion
     }
 }

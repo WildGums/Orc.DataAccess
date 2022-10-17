@@ -11,11 +11,8 @@
 
     public class DbConnectionString : ModelBase
     {
-        #region Fields
         private readonly DbConnectionStringBuilder _connectionStringBuilder;
-        #endregion
 
-        #region Constructors
         public DbConnectionString(DbConnectionStringBuilder connectionStringBuilder, DbProviderInfo dbProvider)
         {
             Argument.IsNotNull(() => connectionStringBuilder);
@@ -26,17 +23,13 @@
 
             UpdateProperties();
         }
-        #endregion
 
-        #region Properties
         public IReadOnlyDictionary<string, DbConnectionStringProperty> Properties { get; private set; }
 
         public DbProviderInfo DbProvider { get; }
 
         public DbConnectionStringBuilder ConnectionStringBuilder => _connectionStringBuilder;
-        #endregion
 
-        #region Methods
         private void UpdateProperties()
         {
             if (_connectionStringBuilder is null)
@@ -95,6 +88,5 @@
         {
             return _connectionStringBuilder.ConnectionString;
         }
-        #endregion
     }
 }
