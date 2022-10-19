@@ -1,22 +1,30 @@
 ﻿namespace Orc.DataAccess
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Orc.DataAccess.Excel;
 
     public static class DataSourceParametersExtensions
     {
         public static string ToArgsValueString(this DataSourceParameters queryParameters)
         {
+            ArgumentNullException.ThrowIfNull(queryParameters);
+
             return queryParameters is not null ? string.Join(",", queryParameters.Parameters?.Select(x => $"'{x.Value}'") ?? new List<string>()) : string.Empty;
         }
 
         public static string ToArgsNamesString(this DataSourceParameters queryParameters, string argsPrefix = "")
         {
+            ArgumentNullException.ThrowIfNull(queryParameters);
+
             return queryParameters is not null ? string.Join(",", queryParameters.Parameters?.Select(x => $"{argsPrefix}{x.Name}") ?? new List<string>()) : string.Empty;
         }
 
         public static bool IsEmpty(this DataSourceParameters databaseQueryParameters)
         {
+            ArgumentNullException.ThrowIfNull(databaseQueryParameters);
+
             return databaseQueryParameters?.Parameters is null || !databaseQueryParameters.Parameters.Any();
         }
 

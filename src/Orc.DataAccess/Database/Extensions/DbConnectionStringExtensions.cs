@@ -1,12 +1,16 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
     using Catel;
 
     public static class DbConnectionStringExtensions
     {
         public static DbConnectionStringProperty? TryGetProperty(this DbConnectionString connectionString, string propertyName)
         {
-            var properties = connectionString?.Properties;
+            ArgumentNullException.ThrowIfNull(connectionString);
+            Argument.IsNotNullOrEmpty(() => propertyName);
+
+            var properties = connectionString.Properties;
             if (properties is null)
             {
                 return null;
@@ -28,7 +32,7 @@
 
         public static DbDataSourceSchema? GetDataSourceSchema(this DbConnectionString connectionString)
         {
-            Argument.IsNotNull(() => connectionString);
+            ArgumentNullException.ThrowIfNull(connectionString);
 
             var provider = connectionString.DbProvider;
             var schemaProvider = provider.GetProvider()?.GetOrCreateConnectedInstance<IDataSourceSchemaProvider>();
@@ -37,6 +41,8 @@
 
         public static ConnectionState GetConnectionState(this DbConnectionString connectionString)
         {
+            ArgumentNullException.ThrowIfNull(connectionString);
+
             var connectionStringStr = connectionString.ToString();
             if (string.IsNullOrWhiteSpace(connectionStringStr))
             {

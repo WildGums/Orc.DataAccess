@@ -1,5 +1,6 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
     using System.Configuration;
     using System.Data;
     using System.Linq;
@@ -23,7 +24,7 @@
         /// <param name="providerInfo">The provider.</param>
         public void Add(DbProviderInfo providerInfo)
         {
-            Argument.IsNotNull(() => providerInfo);
+            ArgumentNullException.ThrowIfNull(providerInfo);
 
             var providerTable = GetProviderTable();
             if (providerTable is null)
@@ -41,7 +42,7 @@
         /// <param name="providerInfo">The provider.</param>
         public void Remove(DbProviderInfo providerInfo)
         {
-            Argument.IsNotNull(() => providerInfo);
+            ArgumentNullException.ThrowIfNull(providerInfo);
 
             var providerTable = GetProviderTable();
             if (providerTable is null)

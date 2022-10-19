@@ -8,16 +8,26 @@
     {
         public static string EncryptConnectionString(this string connectionString, string providerName)
         {
+            ArgumentNullException.ThrowIfNull(connectionString);
+            Argument.IsNotNullOrEmpty(() => providerName);
+
             return AlterConnectionStringPropertyValue(connectionString, providerName, x => x.Encrypt());
         }
 
         public static string DecryptConnectionString(this string connectionString, string providerName)
         {
+            ArgumentNullException.ThrowIfNull(connectionString);
+            Argument.IsNotNullOrEmpty(() => providerName);
+
             return AlterConnectionStringPropertyValue(connectionString, providerName, x => x.Decrypt());
         }
 
         private static string AlterConnectionStringPropertyValue(this string connectionString, string providerName, Func<string, string?> alteractionFunction)
         {
+            ArgumentNullException.ThrowIfNull(connectionString);
+            Argument.IsNotNullOrEmpty(() => providerName);
+            ArgumentNullException.ThrowIfNull(alteractionFunction);
+
             var provider = DbProvider.GetRegisteredProviders()[providerName];
             var dbConnectionString = provider.CreateConnectionString(connectionString);
             if (dbConnectionString is null)
@@ -45,6 +55,10 @@
 
         public static string? GetConnectionStringProperty(this string connectionString, string providerName, string propertyName)
         {
+            ArgumentNullException.ThrowIfNull(connectionString);
+            Argument.IsNotNullOrEmpty(() => providerName);
+            Argument.IsNotNullOrEmpty(() => propertyName);
+
             var provider = DbProvider.GetRegisteredProviders()[providerName];
             var dbConnectionString = provider.CreateConnectionString(connectionString);
             if (dbConnectionString is null)

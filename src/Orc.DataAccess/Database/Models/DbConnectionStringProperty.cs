@@ -1,5 +1,6 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
     using System.ComponentModel;
     using System.Data.Common;
     using Catel;
@@ -12,8 +13,8 @@
 
         public DbConnectionStringProperty(bool isSensitive, DbConnectionStringBuilder dbConnectionStringBuilder, PropertyDescriptor propertyDescriptor)
         {
-            Argument.IsNotNull(() => dbConnectionStringBuilder);
-            Argument.IsNotNull(() => propertyDescriptor);
+            ArgumentNullException.ThrowIfNull(dbConnectionStringBuilder);
+            ArgumentNullException.ThrowIfNull(propertyDescriptor);
 
             _dbConnectionStringBuilder = dbConnectionStringBuilder;
             _propertyDescriptor = propertyDescriptor;

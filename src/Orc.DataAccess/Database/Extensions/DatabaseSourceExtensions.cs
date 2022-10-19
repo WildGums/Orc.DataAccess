@@ -12,6 +12,8 @@
 
         public static IList<DbObject> GetObjectsOfType(this DatabaseSource databaseSource, TableType tableType)
         {
+            ArgumentNullException.ThrowIfNull(databaseSource);
+
             var dataSourceCopy = new DatabaseSource(databaseSource.ToString())
             {
                 TableType = tableType
@@ -24,12 +26,16 @@
 
         public static DbConnection? CreateConnection(this DatabaseSource databaseSource)
         {
+            ArgumentNullException.ThrowIfNull(databaseSource);
+
             var provider = databaseSource.GetProvider();
             return provider?.CreateConnection(databaseSource);
         }
 
         public static DbSourceGatewayBase? CreateGateway(this DatabaseSource databaseSource)
         {
+            ArgumentNullException.ThrowIfNull(databaseSource);
+
             var dbProvider = databaseSource.GetProvider();
             return dbProvider?.CreateDbSourceGateway(databaseSource);
         }

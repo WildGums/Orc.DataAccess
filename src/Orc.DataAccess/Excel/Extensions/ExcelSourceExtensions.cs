@@ -1,5 +1,6 @@
 ﻿namespace Orc.DataAccess.Excel
 {
+    using System;
     using System.Collections.Generic;
     using Catel;
     using Catel.IoC;
@@ -8,7 +9,7 @@
     {
         public static List<string> GetWorkseetsList(this ExcelSource excelSource)
         {
-            Argument.IsNotNull(() => excelSource);
+            ArgumentNullException.ThrowIfNull(excelSource);
 
             var source = excelSource.ToString();
             if (string.IsNullOrEmpty(source))

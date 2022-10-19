@@ -1,5 +1,6 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
 
@@ -8,6 +9,8 @@
     {
         public DbDataSourceSchema? GetSchema(DbConnectionString connectionString)
         {
+            ArgumentNullException.ThrowIfNull(connectionString);
+
             var provider = DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
             var databases = new List<string>();
             using var sqlConnection = provider.CreateConnection();

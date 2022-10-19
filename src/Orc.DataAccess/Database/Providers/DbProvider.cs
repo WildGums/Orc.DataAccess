@@ -25,7 +25,7 @@
         public DbProvider(DbProviderInfo info)
             : this(info.InvariantName)
         {
-            Argument.IsNotNull(() => info);
+            ArgumentNullException.ThrowIfNull(info);
 
             _info = info;
         }
@@ -48,21 +48,21 @@
 
         public static void RegisterProvider(DbProviderInfo providerInfo)
         {
-            Argument.IsNotNull(() => providerInfo);
+            ArgumentNullException.ThrowIfNull(providerInfo);
 
             ProviderFactoryRepository.Add(providerInfo);
         }
 
         public static void UnregisterProvider(DbProviderInfo providerInfo)
         {
-            Argument.IsNotNull(() => providerInfo);
+            ArgumentNullException.ThrowIfNull(providerInfo);
 
             ProviderFactoryRepository.Remove(providerInfo);
         }
 
         public static void RegisterCustomProvider(DbProvider provider)
         {
-            Argument.IsNotNull(() => provider);
+            ArgumentNullException.ThrowIfNull(provider);
 
             Providers[provider.ProviderInvariantName] = provider;
         }

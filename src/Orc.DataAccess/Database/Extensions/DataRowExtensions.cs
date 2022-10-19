@@ -1,11 +1,14 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
     using System.Data;
 
     internal static class DataRowExtensions
     {
         public static DbProviderInfo ToDbProviderInfo(this DataRow row)
         {
+            ArgumentNullException.ThrowIfNull(row);
+
             var name = row["Name"]?.ToString() ?? row["InvariantName"]?.ToString() ?? "- nameless -";
             var description = row["Description"]?.ToString();
             var invariantName = row["InvariantName"]?.ToString();

@@ -14,8 +14,8 @@
 
         public DbProviderPickerViewModel(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
         {
-            Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => typeFactory);
+            ArgumentNullException.ThrowIfNull(uiVisualizerService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
 
             _uiVisualizerService = uiVisualizerService;
             _typeFactory = typeFactory;

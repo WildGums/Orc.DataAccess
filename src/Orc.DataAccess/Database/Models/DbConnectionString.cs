@@ -15,8 +15,8 @@
 
         public DbConnectionString(DbConnectionStringBuilder connectionStringBuilder, DbProviderInfo dbProvider)
         {
-            Argument.IsNotNull(() => connectionStringBuilder);
-            Argument.IsNotNull(() => dbProvider);
+            ArgumentNullException.ThrowIfNull(connectionStringBuilder);
+            ArgumentNullException.ThrowIfNull(dbProvider);
 
             _connectionStringBuilder = connectionStringBuilder;
             DbProvider = dbProvider;

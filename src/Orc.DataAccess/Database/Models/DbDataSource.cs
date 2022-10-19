@@ -1,13 +1,14 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
     using Catel;
 
     public class DbDataSource
     {
         public DbDataSource(string providerInvariantName, string instanceName)
         {
-            Argument.IsNotNull(() => providerInvariantName);
-            Argument.IsNotNull(() => instanceName);
+            ArgumentNullException.ThrowIfNull(providerInvariantName);
+            ArgumentNullException.ThrowIfNull(instanceName);
 
             ProviderInvariantName = providerInvariantName;
             InstanceName = instanceName;

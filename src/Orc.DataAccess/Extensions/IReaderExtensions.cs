@@ -1,13 +1,14 @@
 ﻿namespace Orc.DataAccess
 {
+    using System;
     using System.Collections.Generic;
-    using Catel;
-    using DataAccess;
 
     public static class IReaderExtensions
     {
         public static List<RecordTable> ReadAll(this IReader reader)
         {
+            ArgumentNullException.ThrowIfNull(reader);
+
             var results = new List<RecordTable>();
             while (true)
             {

@@ -1,9 +1,16 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
+
     public class DbProviderInfo
     {
         public DbProviderInfo(string name, string invariantName, string description, string assemblyQualifiedName)
         {
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(invariantName);
+            ArgumentNullException.ThrowIfNull(description);
+            ArgumentNullException.ThrowIfNull(assemblyQualifiedName);
+
             Name = name;
             InvariantName = invariantName;
             Description = description;

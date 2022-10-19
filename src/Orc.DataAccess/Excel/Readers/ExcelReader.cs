@@ -133,6 +133,8 @@
 
         private void InitializeExcelReader(ExcelSource excelSource)
         {
+            ArgumentNullException.ThrowIfNull(excelSource);
+
             var filePath = excelSource.FilePath;
             if (!File.Exists(filePath))
             {
@@ -172,6 +174,8 @@
 
         private void ConfigureStartRange(ExcelSource excelSource)
         {
+            ArgumentNullException.ThrowIfNull(excelSource);
+
             var cellRange = excelSource.TopLeftCell;
 
             var columnRow = ReferenceHelper.ReferenceToColumnAndRow(cellRange);
@@ -181,6 +185,8 @@
 
         private void ConfigureWorksheet(ExcelSource excelSource)
         {
+            ArgumentNullException.ThrowIfNull(excelSource);
+
             if (_reader is null)
             {
                 return;

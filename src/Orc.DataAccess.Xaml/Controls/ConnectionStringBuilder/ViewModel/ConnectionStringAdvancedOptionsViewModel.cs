@@ -11,7 +11,7 @@
     {
         public ConnectionStringAdvancedOptionsViewModel(DbConnectionString connectionString)
         {
-            Argument.IsNotNull(() => connectionString);
+            ArgumentNullException.ThrowIfNull(connectionString);
 
             ConnectionString = connectionString;
         }

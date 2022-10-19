@@ -33,10 +33,10 @@
         public ConnectionStringEditViewModel(string connectionString, DbProviderInfo provider, IMessageService messageService,
             IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory, IDispatcherService dispatcherService)
         {
-            Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => typeFactory);
-            Argument.IsNotNull(() => messageService);
-            Argument.IsNotNull(() => dispatcherService);
+            ArgumentNullException.ThrowIfNull(uiVisualizerService);
+            ArgumentNullException.ThrowIfNull(typeFactory);
+            ArgumentNullException.ThrowIfNull(messageService);
+            ArgumentNullException.ThrowIfNull(dispatcherService);
 
             _messageService = messageService;
             _uiVisualizerService = uiVisualizerService;

@@ -19,7 +19,7 @@
 
         protected DbSourceGatewayBase(DatabaseSource source)
         {
-            Argument.IsNotNull(() => source);
+            ArgumentNullException.ThrowIfNull(source);
 
             Source = source;
         }

@@ -24,6 +24,8 @@
 
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             var source = Source;
             string query;
             if (isPagingEnabled)
@@ -42,12 +44,14 @@
 
         protected override DbCommand CreateTableCountCommand(DbConnection connection)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"SELECT COUNT(*) AS \"count\" FROM \"{Source.Table}\"");
         }
 
         public override DataSourceParameters GetQueryParameters()
         {
-            //Note:Vladimir: Not supported by SqLite
+            // Note:Vladimir: Not supported by SqLite
             return new DataSourceParameters();
         }
     }

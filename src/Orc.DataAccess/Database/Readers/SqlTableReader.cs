@@ -32,7 +32,7 @@
         public SqlTableReader(DatabaseSource source, int offset = 0, int fetchCount = 0, DataSourceParameters? parameters = null)
             : base(source.ToString(), offset, fetchCount)
         {
-            Argument.IsNotNull(() => source);
+            ArgumentNullException.ThrowIfNull(source);
 
             _databaseSource = source;
             _totalRecordCount = 0;

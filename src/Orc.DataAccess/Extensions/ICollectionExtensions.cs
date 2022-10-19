@@ -9,6 +9,9 @@
         public static TTarget FindTypeOrCreateNew<T, TTarget>(this ICollection<T> collection, Func<TTarget> func)
             where TTarget : T
         {
+            ArgumentNullException.ThrowIfNull(collection);
+            ArgumentNullException.ThrowIfNull(func);
+
             var result = collection.OfType<TTarget>().FirstOrDefault();
             if (result is not null)
             {

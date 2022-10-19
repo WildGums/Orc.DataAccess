@@ -6,7 +6,7 @@
     {
         public static bool IsValid(this DataSourceBase dataSource)
         {
-            Argument.IsNotNull(() => dataSource);
+            ArgumentNullException.ThrowIfNull(dataSource);
 
             return !dataSource.ValidationContext.HasErrors;
         }

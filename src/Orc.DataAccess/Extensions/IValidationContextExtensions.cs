@@ -1,5 +1,6 @@
 ﻿namespace Orc.DataAccess
 {
+    using System;
     using Catel;
     using Catel.Data;
 
@@ -7,6 +8,8 @@
     {
         public static void AddValidationError(this IValidationContext validationContext, string message, string? tag = null)
         {
+            ArgumentNullException.ThrowIfNull(validationContext);
+
             var businessRuleValidationResult = new BusinessRuleValidationResult(ValidationResultType.Error, message)
             {
                 Tag = tag

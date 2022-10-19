@@ -32,6 +32,8 @@
 
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             var source = Source;
             string query;
             if (isPagingEnabled)
@@ -50,6 +52,8 @@
 
         protected override DbCommand CreateTableCountCommand(DbConnection connection)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"SELECT COUNT(*) AS \"COUNT\" FROM \"{Source.Table}\"");
         }
     }

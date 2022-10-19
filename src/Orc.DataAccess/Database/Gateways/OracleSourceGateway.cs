@@ -61,6 +61,8 @@
 
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             var sql = $"SELECT * FROM {Source.Table}";
             if (isPagingEnabled)
             {
@@ -72,6 +74,8 @@
 
         protected override DbCommand CreateGetStoredProcedureRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             if (Source.Table is null)
             {
                 throw new InvalidOperationException("Cannot create stored procedure command on null table");
@@ -82,11 +86,15 @@
 
         protected override DbCommand CreateGetFunctionRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"SELECT * FROM table({Source.Table}({parameters?.ToArgsNamesString(":") ?? string.Empty}))");
         }
 
         protected override DbCommand CreateTableCountCommand(DbConnection connection)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"SELECT COUNT(*) \"count\" FROM \"{Source.Table}\"");
         }
     }

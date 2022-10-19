@@ -24,8 +24,8 @@
             : base(source)
         {
             Argument.IsNotNullOrWhitespace(() => source);
-            Argument.IsNotNull(() => csvReaderService);
-            Argument.IsNotNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(csvReaderService);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             _csvReaderService = csvReaderService;
             _fileService = fileService;
@@ -133,6 +133,8 @@
 
         private void Initialize(string source)
         {
+            Argument.IsNotNullOrEmpty(() => source);
+
             if (!_fileService.Exists(source))
             {
                 AddValidationError($"File '{source}' not found");
