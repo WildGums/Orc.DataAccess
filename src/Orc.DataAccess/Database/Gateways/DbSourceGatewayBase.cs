@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Data.Common;
-    using Catel;
     using Catel.Logging;
 
 #pragma warning disable IDISP025 // Class with no virtual dispose method should be sealed.

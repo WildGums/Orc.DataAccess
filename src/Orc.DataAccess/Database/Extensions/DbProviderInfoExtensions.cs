@@ -1,7 +1,6 @@
 ﻿namespace Orc.DataAccess.Database
 {
     using System;
-    using Catel;
 
     public static class DbProviderInfoExtensions
     {

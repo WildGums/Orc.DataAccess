@@ -1,9 +1,9 @@
 ﻿namespace Orc.DataAccess.Controls
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.MVVM;
     using Database;
 
@@ -14,6 +14,7 @@
             ArgumentNullException.ThrowIfNull(connectionString);
 
             ConnectionString = connectionString;
+            ConnectionStringProperties = new List<DbConnectionStringProperty>();
         }
 
         public override string Title => "Advanced options";
@@ -23,9 +24,9 @@
 
         protected override Task InitializeAsync()
         {
-            ConnectionStringProperties = ConnectionString.Properties.Values.Where(x => !x.IsSensitive)
+            ConnectionStringProperties = ConnectionString.Properties?.Values.Where(x => !x.IsSensitive)
                 .OrderBy(x => x.Name)
-                .ToList();
+                .ToList() ?? new();
 
             return base.InitializeAsync();
         }

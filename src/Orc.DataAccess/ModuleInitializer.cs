@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Catel.IoC;
-using Catel.Logging;
+﻿using Catel.IoC;
 using Catel.Services;
 
 /// <summary>

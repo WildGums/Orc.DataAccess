@@ -1,7 +1,6 @@
 ﻿namespace Orc.DataAccess
 {
     using System;
-    using Catel;
     using Catel.Data;
 
     public static class IValidationContextExtensions

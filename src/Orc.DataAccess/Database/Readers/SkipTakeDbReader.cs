@@ -3,7 +3,6 @@
     using System;
     using System.Collections;
     using System.Data.Common;
-    using Catel;
 
     internal class SkipTakeDbReader : DbDataReader
     {

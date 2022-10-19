@@ -3,7 +3,6 @@
     using System;
     using System.ComponentModel;
     using System.Data.Common;
-    using Catel;
     using Catel.Data;
 
     public class DbConnectionStringProperty : ObservableObject

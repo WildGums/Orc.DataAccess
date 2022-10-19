@@ -1,6 +1,6 @@
 ﻿namespace Orc.DataAccess
 {
-    using Catel;
+    using System;
 
     public static class DataSourceBaseExtensions
     {

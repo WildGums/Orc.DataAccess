@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Catel.MVVM;
-    using Catel.Threading;
     using Database;
 
     public class DbConnectionProviderListViewModel : ViewModelBase
@@ -17,10 +16,13 @@
 
             Open = new Command(OnOpen);
             Refresh = new Command(OnRefresh);
+
+            DbProviders = new List<DbProviderInfo>();
+
         }
         public override string Title => "Select provider";
 
-        public DbProviderInfo DbProvider { get; set; }
+        public DbProviderInfo? DbProvider { get; set; }
         public IList<DbProviderInfo> DbProviders { get; private set; }
         public Command Refresh { get; }
         public Command Open { get; }

@@ -7,7 +7,7 @@
 
     public class ConnectionStateToColorBrushValueConverter : ValueConverterBase<ConnectionState, SolidColorBrush>
     {
-        protected override object Convert(ConnectionState value, Type targetType, object parameter)
+        protected override object Convert(ConnectionState value, Type targetType, object? parameter)
         {
             switch (value)
             {

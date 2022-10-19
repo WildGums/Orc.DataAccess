@@ -1,7 +1,7 @@
 ﻿namespace Orc.DataAccess.Controls
 {
+    using System;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.IoC;
     using Catel.MVVM;
     using Catel.Services;
@@ -23,13 +23,14 @@
             ChangeDbProvider = new TaskCommand(OnChangeDbProviderAsync);
         }
 
-        public DbProviderInfo DbProvider { get; set; }
+        public DbProviderInfo? DbProvider { get; set; }
         public TaskCommand ChangeDbProvider { get; }
 
         private async Task OnChangeDbProviderAsync()
         {
-            var dbProviderListViewModel = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<DbConnectionProviderListViewModel>(DbProvider);
-            if (await _uiVisualizerService.ShowDialogAsync(dbProviderListViewModel) ?? false)
+            var dbProviderListViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<DbConnectionProviderListViewModel>(DbProvider);
+            var dialogResult = await _uiVisualizerService.ShowDialogAsync(dbProviderListViewModel);
+            if (dialogResult.DialogResult ?? false)
             {
                 DbProvider = dbProviderListViewModel.DbProvider;
             }

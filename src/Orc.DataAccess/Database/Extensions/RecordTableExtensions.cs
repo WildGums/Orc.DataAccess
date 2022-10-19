@@ -2,8 +2,6 @@
 {
     using System;
     using System.Linq;
-    using Catel;
-    using DataAccess;
 
     public static class RecordTableExtensions
     {

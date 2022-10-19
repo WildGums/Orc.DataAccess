@@ -6,7 +6,7 @@
 
     public sealed partial class DbProviderPicker
     {
-        public static readonly DependencyProperty DbProviderProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty? DbProviderProperty = DependencyProperty.Register(
             nameof(DbProvider), typeof(DbProviderInfo), typeof(DbProviderPicker), new PropertyMetadata(default(DbProviderInfo)));
 
         static DbProviderPicker()
@@ -20,9 +20,9 @@
         }
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
-        public DbProviderInfo DbProvider
+        public DbProviderInfo? DbProvider
         {
-            get { return (DbProviderInfo)GetValue(DbProviderProperty); }
+            get { return (DbProviderInfo?)GetValue(DbProviderProperty); }
             set { SetValue(DbProviderProperty, value); }
         }
     }

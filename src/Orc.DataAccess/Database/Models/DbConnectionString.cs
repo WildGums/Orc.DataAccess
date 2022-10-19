@@ -5,7 +5,6 @@
     using System.ComponentModel;
     using System.Data.Common;
     using System.Linq;
-    using Catel;
     using Catel.Collections;
     using Catel.Data;
 
