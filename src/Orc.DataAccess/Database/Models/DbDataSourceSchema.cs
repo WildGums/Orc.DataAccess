@@ -4,6 +4,11 @@
 
     public class DbDataSourceSchema
     {
+        public DbDataSourceSchema()
+        {
+            Databases = new();
+        }
+
         public List<string> Databases { get; set; }
     }
 }

@@ -4,7 +4,7 @@
 
     public static class DbConnectionStringExtensions
     {
-        public static DbConnectionStringProperty TryGetProperty(this DbConnectionString connectionString, string propertyName)
+        public static DbConnectionStringProperty? TryGetProperty(this DbConnectionString connectionString, string propertyName)
         {
             var properties = connectionString?.Properties;
             if (properties is null)
@@ -26,7 +26,7 @@
             return null;
         }
 
-        public static DbDataSourceSchema GetDataSourceSchema(this DbConnectionString connectionString)
+        public static DbDataSourceSchema? GetDataSourceSchema(this DbConnectionString connectionString)
         {
             Argument.IsNotNull(() => connectionString);
 
@@ -37,7 +37,7 @@
 
         public static ConnectionState GetConnectionState(this DbConnectionString connectionString)
         {
-            var connectionStringStr = connectionString?.ToString();
+            var connectionStringStr = connectionString.ToString();
             if (string.IsNullOrWhiteSpace(connectionStringStr))
             {
                 return ConnectionState.Invalid;

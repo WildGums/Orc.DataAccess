@@ -39,7 +39,7 @@
             }
         }
 
-        public static string Decrypt(this string cipherText)
+        public static string? Decrypt(this string cipherText)
         {
             try
             {

@@ -196,7 +196,7 @@
                 Initialize();
             }
 
-            if (ReferenceEquals(_reader, null))
+            if (_reader is null)
             {
                 InitializeReader();
             }

@@ -5,6 +5,7 @@
         public DbObject(TableType type)
         {
             Type = type;
+            Name = string.Empty;
         }
 
         public string Name { get; set; }

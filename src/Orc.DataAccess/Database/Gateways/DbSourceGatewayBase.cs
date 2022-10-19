@@ -45,12 +45,12 @@
         public abstract DataSourceParameters GetQueryParameters();
         public abstract IList<DbObject> GetObjects();
 
-        protected DbConnection? GetOpenedConnection()
+        protected DbConnection GetOpenedConnection()
         {
             var connection = Connection;
             if (connection is null)
             {
-                return null;
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created in this time");
             }
 
             if (connection.State.HasFlag(System.Data.ConnectionState.Open))
@@ -58,8 +58,7 @@
                 var newConnection = Provider?.CreateConnection(Source);
                 if (newConnection is null)
                 {
-                    Log.Warning($"Failed to create connection to '{Source}'");
-                    return null;
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created in this time");
                 }
                 newConnection.Open();
 

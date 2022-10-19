@@ -24,7 +24,7 @@
             UpdateProperties();
         }
 
-        public IReadOnlyDictionary<string, DbConnectionStringProperty> Properties { get; private set; }
+        public IReadOnlyDictionary<string, DbConnectionStringProperty>? Properties { get; private set; }
 
         public DbProviderInfo DbProvider { get; }
 
@@ -38,16 +38,16 @@
                 return;
             }
 
-            var sensitiveProperties = TypeDescriptor.GetProperties(_connectionStringBuilder, new Attribute[] {PasswordPropertyTextAttribute.Yes})
+            var sensitiveProperties = TypeDescriptor.GetProperties(_connectionStringBuilder, new Attribute[] { PasswordPropertyTextAttribute.Yes })
                 .OfType<PropertyDescriptor>()
                 .Select(x => x.DisplayName.ToUpperInvariant());
 
             var sensitivePropertiesHashSet = new HashSet<string>();
             sensitivePropertiesHashSet.AddRange(sensitiveProperties);
 
-            
+
             var propDescriptor = _connectionStringBuilder as ICustomTypeDescriptor;
-            var props = propDescriptor.GetProperties().OfType<PropertyDescriptor>().Where(x => x.GetType().Name =="DbConnectionStringBuilderDescriptor").ToList();
+            var props = propDescriptor.GetProperties().OfType<PropertyDescriptor>().Where(x => x.GetType().Name == "DbConnectionStringBuilderDescriptor").ToList();
 
             Properties = props
                 .ToDictionary(x => x.DisplayName.ToUpperInvariant(), x =>
@@ -59,19 +59,22 @@
 
         public virtual string ToDisplayString()
         {
-            var sensitiveProperties = Properties.Values.Where(x => x.IsSensitive);
+            var sensitiveProperties = Properties?.Values.Where(x => x.IsSensitive);
 
             var removedProperties = new List<Tuple<string, object>>();
-            foreach (var sensitiveProperty in sensitiveProperties)
+            if (sensitiveProperties is not null)
             {
-                var propertyName = sensitiveProperty.Name;
-                if (!_connectionStringBuilder.ShouldSerialize(propertyName))
+                foreach (var sensitiveProperty in sensitiveProperties)
                 {
-                    continue;
-                }
+                    var propertyName = sensitiveProperty.Name;
+                    if (!_connectionStringBuilder.ShouldSerialize(propertyName))
+                    {
+                        continue;
+                    }
 
-                removedProperties.Add(new Tuple<string, object>(propertyName, _connectionStringBuilder[propertyName]));
-                _connectionStringBuilder.Remove(propertyName);
+                    removedProperties.Add(new Tuple<string, object>(propertyName, _connectionStringBuilder[propertyName]));
+                    _connectionStringBuilder.Remove(propertyName);
+                }
             }
 
             var displayConnectionString = _connectionStringBuilder.ConnectionString;

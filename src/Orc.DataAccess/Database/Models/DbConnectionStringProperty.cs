@@ -24,7 +24,7 @@
         public string Name { get; }
         public bool IsSensitive { get; }
 
-        public object Value
+        public object? Value
         {
             get => _propertyDescriptor.GetValue(_dbConnectionStringBuilder);
 

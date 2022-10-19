@@ -4,10 +4,13 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
+    using Catel.Logging;
     using DataAccess;
 
     public abstract class SqlDbSourceGatewayBase : DbSourceGatewayBase
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         protected SqlDbSourceGatewayBase(DatabaseSource source)
             : base(source)
         {
@@ -49,6 +52,11 @@
             var isPagingQuery = offset >= 0 && fetchCount > 0;
 
             var sql = source.Table;
+            if (string.IsNullOrEmpty(sql))
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Command cannot be empty");
+            }
+
             DbCommand command;
             switch (source.TableType)
             {
@@ -128,6 +136,11 @@
 
             using (var connection = GetOpenedConnection())
             {
+                if (connection is null)
+                {
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("No connection is already opened or can be created to source");
+                }
+
                 switch (source.TableType)
                 {
                     case TableType.Table:
@@ -205,12 +218,12 @@
                 var queryParameters = new DataSourceParameters();
                 using var reader = connection.GetReader(query);
 
-                while (reader.Read())
+                while (reader?.Read() ?? false)
                 {
                     var args = new DataSourceParameter
                     {
-                        Name = reader.GetValue(0).ToString(),
-                        Type = reader.GetValue(1).ToString()
+                        Name = reader.GetValue(0).ToString() ?? string.Empty,
+                        Type = reader.GetValue(1).ToString() ?? string.Empty
                     };
 
                     queryParameters.Parameters.Add(args);

@@ -5,14 +5,11 @@
     using System.Data;
     using System.Data.Common;
     using System.Linq;
-    using Catel.Logging;
     using Microsoft.Win32;
 
     [ConnectToProvider("System.Data.SqlClient")]
     public class MsSqlDbDataSourceProvider : IDbDataSourceProvider
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
         private const string MicrosoftSqlServerRegPath = @"SOFTWARE\Microsoft\Microsoft SQL Server";
 
         public IList<DbDataSource> GetDataSources()
@@ -68,10 +65,13 @@
                         var name = dataTable.Rows[i]["ServerName"].ToString();
                         var instance = dataTable.Rows[i]["InstanceName"].ToString();
 
-                        servers[i] = name;
-                        if (instance.Any())
+                        if (!string.IsNullOrEmpty(name))
                         {
-                            servers[i] += "\\" + instance;
+                            servers[i] = name;
+                            if (!string.IsNullOrEmpty(instance))
+                            {
+                                servers[i] += "\\" + instance;
+                            }
                         }
                     }
 

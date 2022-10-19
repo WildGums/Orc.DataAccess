@@ -8,8 +8,6 @@
     {
         public static List<RecordTable> ReadAll(this IReader reader)
         {
-            Argument.IsNotNull(() => reader);
-
             var results = new List<RecordTable>();
             while (true)
             {

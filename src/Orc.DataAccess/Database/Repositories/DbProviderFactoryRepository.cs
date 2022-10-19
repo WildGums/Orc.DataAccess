@@ -15,7 +15,7 @@
 
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private DataTable _dbProviderFactoryTable;
+        private DataTable? _dbProviderFactoryTable;
 
         /// <summary>
         /// Adds the specified provider.
@@ -44,8 +44,12 @@
             Argument.IsNotNull(() => providerInfo);
 
             var providerTable = GetProviderTable();
+            if (providerTable is null)
+            {
+                return;
+            }
 
-            var row = providerTable?.Rows.Cast<DataRow>()
+            var row = providerTable.Rows.Cast<DataRow>()
                 .FirstOrDefault(o => o[2] is not null && o[2].ToString() == providerInfo.InvariantName);
 
             if (row is not null)
@@ -54,7 +58,7 @@
             }
         }
 
-        private DataTable GetProviderTable()
+        private DataTable? GetProviderTable()
         {
             if (_dbProviderFactoryTable is not null)
             {
@@ -62,7 +66,7 @@
             }
 
             // Open the configuration.
-            if (!(ConfigurationManager.GetSection("system.data") is DataSet dataConfiguration))
+            if (ConfigurationManager.GetSection("system.data") is not DataSet dataConfiguration)
             {
                 Log.Error("Unable to open 'System.Data' from the configuration");
 

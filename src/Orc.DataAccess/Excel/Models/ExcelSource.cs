@@ -14,8 +14,8 @@
         {
         }
 
-        public string FilePath { get; set; }
-        public string Worksheet { get; set; }
+        public string? FilePath { get; set; }
+        public string? Worksheet { get; set; }
 
         public string TopLeftCell
         {

@@ -47,10 +47,10 @@
 
                 case TableType.StoredProcedure:
                 case TableType.Function:
-                {
-                    var query = $"SELECT ARGUMENT_NAME AS NAME, DATA_TYPE AS TYPE FROM USER_ARGUMENTS WHERE OBJECT_NAME = UPPER('{Source.Table}') AND IN_OUT = 'IN'";
-                    return GetArgs(query);
-                }
+                    {
+                        var query = $"SELECT ARGUMENT_NAME AS NAME, DATA_TYPE AS TYPE FROM USER_ARGUMENTS WHERE OBJECT_NAME = UPPER('{Source.Table}') AND IN_OUT = 'IN'";
+                        return GetArgs(query);
+                    }
 
                 default:
                     throw new NotSupportedException($"'{source}' not supported in GetQueryParameters");
@@ -72,6 +72,11 @@
 
         protected override DbCommand CreateGetStoredProcedureRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            if (Source.Table is null)
+            {
+                throw new InvalidOperationException("Cannot create stored procedure command on null table");
+            }
+
             return connection.CreateCommand(Source.Table, CommandType.StoredProcedure);
         }
 

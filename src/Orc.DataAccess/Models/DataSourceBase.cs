@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
     using Catel.Caching;
@@ -33,20 +34,21 @@
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             var propertyName = e.PropertyName;
-            if (propertyName == nameof(IsDirty) || propertyName == nameof(ValidationContext))
+            if (string.IsNullOrEmpty(propertyName) || propertyName == nameof(IsDirty) || propertyName == nameof(ValidationContext))
             {
                 return;
             }
 
             base.OnPropertyChanged(e);
 
-            if (e.NewValue is null)
+            var newValue = GetValue<object?>(propertyName);
+            if (newValue is null)
             {
                 _properties.Remove(propertyName);
             }
             else
             {
-                _properties[propertyName] = e.NewValue?.ToString();
+                _properties[propertyName] = newValue.ToString() ?? string.Empty;
             }
 
             Validate();
@@ -133,7 +135,7 @@
             }
         }
 
-        protected virtual bool TryConvertFromString(string propertyName, string propertyValueStr, out object propertyValue)
+        protected virtual bool TryConvertFromString(string propertyName, string propertyValueStr, [NotNullWhen(true)]out object? propertyValue)
         {
             propertyValue = propertyValueStr;
 

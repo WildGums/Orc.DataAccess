@@ -2,6 +2,6 @@
 {
     public interface IDataSourceSchemaProvider
     {
-        DbDataSourceSchema GetSchema(DbConnectionString connectionString);
+        DbDataSourceSchema? GetSchema(DbConnectionString connectionString);
     }
 }

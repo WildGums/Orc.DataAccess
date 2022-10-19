@@ -16,12 +16,8 @@
             return AlterConnectionStringPropertyValue(connectionString, providerName, x => x.Decrypt());
         }
 
-        private static string AlterConnectionStringPropertyValue(this string connectionString, string providerName, Func<string, string> alteractionFunction)
+        private static string AlterConnectionStringPropertyValue(this string connectionString, string providerName, Func<string, string?> alteractionFunction)
         {
-            Argument.IsNotNullOrEmpty(() => connectionString);
-            Argument.IsNotNullOrEmpty(() => providerName);
-            Argument.IsNotNull(() => alteractionFunction);
-
             var provider = DbProvider.GetRegisteredProviders()[providerName];
             var dbConnectionString = provider.CreateConnectionString(connectionString);
             if (dbConnectionString is null)
@@ -30,24 +26,25 @@
             }
 
             var connectionStringBuilder = dbConnectionString.ConnectionStringBuilder;
-            var sensitiveProperties = dbConnectionString.Properties.Where(x => x.Value.IsSensitive);
-            foreach (var sensitiveProperty in sensitiveProperties)
+
+            if (dbConnectionString.Properties is not null)
             {
-                var value = connectionStringBuilder[sensitiveProperty.Key].ToString();
-                if (!string.IsNullOrWhiteSpace(value))
+                var sensitiveProperties = dbConnectionString.Properties.Where(x => x.Value.IsSensitive);
+                foreach (var sensitiveProperty in sensitiveProperties)
                 {
-                    connectionStringBuilder[sensitiveProperty.Key] = alteractionFunction(value);
+                    var value = connectionStringBuilder[sensitiveProperty.Key].ToString();
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        connectionStringBuilder[sensitiveProperty.Key] = alteractionFunction(value);
+                    }
                 }
             }
 
             return connectionStringBuilder.ConnectionString;
         }
 
-        public static string GetConnectionStringProperty(this string connectionString, string providerName, string propertyName)
+        public static string? GetConnectionStringProperty(this string connectionString, string providerName, string propertyName)
         {
-            Argument.IsNotNullOrEmpty(() => connectionString);
-            Argument.IsNotNullOrEmpty(() => providerName);
-
             var provider = DbProvider.GetRegisteredProviders()[providerName];
             var dbConnectionString = provider.CreateConnectionString(connectionString);
             if (dbConnectionString is null)
@@ -55,7 +52,7 @@
                 return connectionString;
             }
 
-            if (dbConnectionString.Properties.TryGetValue(propertyName, out var dataSourceProperty))
+            if (dbConnectionString.Properties?.TryGetValue(propertyName, out var dataSourceProperty) ?? false)
             {
                 return dataSourceProperty.Value?.ToString() ?? string.Empty;
             }
