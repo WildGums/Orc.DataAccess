@@ -48,11 +48,11 @@
             _initalDbProvider = provider;
             _initialConnectionString = connectionString;
 
-            InitServers = new Command(() => InitServersAsync(), () => !IsServersRefreshing);
-            RefreshServers = new Command(() => RefreshServersAsync(), () => !IsServersRefreshing);
+            InitServers = new TaskCommand(InitServersAsync, () => !IsServersRefreshing);
+            RefreshServers = new TaskCommand(RefreshServersAsync, () => !IsServersRefreshing);
 
-            InitDatabases = new Command(() => InitDatabasesAsync(), () => !IsDatabasesRefreshing);
-            RefreshDatabases = new Command(() => RefreshDatabasesAsync(), CanInitDatabases);
+            InitDatabases = new TaskCommand(InitDatabasesAsync, () => !IsDatabasesRefreshing);
+            RefreshDatabases = new TaskCommand(RefreshDatabasesAsync, CanInitDatabases);
 
             TestConnection = new Command(OnTestConnection);
             ShowAdvancedOptions = new TaskCommand(OnShowAdvancedOptionsAsync, () => ConnectionString is not null);
@@ -107,12 +107,12 @@
 
         public DbProviderInfo? DbProvider { get; set; }
 
-        public Command RefreshServers { get; }
-        public Command InitServers { get; }
+        public TaskCommand RefreshServers { get; }
+        public TaskCommand InitServers { get; }
         public Command TestConnection { get; }
         public TaskCommand ShowAdvancedOptions { get; }
-        public Command RefreshDatabases { get; }
-        public Command InitDatabases { get; }
+        public TaskCommand RefreshDatabases { get; }
+        public TaskCommand InitDatabases { get; }
 
         public FastObservableCollection<string> Servers => CachedServers;
         public FastObservableCollection<string> Databases { get; } = new FastObservableCollection<string>();
@@ -217,19 +217,19 @@
             return RefreshServersAsync();
         }
 
-        private Task RefreshServersAsync()
+        private async Task RefreshServersAsync()
         {
             var connectionString = ConnectionString;
             if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
             {
-                return Task.CompletedTask;
+                return;
             }
 
             IsServersRefreshing = true;
 
             Servers.Clear();
 
-            return TaskHelper.RunAndWaitAsync(() =>
+            await Task.Run(() =>
             {
                 var provider = Database.DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
                 var dataSources = provider.GetDataSources();
@@ -241,24 +241,29 @@
             });
         }
 
-        private Task InitDatabasesAsync()
+        private async Task InitDatabasesAsync()
         {
-            return _isDatabasesInitialized ? Task.CompletedTask : RefreshDatabasesAsync();
+            if (_isDatabasesInitialized)
+            {
+                return;
+            }
+
+            await RefreshDatabasesAsync();
         }
 
-        private Task RefreshDatabasesAsync()
+        private async Task RefreshDatabasesAsync()
         {
             var connectionString = ConnectionString;
             if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
             {
-                return Task.CompletedTask;
+                return;
             }
 
             IsDatabasesRefreshing = true;
 
             Databases.Clear();
 
-            return TaskHelper.RunAndWaitAsync(() =>
+            await Task.Run(() =>
             {
                 var connectionState = connectionString.GetConnectionState();
                 if (connectionState != ConnectionState.Invalid)

@@ -14,7 +14,7 @@
         {
             _selectedProvider = selectedProvider;
 
-            Open = new Command(OnOpen);
+            Open = new TaskCommand(OnOpenAsync);
             Refresh = new Command(OnRefresh);
 
             DbProviders = new List<DbProviderInfo>();
@@ -25,7 +25,7 @@
         public DbProviderInfo? DbProvider { get; set; }
         public IList<DbProviderInfo> DbProviders { get; private set; }
         public Command Refresh { get; }
-        public Command Open { get; }
+        public TaskCommand Open { get; }
 
         protected override Task InitializeAsync()
         {
@@ -34,14 +34,14 @@
             return base.InitializeAsync();
         }
 
-        private void OnOpen()
+        private async Task OnOpenAsync()
         {
             if (DbProvider is null)
             {
                 return;
             }
 
-            TaskHelper.RunAndWaitAsync(async () => await CloseViewModelAsync(true));
+            await Task.Run(async () => await CloseViewModelAsync(true));
         }
 
         private void OnRefresh()
