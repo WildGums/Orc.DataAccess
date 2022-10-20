@@ -4,11 +4,11 @@
 
     public static class DbProviderInfoExtensions
     {
-        public static DbConnectionString? CreateConnectionString(this DbProviderInfo dbProviderInfo, string? connectionString = null)
+        public static DbConnectionString? CreateConnectionString(this DbProviderInfo dbProviderInfo, string connectionString)
         {
             ArgumentNullException.ThrowIfNull(dbProviderInfo);
 
-            return dbProviderInfo.GetProvider()?.CreateConnectionString(connectionString ?? string.Empty);
+            return dbProviderInfo.GetProvider()?.CreateConnectionString(connectionString);
         }
 
         public static DbProvider GetProvider(this DbProviderInfo dbProviderInfo)

@@ -14,7 +14,10 @@
             var invariantName = row["InvariantName"]?.ToString();
             var assemblyQualifiedName = row["AssemblyQualifiedName"]?.ToString();
 
-            var providerInfo = new DbProviderInfo(name ?? string.Empty, description ?? string.Empty, invariantName ?? string.Empty, assemblyQualifiedName ?? string.Empty);
+            var providerInfo = new DbProviderInfo(name ?? string.Empty,
+                                                  description ?? string.Empty,
+                                                  invariantName ?? string.Empty,
+                                                  assemblyQualifiedName ?? string.Empty);
 
             return providerInfo;
         }

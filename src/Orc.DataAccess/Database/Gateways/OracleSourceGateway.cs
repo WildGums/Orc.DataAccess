@@ -4,11 +4,14 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
+    using Catel.Logging;
     using DataAccess;
 
     [ConnectToProvider("Oracle.ManagedDataAccess.Client")]
     public class OracleSourceGateway : SqlDbSourceGatewayBase
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         public OracleSourceGateway(DatabaseSource source)
             : base(source)
         {
@@ -78,7 +81,7 @@
 
             if (Source.Table is null)
             {
-                throw new InvalidOperationException("Cannot create stored procedure command on null table");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot create stored procedure command on null table");
             }
 
             return connection.CreateCommand(Source.Table, CommandType.StoredProcedure);

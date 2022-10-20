@@ -19,11 +19,12 @@
 
             _connectionStringBuilder = connectionStringBuilder;
             DbProvider = dbProvider;
+            Properties = new Dictionary<string, DbConnectionStringProperty>();
 
             UpdateProperties();
         }
 
-        public IReadOnlyDictionary<string, DbConnectionStringProperty>? Properties { get; private set; }
+        public IReadOnlyDictionary<string, DbConnectionStringProperty> Properties { get; private set; }
 
         public DbProviderInfo DbProvider { get; }
 
@@ -33,7 +34,7 @@
         {
             if (_connectionStringBuilder is null)
             {
-                Properties = null;
+                Properties = new Dictionary<string, DbConnectionStringProperty>();
                 return;
             }
 
@@ -58,7 +59,7 @@
 
         public virtual string ToDisplayString()
         {
-            var sensitiveProperties = Properties?.Values.Where(x => x.IsSensitive);
+            var sensitiveProperties = Properties.Values.Where(x => x.IsSensitive);
 
             var removedProperties = new List<Tuple<string, object>>();
             if (sensitiveProperties is not null)

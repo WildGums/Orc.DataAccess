@@ -49,7 +49,7 @@
             var connection = Connection;
             if (connection is null)
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created in this time");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be");
             }
 
             if (connection.State.HasFlag(System.Data.ConnectionState.Open))
@@ -57,7 +57,7 @@
                 var newConnection = Provider?.CreateConnection(Source);
                 if (newConnection is null)
                 {
-                    throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created in this time");
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created");
                 }
                 newConnection.Open();
 

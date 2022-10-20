@@ -6,7 +6,7 @@
 
     public sealed partial class DbProviderPicker
     {
-        public static readonly DependencyProperty? DbProviderProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty DbProviderProperty = DependencyProperty.Register(
             nameof(DbProvider), typeof(DbProviderInfo), typeof(DbProviderPicker), new PropertyMetadata(default(DbProviderInfo)));
 
         static DbProviderPicker()

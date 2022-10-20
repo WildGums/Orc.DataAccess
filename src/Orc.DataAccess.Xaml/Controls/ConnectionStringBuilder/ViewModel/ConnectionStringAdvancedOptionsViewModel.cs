@@ -24,7 +24,7 @@
 
         protected override Task InitializeAsync()
         {
-            ConnectionStringProperties = ConnectionString.Properties?.Values.Where(x => !x.IsSensitive)
+            ConnectionStringProperties = ConnectionString.Properties.Values.Where(x => !x.IsSensitive)
                 .OrderBy(x => x.Name)
                 .ToList() ?? new();
 

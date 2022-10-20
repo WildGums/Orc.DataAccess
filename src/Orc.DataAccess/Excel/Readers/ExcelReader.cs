@@ -233,10 +233,10 @@
                 .Select(i =>
                 {
                     var columnIndex = GetOriginalColumnIndex(i);
-                    return _reader[columnIndex]?.ToString();
+                    return _reader[columnIndex]?.ToString() ?? string.Empty;
                 })
                 .TakeWhile(x => !string.IsNullOrEmpty(x))
-                .ToArray()!;
+                .ToArray();
 
 #if DEBUG
             Log.Debug($"'{fieldCount}' headers of excel file were read");

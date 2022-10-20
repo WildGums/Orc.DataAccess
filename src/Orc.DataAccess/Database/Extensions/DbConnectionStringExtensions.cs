@@ -5,7 +5,7 @@
 
     public static class DbConnectionStringExtensions
     {
-        public static DbConnectionStringProperty? TryGetProperty(this DbConnectionString connectionString, string propertyName)
+        public static DbConnectionStringProperty? GetProperty(this DbConnectionString connectionString, string propertyName)
         {
             ArgumentNullException.ThrowIfNull(connectionString);
             Argument.IsNotNullOrEmpty(() => propertyName);

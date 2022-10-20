@@ -36,19 +36,16 @@
             }
 
             var connectionStringBuilder = dbConnectionString.ConnectionStringBuilder;
-
-            if (dbConnectionString.Properties is not null)
+            var sensitiveProperties = dbConnectionString.Properties.Where(x => x.Value.IsSensitive);
+            foreach (var sensitiveProperty in sensitiveProperties)
             {
-                var sensitiveProperties = dbConnectionString.Properties.Where(x => x.Value.IsSensitive);
-                foreach (var sensitiveProperty in sensitiveProperties)
+                var value = connectionStringBuilder[sensitiveProperty.Key].ToString();
+                if (!string.IsNullOrWhiteSpace(value))
                 {
-                    var value = connectionStringBuilder[sensitiveProperty.Key].ToString();
-                    if (!string.IsNullOrWhiteSpace(value))
-                    {
-                        connectionStringBuilder[sensitiveProperty.Key] = alteractionFunction(value);
-                    }
+                    connectionStringBuilder[sensitiveProperty.Key] = alteractionFunction(value);
                 }
             }
+
 
             return connectionStringBuilder.ConnectionString;
         }
@@ -66,7 +63,7 @@
                 return connectionString;
             }
 
-            if (dbConnectionString.Properties?.TryGetValue(propertyName, out var dataSourceProperty) ?? false)
+            if (dbConnectionString.Properties.TryGetValue(propertyName, out var dataSourceProperty))
             {
                 return dataSourceProperty.Value?.ToString() ?? string.Empty;
             }

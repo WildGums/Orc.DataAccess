@@ -60,18 +60,18 @@
             _initializeTimer.Elapsed += OnInitializeTimerElapsed;
         }
 
-        public DbConnectionStringProperty? DataSource => ConnectionString?.TryGetProperty("Data Source")
-                                                      ?? ConnectionString?.TryGetProperty("Server")
-                                                      ?? ConnectionString?.TryGetProperty("Host");
-        public DbConnectionStringProperty? UserId => ConnectionString?.TryGetProperty("User ID")
-                                                  ?? ConnectionString?.TryGetProperty("User name");
-        public DbConnectionStringProperty? Password => ConnectionString?.TryGetProperty("Password");
+        public DbConnectionStringProperty? DataSource => ConnectionString?.GetProperty("Data Source")
+                                                      ?? ConnectionString?.GetProperty("Server")
+                                                      ?? ConnectionString?.GetProperty("Host");
+        public DbConnectionStringProperty? UserId => ConnectionString?.GetProperty("User ID")
+                                                  ?? ConnectionString?.GetProperty("User name");
+        public DbConnectionStringProperty? Password => ConnectionString?.GetProperty("Password");
 
-        public DbConnectionStringProperty? Port => ConnectionString?.TryGetProperty("Part");
-        public DbConnectionStringProperty? IntegratedSecurity => ConnectionString?.TryGetProperty("Integrated Security");
+        public DbConnectionStringProperty? Port => ConnectionString?.GetProperty("Part");
+        public DbConnectionStringProperty? IntegratedSecurity => ConnectionString?.GetProperty("Integrated Security");
 
-        public DbConnectionStringProperty? InitialCatalog => ConnectionString?.TryGetProperty("Initial Catalog")
-                                                          ?? ConnectionString?.TryGetProperty("Database");
+        public DbConnectionStringProperty? InitialCatalog => ConnectionString?.GetProperty("Initial Catalog")
+                                                          ?? ConnectionString?.GetProperty("Database");
 
         public bool IsAdvancedOptionsReadOnly { get; set; }
 
@@ -154,7 +154,7 @@
             Databases.Clear();
             Servers.Clear();
 
-            ConnectionString = dbProvider.CreateConnectionString();
+            ConnectionString = dbProvider.CreateConnectionString(string.Empty);
             SetIntegratedSecurityToDefault();
         }
 

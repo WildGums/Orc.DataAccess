@@ -18,7 +18,6 @@
             Refresh = new Command(OnRefresh);
 
             DbProviders = new List<DbProviderInfo>();
-
         }
         public override string Title => "Select provider";
 
