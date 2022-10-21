@@ -32,7 +32,7 @@
 
         public DbProvider(string providerInvariantName)
         {
-            Argument.IsNotNullOrWhitespace(() => providerInvariantName);
+            ArgumentNullException.ThrowIfNull(providerInvariantName);
 
             ProviderInvariantName = providerInvariantName;
         }

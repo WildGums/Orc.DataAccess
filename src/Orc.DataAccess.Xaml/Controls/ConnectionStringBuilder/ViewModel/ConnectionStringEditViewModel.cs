@@ -17,7 +17,7 @@
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
         private static bool IsServersInitialized = false;
-        private static readonly FastObservableCollection<string> CachedServers = new FastObservableCollection<string>();
+        private static readonly FastObservableCollection<string> CachedServers = new();
 
         private readonly IDispatcherService _dispatcherService;
 
@@ -26,10 +26,7 @@
         private readonly IMessageService _messageService;
         private readonly ITypeFactory _typeFactory;
         private readonly IUIVisualizerService _uiVisualizerService;
-#pragma warning disable IDISP006 // Implement IDisposable.
-        private readonly Timer _initializeTimer = new Timer(200);
-#pragma warning restore IDISP006 // Implement IDisposable.
-
+        private readonly Timer _initializeTimer = new(200);
         private bool _isDatabasesInitialized = false;
 
         public ConnectionStringEditViewModel(string connectionString, DbProviderInfo provider, IMessageService messageService,
@@ -67,7 +64,7 @@
                                                   ?? ConnectionString?.GetProperty("User name");
         public DbConnectionStringProperty? Password => ConnectionString?.GetProperty("Password");
 
-        public DbConnectionStringProperty? Port => ConnectionString?.GetProperty("Part");
+        public DbConnectionStringProperty? Port => ConnectionString?.GetProperty("Port");
         public DbConnectionStringProperty? IntegratedSecurity => ConnectionString?.GetProperty("Integrated Security");
 
         public DbConnectionStringProperty? InitialCatalog => ConnectionString?.GetProperty("Initial Catalog")

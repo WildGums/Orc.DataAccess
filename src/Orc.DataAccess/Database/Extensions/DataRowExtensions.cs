@@ -15,8 +15,8 @@
             var assemblyQualifiedName = row["AssemblyQualifiedName"]?.ToString();
 
             var providerInfo = new DbProviderInfo(name ?? string.Empty,
-                                                  description ?? string.Empty,
                                                   invariantName ?? string.Empty,
+                                                  description ?? string.Empty,
                                                   assemblyQualifiedName ?? string.Empty);
 
             return providerInfo;
