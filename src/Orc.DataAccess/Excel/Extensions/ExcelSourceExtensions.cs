@@ -21,7 +21,7 @@
 #pragma warning restore IDISP001 // Dispose created
             using (var reader = new ExcelReader(source))
             {
-                return reader.GetWorkseetsList();
+                return reader.GetWorksheetsList();
             }
         }
     }

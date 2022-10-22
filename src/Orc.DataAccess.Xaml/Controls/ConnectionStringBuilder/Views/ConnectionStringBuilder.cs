@@ -54,7 +54,8 @@
                 var connectionStringEditViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
                 connectionStringEditViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
 
-                if ((await _uiVisualizerService.ShowDialogAsync(connectionStringEditViewModel)).DialogResult ?? false)
+                var viewResult = await _uiVisualizerService.ShowDialogAsync(connectionStringEditViewModel);
+                if (viewResult.DialogResult ?? false)
                 {
                     using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance._isConnectionStringUpdating = true,
                         x => x.Instance._isConnectionStringUpdating = false))

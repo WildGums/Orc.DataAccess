@@ -49,7 +49,7 @@
             var connection = Connection;
             if (connection is null)
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be");
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created");
             }
 
             if (connection.State.HasFlag(System.Data.ConnectionState.Open))

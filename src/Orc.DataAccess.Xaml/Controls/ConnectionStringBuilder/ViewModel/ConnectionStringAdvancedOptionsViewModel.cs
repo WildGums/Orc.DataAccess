@@ -26,7 +26,7 @@
         {
             ConnectionStringProperties = ConnectionString.Properties.Values.Where(x => !x.IsSensitive)
                 .OrderBy(x => x.Name)
-                .ToList() ?? new();
+                .ToList();
 
             return base.InitializeAsync();
         }

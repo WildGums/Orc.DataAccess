@@ -22,11 +22,11 @@
             return AlterConnectionStringPropertyValue(connectionString, providerName, x => x.Decrypt());
         }
 
-        private static string AlterConnectionStringPropertyValue(this string connectionString, string providerName, Func<string, string?> alteractionFunction)
+        private static string AlterConnectionStringPropertyValue(this string connectionString, string providerName, Func<string, string?> alterFunction)
         {
             ArgumentNullException.ThrowIfNull(connectionString);
             Argument.IsNotNullOrEmpty(() => providerName);
-            ArgumentNullException.ThrowIfNull(alteractionFunction);
+            ArgumentNullException.ThrowIfNull(alterFunction);
 
             var provider = DbProvider.GetRegisteredProviders()[providerName];
             var dbConnectionString = provider.CreateConnectionString(connectionString);
@@ -42,7 +42,7 @@
                 var value = connectionStringBuilder[sensitiveProperty.Key].ToString();
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    connectionStringBuilder[sensitiveProperty.Key] = alteractionFunction(value);
+                    connectionStringBuilder[sensitiveProperty.Key] = alterFunction(value);
                 }
             }
 

@@ -84,7 +84,7 @@
             }
         }
 
-        public List<string> GetWorkseetsList()
+        public List<string> GetWorksheetsList()
         {
             var result = new List<string>();
             if (_reader is null)
