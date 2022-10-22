@@ -16,13 +16,14 @@
         private bool _isFirstRowReaded = true;
         private bool _isFieldHeaderInitialized = false;
         private string[] _fieldHeaders;
-        private IExcelDataReader _reader;
+        private IExcelDataReader? _reader;
         private int _startColumnIndex;
         private int _startRowIndex;
 
         public ExcelReader(string source)
             : base(source)
         {
+            _fieldHeaders = Array.Empty<string>();
             Initialize(source);
         }
 
@@ -43,15 +44,15 @@
             }
         }
 
-        public override object this[int index] => _reader[GetOriginalColumnIndex(index)];
+        public override object? this[int index] => _reader?[GetOriginalColumnIndex(index)];
 
-        public override object this[string name] => _reader[GetOriginalColumnIndex(FieldHeaders.IndexOf(name, 0))];
+        public override object? this[string name] => _reader?[GetOriginalColumnIndex(FieldHeaders.IndexOf(name, 0))];
 
-        public override int TotalRecordCount => _reader.RowCount;
+        public override int TotalRecordCount => _reader?.RowCount ?? 0;
 
         public override bool Read()
         {
-            if (ReferenceEquals(_reader, null))
+            if (_reader is null)
             {
                 return false;
             }
@@ -83,9 +84,13 @@
             }
         }
 
-        public List<string> GetWorkseetsList()
+        public List<string> GetWorksheetsList()
         {
             var result = new List<string>();
+            if (_reader is null)
+            {
+                return result;
+            }
 
             try
             {
@@ -124,11 +129,12 @@
 
                 AddValidationError($"Failed to initialize reader: '{ex.Message}'");
             }
-
         }
 
         private void InitializeExcelReader(ExcelSource excelSource)
         {
+            ArgumentNullException.ThrowIfNull(excelSource);
+
             var filePath = excelSource.FilePath;
             if (!File.Exists(filePath))
             {
@@ -168,6 +174,8 @@
 
         private void ConfigureStartRange(ExcelSource excelSource)
         {
+            ArgumentNullException.ThrowIfNull(excelSource);
+
             var cellRange = excelSource.TopLeftCell;
 
             var columnRow = ReferenceHelper.ReferenceToColumnAndRow(cellRange);
@@ -177,7 +185,9 @@
 
         private void ConfigureWorksheet(ExcelSource excelSource)
         {
-            if (ReferenceEquals(_reader, null))
+            ArgumentNullException.ThrowIfNull(excelSource);
+
+            if (_reader is null)
             {
                 return;
             }
@@ -188,13 +198,12 @@
                 return;
             }
 
-            var isWorksheetFound = false;
             do
             {
-                isWorksheetFound = string.Equals(_reader.Name, worksheetName);
-            } while (!isWorksheetFound && _reader.NextResult());
+                _ = string.Equals(_reader.Name, worksheetName);
+            } while (!false && _reader.NextResult());
 
-            if (!isWorksheetFound)
+            if (!false)
             {
                 throw Log.ErrorAndCreateException<Exception>($"No worksheet with name: '{worksheetName}' in project data file");
             }
@@ -212,7 +221,7 @@
                 return;
             }
 
-            if (ReferenceEquals(_reader, null))
+            if (_reader is null)
             {
                 return;
             }
@@ -224,7 +233,7 @@
                 .Select(i =>
                 {
                     var columnIndex = GetOriginalColumnIndex(i);
-                    return _reader[columnIndex]?.ToString();
+                    return _reader[columnIndex]?.ToString() ?? string.Empty;
                 })
                 .TakeWhile(x => !string.IsNullOrEmpty(x))
                 .ToArray();
@@ -236,7 +245,7 @@
 
         private void ReadFirstRow()
         {
-            if (ReferenceEquals(_reader, null))
+            if (_reader is null)
             {
                 return;
             }

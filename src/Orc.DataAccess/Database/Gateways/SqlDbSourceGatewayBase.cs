@@ -4,10 +4,14 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
+    using Catel;
+    using Catel.Logging;
     using DataAccess;
 
     public abstract class SqlDbSourceGatewayBase : DbSourceGatewayBase
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         protected SqlDbSourceGatewayBase(DatabaseSource source)
             : base(source)
         {
@@ -49,6 +53,11 @@
             var isPagingQuery = offset >= 0 && fetchCount > 0;
 
             var sql = source.Table;
+            if (string.IsNullOrEmpty(sql))
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Command cannot be empty");
+            }
+
             DbCommand command;
             switch (source.TableType)
             {
@@ -91,27 +100,37 @@
 
         private DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             var isPagingQuery = offset >= 0 && fetchCount > 0;
             return CreateGetTableRecordsCommand(connection, parameters, offset, fetchCount, isPagingQuery);
         }
 
         protected virtual DbCommand CreateGetViewRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return CreateGetTableRecordsCommand(connection, parameters, offset, fetchCount, isPagingEnabled);
         }
 
         private DbCommand CreateGetViewRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return CreateGetTableRecordsCommand(connection, parameters, offset, fetchCount);
         }
 
         protected virtual DbCommand CreateGetStoredProcedureRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand(Source.Table, CommandType.StoredProcedure);
         }
 
         protected virtual DbCommand CreateGetFunctionRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"SELECT * FROM {Source.Table}({parameters?.ToArgsNamesString() ?? string.Empty})");
         }
 
@@ -119,6 +138,8 @@
 
         protected virtual DbCommand CreateViewCountCommand(DbConnection connection)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return CreateTableCountCommand(connection);
         }
 
@@ -128,6 +149,11 @@
 
             using (var connection = GetOpenedConnection())
             {
+                if (connection is null)
+                {
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("No connection is already opened or can be created to source");
+                }
+
                 switch (source.TableType)
                 {
                     case TableType.Table:
@@ -183,6 +209,8 @@
 
         protected virtual IList<DbObject> ReadAllDbObjects(DbCommand command)
         {
+            ArgumentNullException.ThrowIfNull(command);
+
             var dbObjects = new List<DbObject>();
             var tableType = Source.TableType;
 
@@ -200,17 +228,19 @@
 
         protected DataSourceParameters GetArgs(string query)
         {
+            Argument.IsNotNullOrEmpty(() => query);
+
             using (var connection = GetOpenedConnection())
             {
                 var queryParameters = new DataSourceParameters();
                 using var reader = connection.GetReader(query);
 
-                while (reader.Read())
+                while (reader?.Read() ?? false)
                 {
                     var args = new DataSourceParameter
                     {
-                        Name = reader.GetValue(0).ToString(),
-                        Type = reader.GetValue(1).ToString()
+                        Name = reader.GetValue(0).ToString() ?? string.Empty,
+                        Type = reader.GetValue(1).ToString() ?? string.Empty
                     };
 
                     queryParameters.Parameters.Add(args);

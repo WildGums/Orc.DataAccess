@@ -1,14 +1,14 @@
 ﻿namespace Orc.DataAccess.Excel
 {
+    using System;
     using System.Collections.Generic;
-    using Catel;
     using Catel.IoC;
 
     public static class ExcelSourceExtensions
     {
         public static List<string> GetWorkseetsList(this ExcelSource excelSource)
         {
-            Argument.IsNotNull(() => excelSource);
+            ArgumentNullException.ThrowIfNull(excelSource);
 
             var source = excelSource.ToString();
             if (string.IsNullOrEmpty(source))
@@ -21,7 +21,7 @@
 #pragma warning restore IDISP001 // Dispose created
             using (var reader = new ExcelReader(source))
             {
-                return reader.GetWorkseetsList();
+                return reader.GetWorksheetsList();
             }
         }
     }

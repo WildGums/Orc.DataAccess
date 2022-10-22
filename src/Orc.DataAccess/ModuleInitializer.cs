@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Catel.IoC;
-using Catel.Logging;
+﻿using Catel.IoC;
 using Catel.Services;
 
 /// <summary>
@@ -15,7 +13,7 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
-        var languageService = serviceLocator.ResolveType<ILanguageService>();
+        var languageService = serviceLocator.ResolveRequiredType<ILanguageService>();
         languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.DataAccess", "Orc.DataAccess.Properties", "Resources"));
     }
 }

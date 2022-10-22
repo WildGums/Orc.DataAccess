@@ -1,9 +1,9 @@
 ﻿namespace Orc.DataAccess.Controls
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Catel;
     using Catel.MVVM;
     using Database;
 
@@ -11,9 +11,10 @@
     {
         public ConnectionStringAdvancedOptionsViewModel(DbConnectionString connectionString)
         {
-            Argument.IsNotNull(() => connectionString);
+            ArgumentNullException.ThrowIfNull(connectionString);
 
             ConnectionString = connectionString;
+            ConnectionStringProperties = new List<DbConnectionStringProperty>();
         }
 
         public override string Title => "Advanced options";

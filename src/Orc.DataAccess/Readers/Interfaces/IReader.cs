@@ -9,8 +9,8 @@
     {
         IValidationContext ValidationContext { get; }
         string[] FieldHeaders { get; }
-        object this[int index] { get; }
-        object this[string name] { get; }
+        object? this[int index] { get; }
+        object? this[string name] { get; }
         int TotalRecordCount { get; }
         CultureInfo Culture { get; set; }
         int Offset { get; set; }

@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Data.Common;
-    using Catel;
     using Catel.Logging;
 
 #pragma warning disable IDISP025 // Class with no virtual dispose method should be sealed.
@@ -19,7 +18,7 @@
 
         protected DbSourceGatewayBase(DatabaseSource source)
         {
-            Argument.IsNotNull(() => source);
+            ArgumentNullException.ThrowIfNull(source);
 
             Source = source;
         }
@@ -45,12 +44,12 @@
         public abstract DataSourceParameters GetQueryParameters();
         public abstract IList<DbObject> GetObjects();
 
-        protected DbConnection? GetOpenedConnection()
+        protected DbConnection GetOpenedConnection()
         {
             var connection = Connection;
             if (connection is null)
             {
-                return null;
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created");
             }
 
             if (connection.State.HasFlag(System.Data.ConnectionState.Open))
@@ -58,8 +57,7 @@
                 var newConnection = Provider?.CreateConnection(Source);
                 if (newConnection is null)
                 {
-                    Log.Warning($"Failed to create connection to '{Source}'");
-                    return null;
+                    throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created");
                 }
                 newConnection.Open();
 

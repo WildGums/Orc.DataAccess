@@ -1,13 +1,13 @@
 ﻿namespace Orc.DataAccess.Database
 {
-    using Catel;
+    using System;
 
     public class DbDataSource
     {
         public DbDataSource(string providerInvariantName, string instanceName)
         {
-            Argument.IsNotNull(() => providerInvariantName);
-            Argument.IsNotNull(() => instanceName);
+            ArgumentNullException.ThrowIfNull(providerInvariantName);
+            ArgumentNullException.ThrowIfNull(instanceName);
 
             ProviderInvariantName = providerInvariantName;
             InstanceName = instanceName;
@@ -20,9 +20,9 @@
             return string.Equals(InstanceName, other.InstanceName);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
             {
                 return false;
             }

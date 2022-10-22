@@ -1,16 +1,15 @@
 ﻿namespace Orc.DataAccess
 {
+    using System;
     using System.Collections.Generic;
     using System.Data.Common;
     using System.Linq;
-    using Catel;
-    using DataAccess;
 
     public static class DbDataReaderExtensions
     {
         public static string[] GetHeaders(this DbDataReader reader)
         {
-            Argument.IsNotNull(() => reader);
+            ArgumentNullException.ThrowIfNull(reader);
 
             return Enumerable.Range(0, reader.FieldCount)
                 .Select(reader.GetName)
@@ -19,7 +18,7 @@
 
         public static List<RecordTable> ReadAll(this DbDataReader reader)
         {
-            Argument.IsNotNull(() => reader);
+            ArgumentNullException.ThrowIfNull(reader);
 
             var results = new List<RecordTable>();
             while (true)

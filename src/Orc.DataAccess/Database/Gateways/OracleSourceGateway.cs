@@ -4,11 +4,14 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
+    using Catel.Logging;
     using DataAccess;
 
     [ConnectToProvider("Oracle.ManagedDataAccess.Client")]
     public class OracleSourceGateway : SqlDbSourceGatewayBase
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         public OracleSourceGateway(DatabaseSource source)
             : base(source)
         {
@@ -47,10 +50,10 @@
 
                 case TableType.StoredProcedure:
                 case TableType.Function:
-                {
-                    var query = $"SELECT ARGUMENT_NAME AS NAME, DATA_TYPE AS TYPE FROM USER_ARGUMENTS WHERE OBJECT_NAME = UPPER('{Source.Table}') AND IN_OUT = 'IN'";
-                    return GetArgs(query);
-                }
+                    {
+                        var query = $"SELECT ARGUMENT_NAME AS NAME, DATA_TYPE AS TYPE FROM USER_ARGUMENTS WHERE OBJECT_NAME = UPPER('{Source.Table}') AND IN_OUT = 'IN'";
+                        return GetArgs(query);
+                    }
 
                 default:
                     throw new NotSupportedException($"'{source}' not supported in GetQueryParameters");
@@ -61,6 +64,8 @@
 
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             var sql = $"SELECT * FROM {Source.Table}";
             if (isPagingEnabled)
             {
@@ -72,16 +77,27 @@
 
         protected override DbCommand CreateGetStoredProcedureRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
+            if (Source.Table is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot create stored procedure command on null table");
+            }
+
             return connection.CreateCommand(Source.Table, CommandType.StoredProcedure);
         }
 
         protected override DbCommand CreateGetFunctionRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"SELECT * FROM table({Source.Table}({parameters?.ToArgsNamesString(":") ?? string.Empty}))");
         }
 
         protected override DbCommand CreateTableCountCommand(DbConnection connection)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"SELECT COUNT(*) \"count\" FROM \"{Source.Table}\"");
         }
     }

@@ -1,19 +1,19 @@
 ﻿namespace Orc.DataAccess.Database
 {
-    using Catel;
+    using System;
 
     public static class DbProviderInfoExtensions
     {
-        public static DbConnectionString CreateConnectionString(this DbProviderInfo dbProviderInfo, string? connectionString = null)
+        public static DbConnectionString? CreateConnectionString(this DbProviderInfo dbProviderInfo, string connectionString)
         {
-            Argument.IsNotNull(() => dbProviderInfo);
+            ArgumentNullException.ThrowIfNull(dbProviderInfo);
 
             return dbProviderInfo.GetProvider()?.CreateConnectionString(connectionString);
         }
 
         public static DbProvider GetProvider(this DbProviderInfo dbProviderInfo)
         {
-            Argument.IsNotNull(() => dbProviderInfo);
+            ArgumentNullException.ThrowIfNull(dbProviderInfo);
 
             return DbProvider.GetRegisteredProvider(dbProviderInfo.InvariantName);
         }

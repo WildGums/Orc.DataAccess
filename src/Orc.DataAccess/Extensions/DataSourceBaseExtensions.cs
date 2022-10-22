@@ -1,12 +1,12 @@
 ﻿namespace Orc.DataAccess
 {
-    using Catel;
+    using System;
 
     public static class DataSourceBaseExtensions
     {
         public static bool IsValid(this DataSourceBase dataSource)
         {
-            Argument.IsNotNull(() => dataSource);
+            ArgumentNullException.ThrowIfNull(dataSource);
 
             return !dataSource.ValidationContext.HasErrors;
         }

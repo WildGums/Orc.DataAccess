@@ -5,14 +5,18 @@
     using System.Data;
     using System.Data.Common;
     using Catel;
+    using Catel.Logging;
 
     internal static class SqlConnectionExtensions
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private static readonly Dictionary<Type, DbProvider> ConnectionTypeToProvider = new();
 
         public static DbDataReader GetReaderSql(this DbConnection connection, string sql, int? commandTimeout = null)
         {
-            Argument.IsNotNull(() => connection);
+            ArgumentNullException.ThrowIfNull(connection);
+            Argument.IsNotNullOrEmpty(() => sql);
 
             return connection.GetReader(sql, CommandType.Text, commandTimeout);
         }
@@ -20,16 +24,17 @@
         public static DbDataReader GetReader(this DbConnection connection, string sql, CommandType commandType = CommandType.Text,
             int? commandTimeout = null)
         {
-            Argument.IsNotNull(() => connection);
+            ArgumentNullException.ThrowIfNull(connection);
+            Argument.IsNotNullOrEmpty(() => sql);
 
             var command = connection.CreateCommand(sql, commandType, commandTimeout);
             return command.ExecuteReader();
         }
 
-        public static DbCommand CreateCommand(this DbConnection connection, string sql,
-            CommandType commandType = CommandType.Text, int? commandTimeout = null)
+        public static DbCommand CreateCommand(this DbConnection connection, string sql, CommandType commandType = CommandType.Text, int? commandTimeout = null)
         {
-            Argument.IsNotNull(() => connection);
+            ArgumentNullException.ThrowIfNull(connection);
+            Argument.IsNotNullOrEmpty(() => sql);
 
             var command = connection.CreateCommand();
             command.CommandType = commandType;
@@ -44,7 +49,7 @@
 
         public static DbProvider GetDbProvider(this DbConnection connection)
         {
-            Argument.IsNotNull(() => connection);
+            ArgumentNullException.ThrowIfNull(connection);
 
             var connectionType = connection.GetType();
             return GetProviderByConnectionType(connectionType);
@@ -52,7 +57,7 @@
 
         private static DbProvider GetProviderByConnectionType(Type connectionType)
         {
-            Argument.IsNotNull(() => connectionType);
+            ArgumentNullException.ThrowIfNull(connectionType);
 
             if (ConnectionTypeToProvider.TryGetValue(connectionType, out var dbProvider))
             {
@@ -69,7 +74,7 @@
                 }
             }
 
-            return null;
+            throw Log.ErrorAndCreateException<InvalidOperationException>($"Failed to obtain '{nameof(DbProviderInfo)}'");
         }
     }
 }

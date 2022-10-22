@@ -10,6 +10,7 @@
     using Catel.Services;
     using Database;
 
+#pragma warning disable IDISP006 // Implement IDisposable
     [TemplatePart(Name = "PART_ConnectionStringTextBox", Type = typeof(TextBox))]
     public class ConnectionStringBuilder : Control
     {
@@ -18,8 +19,8 @@
         private readonly ITypeFactory _typeFactory;
         private readonly IUIVisualizerService _uiVisualizerService;
 
-        private DbProviderInfo _dbProvider;
-        private TextBox _connectionStringTextBox;
+        private DbProviderInfo? _dbProvider;
+        private TextBox? _connectionStringTextBox;
 
         private bool _isConnectionStringUpdating = false;
 
@@ -50,10 +51,11 @@
             using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance.SetCurrentValue(IsInEditModeProperty, true), 
                 x => x.Instance.SetCurrentValue(IsInEditModeProperty, false)))
             {
-                var connectionStringEditViewModel = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
+                var connectionStringEditViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
                 connectionStringEditViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
 
-                if (await _uiVisualizerService.ShowDialogAsync(connectionStringEditViewModel) ?? false)
+                var viewResult = await _uiVisualizerService.ShowDialogAsync(connectionStringEditViewModel);
+                if (viewResult.DialogResult ?? false)
                 {
                     using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance._isConnectionStringUpdating = true,
                         x => x.Instance._isConnectionStringUpdating = false))
@@ -62,7 +64,7 @@
                         var connectionString = connectionStringEditViewModel.ConnectionString;
 
                         SetCurrentValue(ConnectionStringProperty, connectionString?.ToString());
-                        _connectionStringTextBox.SetCurrentValue(TextBox.TextProperty, connectionString?.ToDisplayString());
+                        _connectionStringTextBox?.SetCurrentValue(TextBox.TextProperty, connectionString?.ToDisplayString());
                         SetCurrentValue(ConnectionStateProperty, connectionStringEditViewModel.ConnectionState);
                         SetCurrentValue(DatabaseProviderProperty, connectionString?.DbProvider.InvariantName);
                     }
@@ -75,7 +77,7 @@
         private void OnClearCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             SetCurrentValue(ConnectionStringProperty, null);
-            _connectionStringTextBox.SetCurrentValue(TextBox.TextProperty, null);
+            _connectionStringTextBox?.SetCurrentValue(TextBox.TextProperty, null);
             SetCurrentValue(ConnectionStateProperty, ConnectionState.Undefined);
             _dbProvider = null;
         }
@@ -87,9 +89,9 @@
         #endregion
 
         #region Dependency Properties
-        public string ConnectionString
+        public string? ConnectionString
         {
-            get { return (string)GetValue(ConnectionStringProperty); }
+            get { return (string?)GetValue(ConnectionStringProperty); }
             set { SetValue(ConnectionStringProperty, value); }
         }
 
@@ -97,9 +99,9 @@
             nameof(ConnectionString), typeof(string), typeof(ConnectionStringBuilder), new PropertyMetadata(default(string),
                 (sender, args) => ((ConnectionStringBuilder)sender). OnConnectionStringChanged()));
 
-        public string DatabaseProvider
+        public string? DatabaseProvider
         {
-            get { return (string)GetValue(DatabaseProviderProperty); }
+            get { return (string?)GetValue(DatabaseProviderProperty); }
             set { SetValue(DatabaseProviderProperty, value); }
         }
 
@@ -168,11 +170,11 @@
                 x => x.Instance._isConnectionStringUpdating = false))
             {
                 var providerName = DatabaseProvider;
-                var connectionString = ConnectionString;
+                var connectionString = ConnectionString ?? string.Empty;
 
                 var providers = DbProvider.GetRegisteredProviders();
-                DbConnectionString displayedConnectionsString = null;
-                DbProvider dbProvider = null;
+                DbConnectionString? displayedConnectionsString = null;
+                DbProvider? dbProvider = null;
                 if (string.IsNullOrEmpty(providerName))
                 {
                     foreach (var providerKeyValue in providers)
@@ -200,10 +202,11 @@
                     }
                 }
 
-                _connectionStringTextBox.SetCurrentValue(TextBox.TextProperty, displayedConnectionsString?.ToDisplayString());
+                _connectionStringTextBox?.SetCurrentValue(TextBox.TextProperty, displayedConnectionsString?.ToDisplayString());
                 SetCurrentValue(DatabaseProviderProperty, dbProvider?.ProviderInvariantName);
                 _dbProvider = dbProvider?.Info;
             }
         }
     }
+#pragma warning restore IDISP006 // Implement IDisposable
 }

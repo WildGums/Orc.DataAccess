@@ -1,19 +1,17 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
 
     [ConnectToProvider("System.Data.SqlClient")]
     public class MsSqlDataSourceSchemaProvider : IDataSourceSchemaProvider
     {
-        public DbDataSourceSchema GetSchema(DbConnectionString connectionString)
+        public DbDataSourceSchema? GetSchema(DbConnectionString connectionString)
         {
-            var provider = DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
-            if (provider is null)
-            {
-                return null;
-            }
+            ArgumentNullException.ThrowIfNull(connectionString);
 
+            var provider = DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
             var databases = new List<string>();
             using var sqlConnection = provider.CreateConnection();
             if (sqlConnection is null)
@@ -32,10 +30,18 @@
             using var dataReader = command.ExecuteReader();
             while (dataReader.Read())
             {
-                databases.Add(dataReader[0].ToString());
+                var readValue = dataReader[0].ToString();
+                if (string.IsNullOrEmpty(readValue))
+                {
+                    continue;
+                }
+                databases.Add(readValue);
             }
 
-            return new DbDataSourceSchema {Databases = databases};
+            return new DbDataSourceSchema 
+            {
+                Databases = databases
+            };
         }
     }
 }

@@ -9,6 +9,8 @@
     {
         public static IList<Type> GetAllAssignableFrom(this Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             var descendantTypes = new List<Type>();
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var loadedAssembly in loadedAssemblies)

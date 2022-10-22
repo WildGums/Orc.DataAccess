@@ -1,13 +1,16 @@
 ﻿namespace Orc.DataAccess
 {
+    using System;
     using System.Data.Common;
-    using Catel;
+    using Catel.Logging;
 
     public static class DbCommandExtensions
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         public static DbCommand AddParameters(this DbCommand dbCommand, DataSourceParameters parameters)
         {
-            Argument.IsNotNull(() => dbCommand);
+            ArgumentNullException.ThrowIfNull(dbCommand);
 
             parameters?.Parameters?.ForEach(x => dbCommand.AddParameter(x));
 
@@ -16,15 +19,21 @@
 
         public static DbCommand AddParameter(this DbCommand dbCommand, DataSourceParameter parameter)
         {
-            Argument.IsNotNull(() => dbCommand);
-            Argument.IsNotNull(() => parameter);
+            ArgumentNullException.ThrowIfNull(dbCommand);
+            ArgumentNullException.ThrowIfNull(parameter);
 
+            if (parameter.Value is null)
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot add parameter with null value");
+            }
             return dbCommand.AddParameter(parameter.Name, parameter.Value);
         }
 
         public static DbCommand AddParameter(this DbCommand dbCommand, string name, object value)
         {
-            Argument.IsNotNull(() => dbCommand);
+            ArgumentNullException.ThrowIfNull(dbCommand);
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(value);
 
             var parameter = dbCommand.CreateParameter();
             parameter.Value = value;
@@ -35,7 +44,7 @@
         }
         public static long GetRecordsCount(this DbCommand command)
         {
-            Argument.IsNotNull(() => command);
+            ArgumentNullException.ThrowIfNull(command);
 
             long count = 0;
             using (var reader = command.ExecuteReader())

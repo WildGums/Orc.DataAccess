@@ -4,7 +4,7 @@
 
     public static class SqlConnectionStringExtensions
     {
-        public static DbConnectionStringProperty? TryGetProperty(this DbConnectionString connectionString, string propertyName)
+        public static DbConnectionStringProperty? GetProperty(this DbConnectionString connectionString, string propertyName)
         {
             var properties = connectionString.Properties;
             if (properties is null)

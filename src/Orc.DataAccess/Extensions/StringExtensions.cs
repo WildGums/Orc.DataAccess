@@ -12,6 +12,8 @@
 
         public static string Encrypt(this string plainText) /////to encrypt password
         {
+            ArgumentNullException.ThrowIfNull(plainText);
+
             var passPhrase = "FG_EncryptionKey"; /////encryption Key text
             var initVectorBytes = Encoding.UTF8.GetBytes(InitVector);
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
@@ -39,8 +41,10 @@
             }
         }
 
-        public static string Decrypt(this string cipherText)
+        public static string? Decrypt(this string cipherText)
         {
+            ArgumentNullException.ThrowIfNull(cipherText);
+
             try
             {
                 var passPhrase = "FG_EncryptionKey"; /////encryption Key text same 

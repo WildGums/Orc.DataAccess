@@ -1,31 +1,23 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
     using System.Data;
-    using Catel;
 
     internal static class DataRowExtensions
     {
         public static DbProviderInfo ToDbProviderInfo(this DataRow row)
         {
-            Argument.IsNotNull(() => row);
+            ArgumentNullException.ThrowIfNull(row);
 
-            var providerInfo = new DbProviderInfo
-            {
-                Name = row["Name"]?.ToString(),
-                Description = row["Description"]?.ToString(),
-                InvariantName = row["InvariantName"]?.ToString(),
-                AssemblyQualifiedName = row["AssemblyQualifiedName"]?.ToString()
-            };
+            var name = row["Name"]?.ToString() ?? row["InvariantName"]?.ToString() ?? "- nameless -";
+            var description = row["Description"]?.ToString();
+            var invariantName = row["InvariantName"]?.ToString();
+            var assemblyQualifiedName = row["AssemblyQualifiedName"]?.ToString();
 
-            if (string.IsNullOrWhiteSpace(providerInfo.Name))
-            {
-                providerInfo.Name = row["InvariantName"]?.ToString();
-
-                if (string.IsNullOrWhiteSpace(providerInfo.Name))
-                {
-                    providerInfo.Name = "- nameless -";
-                }
-            }
+            var providerInfo = new DbProviderInfo(name ?? string.Empty,
+                                                  invariantName ?? string.Empty,
+                                                  description ?? string.Empty,
+                                                  assemblyQualifiedName ?? string.Empty);
 
             return providerInfo;
         }

@@ -1,5 +1,6 @@
 ﻿namespace Orc.DataAccess
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
@@ -46,10 +47,12 @@
 
         public static string FormatToKeyValueString(IEnumerable<KeyValuePair<string, string>> keyPairs)
         {
+            ArgumentNullException.ThrowIfNull(keyPairs);
+
             return string.Join($"{KeyValuePairsDelimiter} ", keyPairs.Select(x => FormatKeyValue(x.Key, x.Value)));
         }
 
-        public static string GetValue(string source, string key)
+        public static string? GetValue(string source, string key)
         {
             var keyValuePairs = Parse(source);
             return keyValuePairs.ContainsKey(key) ? keyValuePairs[key] : null;

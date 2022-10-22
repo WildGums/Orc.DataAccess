@@ -20,9 +20,9 @@
         }
 
         [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
-        public DbProviderInfo DbProvider
+        public DbProviderInfo? DbProvider
         {
-            get { return (DbProviderInfo)GetValue(DbProviderProperty); }
+            get { return (DbProviderInfo?)GetValue(DbProviderProperty); }
             set { SetValue(DbProviderProperty, value); }
         }
     }

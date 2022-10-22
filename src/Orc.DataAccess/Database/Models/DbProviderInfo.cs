@@ -1,20 +1,35 @@
 ﻿namespace Orc.DataAccess.Database
 {
+    using System;
+
     public class DbProviderInfo
     {
-        public string Name { get; set; }
-        public string InvariantName { get; set; }
-        public string Description { get; set; }
-        public string AssemblyQualifiedName { get; set; }
+        public DbProviderInfo(string name, string invariantName, string description, string assemblyQualifiedName)
+        {
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(invariantName);
+            ArgumentNullException.ThrowIfNull(description);
+            ArgumentNullException.ThrowIfNull(assemblyQualifiedName);
+
+            Name = name;
+            InvariantName = invariantName;
+            Description = description;
+            AssemblyQualifiedName = assemblyQualifiedName;
+        }
+
+        public string Name { get; }
+        public string InvariantName { get; }
+        public string Description { get; }
+        public string AssemblyQualifiedName { get; }
 
         protected bool Equals(DbProviderInfo other)
         {
             return string.Equals(InvariantName, other.InvariantName);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
             {
                 return false;
             }

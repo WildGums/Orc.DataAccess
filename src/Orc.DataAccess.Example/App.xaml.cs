@@ -1,16 +1,13 @@
 ﻿namespace Orc.DataAccess.Example
 {
-    using System;
     using System.Data.Common;
     using System.Globalization;
     using System.Windows;
-    using System.Windows.Media;
     using Catel.IoC;
     using Catel.Logging;
     using Catel.Services;
     using Microsoft.Data.SqlClient;
     using Orchestra;
-    using Orchestra.Markup;
 
     public partial class App : Application
     {

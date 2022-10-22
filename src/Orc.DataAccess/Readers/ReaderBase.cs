@@ -19,6 +19,8 @@
             ValidationContext = new ValidationContext();
             Offset = offset;
             FetchCount = fetchCount;
+
+            Culture = CultureInfo.CurrentCulture;
         }
 
         protected void AddValidationError(string message)
@@ -28,8 +30,8 @@
 
         public IValidationContext ValidationContext { get; }
         public abstract string[] FieldHeaders { get; }
-        public abstract object this[int index] { get; }
-        public abstract object this[string name] { get; }
+        public abstract object? this[int index] { get; }
+        public abstract object? this[string name] { get; }
         public abstract int TotalRecordCount { get; }
         public CultureInfo Culture { get; set; }
         public int Offset { get; set; }

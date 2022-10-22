@@ -42,6 +42,8 @@
 
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             var source = Source;
             string query;
             if (isPagingEnabled)
@@ -115,11 +117,15 @@
 
         protected override DbCommand CreateGetStoredProcedureRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"call {Source.Table}({parameters?.ToArgsNamesString() ?? string.Empty})");
         }
 
         protected override DbCommand CreateTableCountCommand(DbConnection connection)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"SELECT COUNT(*) AS \"count\" FROM \"{Source.Table}\"");
         }
     }

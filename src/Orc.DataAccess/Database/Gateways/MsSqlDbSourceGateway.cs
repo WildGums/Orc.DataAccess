@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data.Common;
+    using Catel;
     using DataAccess;
 
     [ConnectToProvider("System.Data.SqlClient")]
@@ -34,6 +35,8 @@
 
         protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             var source = Source;
             var fullTableName = GetFullTableName(source);
             string query;
@@ -53,16 +56,23 @@
 
         protected override DbCommand CreateTableCountCommand(DbConnection connection)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+
             return connection.CreateCommand($"SELECT COUNT(*) AS [count] FROM {GetFullTableName(Source)}");
         }
 
         private DbCommand CreateGetObjectsCommand(DbConnection connection, string commandParameter)
         {
+            ArgumentNullException.ThrowIfNull(connection);
+            Argument.IsNotNullOrEmpty(() => commandParameter);
+
             return connection.CreateCommand($"SELECT name FROM dbo.sysobjects WHERE uid = 1 AND type = '{commandParameter}' ORDER BY name;");
         }
 
         private string GetFullTableName(DatabaseSource source)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             if (string.IsNullOrWhiteSpace(source.Schema))
             {
                 return $"[{source.Table}]";

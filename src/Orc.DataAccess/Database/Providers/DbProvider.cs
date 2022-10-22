@@ -7,58 +7,62 @@
     using System.Linq;
     using Catel;
     using Catel.Collections;
+    using Catel.Logging;
 
     public class DbProvider
     {
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private static readonly Dictionary<string, DbProvider> Providers = new();
         private static readonly DbProviderFactoryRepository ProviderFactoryRepository = new();
 
         private static bool IsProvidersInitialized = false;
 
-        private Type _connectionType;
-        private DbProviderFactory _dbProviderFactory;
-        private DbProviderInfo _info;
+        private Type? _connectionType;
+        private DbProviderFactory? _dbProviderFactory;
+        private DbProviderInfo? _info;
 
         public DbProvider(DbProviderInfo info)
             : this(info.InvariantName)
         {
-            Argument.IsNotNull(() => info);
+            ArgumentNullException.ThrowIfNull(info);
 
             _info = info;
         }
 
         public DbProvider(string providerInvariantName)
         {
-            Argument.IsNotNullOrWhitespace(() => providerInvariantName);
+            ArgumentNullException.ThrowIfNull(providerInvariantName);
 
             ProviderInvariantName = providerInvariantName;
         }
 
         protected DbProviderFactory DbProviderFactory => _dbProviderFactory ??= DbProviderFactories.GetFactory(ProviderInvariantName);
 #pragma warning disable IDISP004 // Don't ignore created IDisposable.
-        public virtual Type ConnectionType => _connectionType ??= DbProviderFactory.CreateConnection()?.GetType();
+        public virtual Type ConnectionType => _connectionType ??= DbProviderFactory.CreateConnection()?.GetType() 
+            ?? throw Log.ErrorAndCreateException<InvalidOperationException>($"Failed to get '{nameof(ConnectionType)}' value");
 #pragma warning restore IDISP004 // Don't ignore created IDisposable.
         public virtual DbProviderInfo Info => GetInfo();
-        public string Dialect { get; }
+        public string? Dialect { get; }
         public string ProviderInvariantName { get; }
 
         public static void RegisterProvider(DbProviderInfo providerInfo)
         {
-            Argument.IsNotNull(() => providerInfo);
+            ArgumentNullException.ThrowIfNull(providerInfo);
 
             ProviderFactoryRepository.Add(providerInfo);
         }
 
         public static void UnregisterProvider(DbProviderInfo providerInfo)
         {
-            Argument.IsNotNull(() => providerInfo);
+            ArgumentNullException.ThrowIfNull(providerInfo);
 
             ProviderFactoryRepository.Remove(providerInfo);
         }
 
         public static void RegisterCustomProvider(DbProvider provider)
         {
-            Argument.IsNotNull(() => provider);
+            ArgumentNullException.ThrowIfNull(provider);
 
             Providers[provider.ProviderInvariantName] = provider;
         }
@@ -71,7 +75,7 @@
                 return dbProvider;
             }
 
-            return null;
+            throw Log.ErrorAndCreateException<InvalidOperationException>($"Provider with name '{invariantName}' is not registered");
         }
 
         public static IReadOnlyDictionary<string, DbProvider> GetRegisteredProviders()
@@ -96,19 +100,19 @@
             }
         }
 
-        public virtual DbConnection CreateConnection()
+        public virtual DbConnection? CreateConnection()
         {
             var connection = DbProviderFactory.CreateConnection();
-            if (_connectionType is null)
+            if (_connectionType is null && connection is not null)
             {
-                _connectionType = connection?.GetType();
+                _connectionType = connection.GetType();
                 this.ConnectType<DbConnection>(_connectionType);
             }
 
             return connection;
         }
 
-        public virtual DbConnectionString CreateConnectionString(string connectionString = null)
+        public virtual DbConnectionString? CreateConnectionString(string connectionString)
         {
             var connectionStringBuilder = DbProviderFactory.CreateConnectionStringBuilder();
             if (connectionStringBuilder is null)
@@ -139,7 +143,7 @@
 
                 if (infoRow is null)
                 {
-                    return null;
+                    throw Log.ErrorAndCreateException<InvalidOperationException>($"Failed to obtain '{nameof(DbProviderInfo)}'");
                 }
 
                 _info = infoRow.ToDbProviderInfo();

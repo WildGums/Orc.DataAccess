@@ -8,19 +8,25 @@
     {
         public static string EncryptConnectionString(this string connectionString, string providerName)
         {
+            ArgumentNullException.ThrowIfNull(connectionString);
+            Argument.IsNotNullOrEmpty(() => providerName);
+
             return AlterConnectionStringPropertyValue(connectionString, providerName, x => x.Encrypt());
         }
 
         public static string DecryptConnectionString(this string connectionString, string providerName)
         {
+            ArgumentNullException.ThrowIfNull(connectionString);
+            Argument.IsNotNullOrEmpty(() => providerName);
+
             return AlterConnectionStringPropertyValue(connectionString, providerName, x => x.Decrypt());
         }
 
-        private static string AlterConnectionStringPropertyValue(this string connectionString, string providerName, Func<string, string> alteractionFunction)
+        private static string AlterConnectionStringPropertyValue(this string connectionString, string providerName, Func<string, string?> alterFunction)
         {
-            Argument.IsNotNullOrEmpty(() => connectionString);
+            ArgumentNullException.ThrowIfNull(connectionString);
             Argument.IsNotNullOrEmpty(() => providerName);
-            Argument.IsNotNull(() => alteractionFunction);
+            ArgumentNullException.ThrowIfNull(alterFunction);
 
             var provider = DbProvider.GetRegisteredProviders()[providerName];
             var dbConnectionString = provider.CreateConnectionString(connectionString);
@@ -36,17 +42,19 @@
                 var value = connectionStringBuilder[sensitiveProperty.Key].ToString();
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    connectionStringBuilder[sensitiveProperty.Key] = alteractionFunction(value);
+                    connectionStringBuilder[sensitiveProperty.Key] = alterFunction(value);
                 }
             }
+
 
             return connectionStringBuilder.ConnectionString;
         }
 
-        public static string GetConnectionStringProperty(this string connectionString, string providerName, string propertyName)
+        public static string? GetConnectionStringProperty(this string connectionString, string providerName, string propertyName)
         {
-            Argument.IsNotNullOrEmpty(() => connectionString);
+            ArgumentNullException.ThrowIfNull(connectionString);
             Argument.IsNotNullOrEmpty(() => providerName);
+            Argument.IsNotNullOrEmpty(() => propertyName);
 
             var provider = DbProvider.GetRegisteredProviders()[providerName];
             var dbConnectionString = provider.CreateConnectionString(connectionString);

@@ -16,7 +16,7 @@
 
         private int _currentOffset;
         private int _fetchedCount;
-        private CsvHelper.CsvReader _reader;
+        private CsvHelper.CsvReader? _reader;
 
         private bool _isFieldHeaderInitialized;
 
@@ -24,8 +24,8 @@
             : base(source)
         {
             Argument.IsNotNullOrWhitespace(() => source);
-            Argument.IsNotNull(() => csvReaderService);
-            Argument.IsNotNull(() => fileService);
+            ArgumentNullException.ThrowIfNull(csvReaderService);
+            ArgumentNullException.ThrowIfNull(fileService);
 
             _csvReaderService = csvReaderService;
             _fileService = fileService;
@@ -46,24 +46,24 @@
 
                 if (_isFieldHeaderInitialized)
                 {
-                    return context.Reader.HeaderRecord;
+                    return context.Reader.HeaderRecord ?? Array.Empty<string>();
                 }
 
                 if (!_reader.Read())
                 {
-                    return context.Reader.HeaderRecord;
+                    return context.Reader.HeaderRecord ?? Array.Empty<string>();
                 }
 
                 _reader.ReadHeader();
 
                 _isFieldHeaderInitialized = true;
 
-                return context.Reader.HeaderRecord;
+                return context.Reader.HeaderRecord ?? Array.Empty<string>();
             }
         }
-
-        public override object this[int index] => _reader[index];
-        public override object this[string name] => _reader[name];
+            
+        public override object? this[int index] => _reader?[index];
+        public override object? this[string name] => _reader?[name];
         public override int TotalRecordCount => GetRecordCount();
 
         public override bool Read()
@@ -133,6 +133,8 @@
 
         private void Initialize(string source)
         {
+            Argument.IsNotNullOrEmpty(() => source);
+
             if (!_fileService.Exists(source))
             {
                 AddValidationError($"File '{source}' not found");
