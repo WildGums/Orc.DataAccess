@@ -14,7 +14,7 @@
         static KeyValueStringParser()
         {
             //NOTE: regex is not compiled because this operation is very rare
-            KeyValueGroupRegex = new Regex($@"(?<key>\w+)\s*{KeyValueDelimiter}\s*(?<value>.+)(?:\s|$)");
+            KeyValueGroupRegex = new Regex($@"(?<key>\w+)\s*{KeyValueDelimiter}\s*(?<value>.+)(?:\s|$)", RegexOptions.None, TimeSpan.FromSeconds(1));
         }
 
         public static Dictionary<string, string> Parse(string source)
