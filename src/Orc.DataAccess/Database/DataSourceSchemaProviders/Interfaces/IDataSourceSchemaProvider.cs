@@ -1,7 +1,6 @@
-﻿namespace Orc.DataAccess.Database
+﻿namespace Orc.DataAccess.Database;
+
+public interface IDataSourceSchemaProvider
 {
-    public interface IDataSourceSchemaProvider
-    {
-        DbDataSourceSchema? GetSchema(DbConnectionString connectionString);
-    }
+    DbDataSourceSchema? GetSchema(DbConnectionString connectionString);
 }

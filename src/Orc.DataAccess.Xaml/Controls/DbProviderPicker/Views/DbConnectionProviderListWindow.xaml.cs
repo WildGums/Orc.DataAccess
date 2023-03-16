@@ -1,10 +1,6 @@
-﻿namespace Orc.DataAccess.Controls
+﻿namespace Orc.DataAccess.Controls;
+
+public sealed partial class DbConnectionProviderListWindow
 {
-    public sealed partial class DbConnectionProviderListWindow
-    {
-        public DbConnectionProviderListWindow()
-        {
-            this.InitializeComponent();
-        }
-    }
+    public DbConnectionProviderListWindow() => this.InitializeComponent();
 }

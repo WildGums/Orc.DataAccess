@@ -1,72 +1,71 @@
-﻿namespace Orc.DataAccess
+﻿namespace Orc.DataAccess;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+public static class KeyValueStringParser
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.RegularExpressions;
+    public const char KeyValuePairsDelimiter = ',';
+    public const char KeyValueDelimiter = '=';
+    private static readonly Regex KeyValueGroupRegex;
 
-    public static class KeyValueStringParser
+    static KeyValueStringParser()
     {
-        public const char KeyValuePairsDelimiter = ',';
-        public const char KeyValueDelimiter = '=';
-        private static readonly Regex KeyValueGroupRegex;
+        //NOTE: regex is not compiled because this operation is very rare
+        KeyValueGroupRegex = new Regex($@"(?<key>\w+)\s*{KeyValueDelimiter}\s*(?<value>.+)(?:\s|$)", RegexOptions.None, TimeSpan.FromSeconds(1));
+    }
 
-        static KeyValueStringParser()
+    public static Dictionary<string, string> Parse(string source)
+    {
+        if (string.IsNullOrWhiteSpace(source))
         {
-            //NOTE: regex is not compiled because this operation is very rare
-            KeyValueGroupRegex = new Regex($@"(?<key>\w+)\s*{KeyValueDelimiter}\s*(?<value>.+)(?:\s|$)", RegexOptions.None, TimeSpan.FromSeconds(1));
+            return new Dictionary<string, string>();
         }
 
-        public static Dictionary<string, string> Parse(string source)
+        var keyValuePairs = source.Split(KeyValuePairsDelimiter);
+
+        var keyValueDictionary = new Dictionary<string, string>();
+
+        foreach (var keyValuePair in keyValuePairs)
         {
-            if (string.IsNullOrWhiteSpace(source))
+            var match = KeyValueGroupRegex.Match(keyValuePair.Trim());
+            if (!match.Success)
             {
-                return new Dictionary<string, string>();
+                continue;
             }
 
-            var keyValuePairs = source.Split(KeyValuePairsDelimiter);
+            var key = match.Groups["key"].Value;
+            var value = match.Groups["value"].Value;
 
-            var keyValueDictionary = new Dictionary<string, string>();
-
-            foreach (var keyValuePair in keyValuePairs)
-            {
-                var match = KeyValueGroupRegex.Match(keyValuePair.Trim());
-                if (!match.Success)
-                {
-                    continue;
-                }
-
-                var key = match.Groups["key"].Value;
-                var value = match.Groups["value"].Value;
-
-                keyValueDictionary[key] = value;
-            }
-
-            return keyValueDictionary;
+            keyValueDictionary[key] = value;
         }
 
-        public static string FormatToKeyValueString(IEnumerable<KeyValuePair<string, string>> keyPairs)
-        {
-            ArgumentNullException.ThrowIfNull(keyPairs);
+        return keyValueDictionary;
+    }
 
-            return string.Join($"{KeyValuePairsDelimiter} ", keyPairs.Select(x => FormatKeyValue(x.Key, x.Value)));
-        }
+    public static string FormatToKeyValueString(IEnumerable<KeyValuePair<string, string>> keyPairs)
+    {
+        ArgumentNullException.ThrowIfNull(keyPairs);
 
-        public static string? GetValue(string source, string key)
-        {
-            var keyValuePairs = Parse(source);
-            return keyValuePairs.ContainsKey(key) ? keyValuePairs[key] : null;
-        }
+        return string.Join($"{KeyValuePairsDelimiter} ", keyPairs.Select(x => FormatKeyValue(x.Key, x.Value)));
+    }
 
-        public static string SetValue(string source, string key, string value)
-        {
-            var oldValue = GetValue(source, key);
-            return oldValue is not null ? source.Replace(oldValue, value) : $"{source}{KeyValuePairsDelimiter} {FormatKeyValue(key, value)}";
-        }
+    public static string? GetValue(string source, string key)
+    {
+        var keyValuePairs = Parse(source);
+        return keyValuePairs.ContainsKey(key) ? keyValuePairs[key] : null;
+    }
 
-        private static string FormatKeyValue(string key, string value)
-        {
-            return $"{key}{KeyValueDelimiter}{value}";
-        }
+    public static string SetValue(string source, string key, string value)
+    {
+        var oldValue = GetValue(source, key);
+        return oldValue is not null ? source.Replace(oldValue, value) : $"{source}{KeyValuePairsDelimiter} {FormatKeyValue(key, value)}";
+    }
+
+    private static string FormatKeyValue(string key, string value)
+    {
+        return $"{key}{KeyValueDelimiter}{value}";
     }
 }

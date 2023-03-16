@@ -1,11 +1,10 @@
-﻿namespace Orc.DataAccess.Database
+﻿namespace Orc.DataAccess.Database;
+
+public enum TableType
 {
-    public enum TableType
-    {
-        Table,
-        View,
-        StoredProcedure,
-        Function,
-        Sql
-    }
+    Table = 0,
+    View = 1,
+    StoredProcedure = 2,
+    Function = 3,
+    Sql = 4
 }

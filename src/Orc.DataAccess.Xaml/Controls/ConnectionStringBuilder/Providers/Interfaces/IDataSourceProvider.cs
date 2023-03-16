@@ -1,7 +1,6 @@
-﻿namespace Orc.DataAccess.Controls
+﻿namespace Orc.DataAccess.Controls;
+
+public interface IDataSourceProvider
 {
-    public interface IDataSourceProvider
-    {
-        string DataBasesQuery { get; }
-    }
+    string DataBasesQuery { get; }
 }

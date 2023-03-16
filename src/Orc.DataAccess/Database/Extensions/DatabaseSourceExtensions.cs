@@ -1,51 +1,50 @@
-﻿namespace Orc.DataAccess.Database
+﻿namespace Orc.DataAccess.Database;
+
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using Catel;
+using Catel.Logging;
+
+public static class DatabaseSourceExtensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Common;
-    using Catel;
-    using Catel.Logging;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public static class DatabaseSourceExtensions
+    public static IList<DbObject> GetObjectsOfType(this DatabaseSource databaseSource, TableType tableType)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(databaseSource);
 
-        public static IList<DbObject> GetObjectsOfType(this DatabaseSource databaseSource, TableType tableType)
+        var dataSourceCopy = new DatabaseSource(databaseSource.ToString())
         {
-            ArgumentNullException.ThrowIfNull(databaseSource);
+            TableType = tableType
+        };
 
-            var dataSourceCopy = new DatabaseSource(databaseSource.ToString())
-            {
-                TableType = tableType
-            };
+        var gateway = dataSourceCopy.CreateGateway();
 
-            var gateway = dataSourceCopy.CreateGateway();
+        return gateway?.GetObjects() ?? new List<DbObject>();
+    }
 
-            return gateway?.GetObjects() ?? new List<DbObject>();
-        }
+    public static DbConnection? CreateConnection(this DatabaseSource databaseSource)
+    {
+        ArgumentNullException.ThrowIfNull(databaseSource);
 
-        public static DbConnection? CreateConnection(this DatabaseSource databaseSource)
-        {
-            ArgumentNullException.ThrowIfNull(databaseSource);
+        var provider = databaseSource.GetProvider();
+        return provider.CreateConnection(databaseSource);
+    }
 
-            var provider = databaseSource.GetProvider();
-            return provider?.CreateConnection(databaseSource);
-        }
+    public static DbSourceGatewayBase? CreateGateway(this DatabaseSource databaseSource)
+    {
+        ArgumentNullException.ThrowIfNull(databaseSource);
 
-        public static DbSourceGatewayBase? CreateGateway(this DatabaseSource databaseSource)
-        {
-            ArgumentNullException.ThrowIfNull(databaseSource);
+        var dbProvider = databaseSource.GetProvider();
+        return dbProvider.CreateDbSourceGateway(databaseSource);
+    }
 
-            var dbProvider = databaseSource.GetProvider();
-            return dbProvider?.CreateDbSourceGateway(databaseSource);
-        }
+    public static DbProvider GetProvider(this DatabaseSource databaseSource)
+    {
+        ArgumentNullException.ThrowIfNull(databaseSource);
+        Argument.IsNotNullOrEmpty(databaseSource.ProviderName, "databaseSource.ProviderName");
 
-        public static DbProvider GetProvider(this DatabaseSource databaseSource)
-        {
-            ArgumentNullException.ThrowIfNull(databaseSource);
-            Argument.IsNotNullOrEmpty(databaseSource.ProviderName, "databaseSource.ProviderName");
-
-            return DbProvider.GetRegisteredProvider(databaseSource.ProviderName);
-        }
+        return DbProvider.GetRegisteredProvider(databaseSource.ProviderName);
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace Orc.DataAccess
-{
-    using System.Collections.Generic;
+﻿namespace Orc.DataAccess;
 
-    public class Record : Dictionary<string, object?>
-    {
-    }
+using System.Collections.Generic;
+
+public class Record : Dictionary<string, object?>
+{
 }

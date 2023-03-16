@@ -1,28 +1,20 @@
-﻿namespace Orc.DataAccess.Controls
+﻿namespace Orc.DataAccess.Controls;
+
+using System;
+using System.Windows.Media;
+using Catel.MVVM.Converters;
+using Database;
+
+public class ConnectionStateToColorBrushValueConverter : ValueConverterBase<ConnectionState, SolidColorBrush>
 {
-    using System;
-    using System.Windows.Media;
-    using Catel.MVVM.Converters;
-    using Database;
-
-    public class ConnectionStateToColorBrushValueConverter : ValueConverterBase<ConnectionState, SolidColorBrush>
+    protected override object Convert(ConnectionState value, Type targetType, object? parameter)
     {
-        protected override object Convert(ConnectionState value, Type targetType, object? parameter)
+        return value switch
         {
-            switch (value)
-            {
-                case ConnectionState.Undefined:
-                    return new SolidColorBrush(Colors.Gray);
-
-                case ConnectionState.Valid:
-                    return new SolidColorBrush(Colors.Green);
-
-                case ConnectionState.Invalid:
-                    return new SolidColorBrush(Colors.Red);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(value), value, null);
-            }
-        }
+            ConnectionState.Undefined => new SolidColorBrush(Colors.Gray),
+            ConnectionState.Valid => new SolidColorBrush(Colors.Green),
+            ConnectionState.Invalid => new SolidColorBrush(Colors.Red),
+            _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+        };
     }
 }
