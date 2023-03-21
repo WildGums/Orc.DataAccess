@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Orc.DataAccess\Orc.DataAccess.csproj" />
     <ProjectReference Include="..\Orc.DataAccess.Xaml\Orc.DataAccess.Xaml.csproj" />
   </ItemGroup>
 
