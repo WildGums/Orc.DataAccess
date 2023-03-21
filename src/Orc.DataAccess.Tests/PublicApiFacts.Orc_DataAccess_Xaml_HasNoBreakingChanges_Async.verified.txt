@@ -58,7 +58,7 @@ namespace Orc.DataAccess.Controls
         public static readonly Catel.Data.IPropertyData IsDatabasesRefreshingProperty;
         public static readonly Catel.Data.IPropertyData IsServerListVisibleProperty;
         public static readonly Catel.Data.IPropertyData IsServersRefreshingProperty;
-        public ConnectionStringEditViewModel(string connectionString, Orc.DataAccess.Database.DbProviderInfo provider, Catel.Services.IMessageService messageService, Catel.Services.IUIVisualizerService uiVisualizerService, Catel.IoC.ITypeFactory typeFactory, Catel.Services.IDispatcherService dispatcherService) { }
+        public ConnectionStringEditViewModel(string connectionString, Orc.DataAccess.Database.DbProviderInfo? provider, Catel.Services.IMessageService messageService, Catel.Services.IUIVisualizerService uiVisualizerService, Catel.IoC.ITypeFactory typeFactory, Catel.Services.IDispatcherService dispatcherService) { }
         public bool CanLogOnToServer { get; }
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; }
         public Orc.DataAccess.Database.DbConnectionString? ConnectionString { get; }

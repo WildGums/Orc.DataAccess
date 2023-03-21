@@ -1,29 +1,25 @@
-﻿namespace Orc.DataAccess.Controls
+﻿namespace Orc.DataAccess.Controls;
+
+using System.Windows;
+using Catel.MVVM.Views;
+using Database;
+
+public sealed partial class DbProviderPicker
 {
-    using System.Windows;
-    using Catel.MVVM.Views;
-    using Database;
+    public static readonly DependencyProperty DbProviderProperty = DependencyProperty.Register(
+        nameof(DbProvider), typeof(DbProviderInfo), typeof(DbProviderPicker), new PropertyMetadata(default(DbProviderInfo)));
 
-    public sealed partial class DbProviderPicker
+    static DbProviderPicker()
     {
-        public static readonly DependencyProperty DbProviderProperty = DependencyProperty.Register(
-            nameof(DbProvider), typeof(DbProviderInfo), typeof(DbProviderPicker), new PropertyMetadata(default(DbProviderInfo)));
+        typeof(DbProviderPicker).AutoDetectViewPropertiesToSubscribe();
+    }
 
-        static DbProviderPicker()
-        {
-            typeof(DbProviderPicker).AutoDetectViewPropertiesToSubscribe();
-        }
+    public DbProviderPicker() => InitializeComponent();
 
-        public DbProviderPicker()
-        {
-            InitializeComponent();
-        }
-
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
-        public DbProviderInfo? DbProvider
-        {
-            get { return (DbProviderInfo?)GetValue(DbProviderProperty); }
-            set { SetValue(DbProviderProperty, value); }
-        }
+    [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
+    public DbProviderInfo? DbProvider
+    {
+        get { return (DbProviderInfo?)GetValue(DbProviderProperty); }
+        set { SetValue(DbProviderProperty, value); }
     }
 }

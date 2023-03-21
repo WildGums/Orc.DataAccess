@@ -1,21 +1,20 @@
-﻿namespace Orc.DataAccess.Database
+﻿namespace Orc.DataAccess.Database;
+
+using System;
+
+public static class DbProviderInfoExtensions
 {
-    using System;
-
-    public static class DbProviderInfoExtensions
+    public static DbConnectionString? CreateConnectionString(this DbProviderInfo dbProviderInfo, string connectionString)
     {
-        public static DbConnectionString? CreateConnectionString(this DbProviderInfo dbProviderInfo, string connectionString)
-        {
-            ArgumentNullException.ThrowIfNull(dbProviderInfo);
+        ArgumentNullException.ThrowIfNull(dbProviderInfo);
 
-            return dbProviderInfo.GetProvider()?.CreateConnectionString(connectionString);
-        }
+        return dbProviderInfo.GetProvider().CreateConnectionString(connectionString);
+    }
 
-        public static DbProvider GetProvider(this DbProviderInfo dbProviderInfo)
-        {
-            ArgumentNullException.ThrowIfNull(dbProviderInfo);
+    public static DbProvider GetProvider(this DbProviderInfo dbProviderInfo)
+    {
+        ArgumentNullException.ThrowIfNull(dbProviderInfo);
 
-            return DbProvider.GetRegisteredProvider(dbProviderInfo.InvariantName);
-        }
+        return DbProvider.GetRegisteredProvider(dbProviderInfo.InvariantName);
     }
 }

@@ -1,14 +1,13 @@
-﻿namespace Orc.DataAccess.Example.ViewModels
+﻿namespace Orc.DataAccess.Example.ViewModels;
+
+using Catel.MVVM;
+
+public class MainViewModel : ViewModelBase
 {
-    using Catel.MVVM;
-
-    public class MainViewModel : ViewModelBase
+    public MainViewModel()
     {
-        public MainViewModel()
-        {
 
-        }
-
-        public override string Title => "Orc.DataAccess example";
     }
+
+    public override string Title => "Orc.DataAccess example";
 }

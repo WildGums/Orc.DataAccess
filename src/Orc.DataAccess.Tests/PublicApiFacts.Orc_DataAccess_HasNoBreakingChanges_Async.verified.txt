@@ -161,6 +161,10 @@ namespace Orc.DataAccess.Database
         Valid = 1,
         Invalid = 2,
     }
+    public static class DataRowExtensions
+    {
+        public static Orc.DataAccess.Database.DbProviderInfo ToDbProviderInfo(this System.Data.DataRow row) { }
+    }
     public class DatabaseSource : Orc.DataAccess.DataSourceBase
     {
         public static readonly Catel.Data.IPropertyData ConnectionStringProperty;
@@ -286,7 +290,7 @@ namespace Orc.DataAccess.Database
     {
         protected DbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source) { }
         public virtual System.Data.Common.DbConnection? Connection { get; }
-        public virtual Orc.DataAccess.Database.DbProvider? Provider { get; }
+        public virtual Orc.DataAccess.Database.DbProvider Provider { get; }
         public Orc.DataAccess.Database.DatabaseSource Source { get; }
         public void Close() { }
         public void Dispose() { }

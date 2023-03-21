@@ -1,285 +1,286 @@
-﻿namespace Orc.DataAccess.Controls
+﻿namespace Orc.DataAccess.Controls;
+
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
+using Catel.Collections;
+using Catel.IoC;
+using Catel.Logging;
+using Catel.MVVM;
+using Catel.Services;
+using Database;
+using Timer = System.Timers.Timer;
+
+public class ConnectionStringEditViewModel : ViewModelBase
 {
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Timers;
-    using Catel.Collections;
-    using Catel.IoC;
-    using Catel.Logging;
-    using Catel.MVVM;
-    using Catel.Services;
-    using Database;
-    using Timer = System.Timers.Timer;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class ConnectionStringEditViewModel : ViewModelBase
+    private static readonly FastObservableCollection<string> CachedServers = new();
+
+    private static bool IsServersInitialized;
+
+    private readonly IDispatcherService _dispatcherService;
+
+    private readonly DbProviderInfo? _initalDbProvider;
+    private readonly string _initialConnectionString;
+    private readonly IMessageService _messageService;
+    private readonly ITypeFactory _typeFactory;
+    private readonly IUIVisualizerService _uiVisualizerService;
+    private readonly Timer _initializeTimer = new(200);
+    private bool _isDatabasesInitialized;
+
+    public ConnectionStringEditViewModel(string connectionString, DbProviderInfo? provider, IMessageService messageService,
+        IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory, IDispatcherService dispatcherService)
     {
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        ArgumentNullException.ThrowIfNull(uiVisualizerService);
+        ArgumentNullException.ThrowIfNull(typeFactory);
+        ArgumentNullException.ThrowIfNull(messageService);
+        ArgumentNullException.ThrowIfNull(dispatcherService);
 
-        private static bool IsServersInitialized = false;
-        private static readonly FastObservableCollection<string> CachedServers = new();
+        _messageService = messageService;
+        _uiVisualizerService = uiVisualizerService;
+        _typeFactory = typeFactory;
+        _dispatcherService = dispatcherService;
 
-        private readonly IDispatcherService _dispatcherService;
+        _initalDbProvider = provider;
+        _initialConnectionString = connectionString;
 
-        private readonly DbProviderInfo _initalDbProvider;
-        private readonly string _initialConnectionString;
-        private readonly IMessageService _messageService;
-        private readonly ITypeFactory _typeFactory;
-        private readonly IUIVisualizerService _uiVisualizerService;
-        private readonly Timer _initializeTimer = new(200);
-        private bool _isDatabasesInitialized = false;
+        InitServers = new TaskCommand(InitServersAsync, () => !IsServersRefreshing);
+        RefreshServers = new TaskCommand(RefreshServersAsync, () => !IsServersRefreshing);
 
-        public ConnectionStringEditViewModel(string connectionString, DbProviderInfo provider, IMessageService messageService,
-            IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory, IDispatcherService dispatcherService)
+        InitDatabases = new TaskCommand(InitDatabasesAsync, () => !IsDatabasesRefreshing);
+        RefreshDatabases = new TaskCommand(RefreshDatabasesAsync, CanInitDatabases);
+
+        TestConnection = new Command(OnTestConnection);
+        ShowAdvancedOptions = new TaskCommand(OnShowAdvancedOptionsAsync, () => ConnectionString is not null);
+
+        _initializeTimer.Elapsed += OnInitializeTimerElapsed;
+    }
+
+    public DbConnectionStringProperty? DataSource => ConnectionString?.GetProperty("Data Source")
+                                                     ?? ConnectionString?.GetProperty("Server")
+                                                     ?? ConnectionString?.GetProperty("Host");
+    public DbConnectionStringProperty? UserId => ConnectionString?.GetProperty("User ID")
+                                                 ?? ConnectionString?.GetProperty("User name");
+    public DbConnectionStringProperty? Password => ConnectionString?.GetProperty("Password");
+
+    public DbConnectionStringProperty? Port => ConnectionString?.GetProperty("Port");
+    public DbConnectionStringProperty? IntegratedSecurity => ConnectionString?.GetProperty("Integrated Security");
+
+    public DbConnectionStringProperty? InitialCatalog => ConnectionString?.GetProperty("Initial Catalog")
+                                                         ?? ConnectionString?.GetProperty("Database");
+
+    public bool IsAdvancedOptionsReadOnly { get; set; }
+
+    public bool? IntegratedSecurityValue
+    {
+        get => IntegratedSecurity?.Value as bool?;
+        set
         {
-            ArgumentNullException.ThrowIfNull(uiVisualizerService);
-            ArgumentNullException.ThrowIfNull(typeFactory);
-            ArgumentNullException.ThrowIfNull(messageService);
-            ArgumentNullException.ThrowIfNull(dispatcherService);
+            if (IntegratedSecurity is null)
+            {
+                return;
+            }
 
-            _messageService = messageService;
-            _uiVisualizerService = uiVisualizerService;
-            _typeFactory = typeFactory;
-            _dispatcherService = dispatcherService;
+            if (Equals(IntegratedSecurity.Value, value))
+            {
+                return;
+            }
 
-            _initalDbProvider = provider;
-            _initialConnectionString = connectionString;
+            IntegratedSecurity.Value = value;
+            RaisePropertyChanged(nameof(IntegratedSecurityValue));
+        }
+    }
+    public bool CanLogOnToServer => Password is not null || UserId is not null;
+    public bool IsLogOnEnabled => CanLogOnToServer && !(IntegratedSecurityValue ?? false);
 
-            InitServers = new TaskCommand(InitServersAsync, () => !IsServersRefreshing);
-            RefreshServers = new TaskCommand(RefreshServersAsync, () => !IsServersRefreshing);
+    public bool IsServerListVisible { get; set; }
+    public bool IsDatabaseListVisible { get; set; }
+    public bool IsServersRefreshing { get; private set; }
+    public bool IsDatabasesRefreshing { get; private set; }
+    public ConnectionState ConnectionState { get; private set; } = ConnectionState.Undefined;
+    public override string Title => "Connection properties";
+    public DbConnectionString? ConnectionString { get; private set; }
 
-            InitDatabases = new TaskCommand(InitDatabasesAsync, () => !IsDatabasesRefreshing);
-            RefreshDatabases = new TaskCommand(RefreshDatabasesAsync, CanInitDatabases);
+    public DbProviderInfo? DbProvider { get; set; }
 
-            TestConnection = new Command(OnTestConnection);
-            ShowAdvancedOptions = new TaskCommand(OnShowAdvancedOptionsAsync, () => ConnectionString is not null);
+    public TaskCommand RefreshServers { get; }
+    public TaskCommand InitServers { get; }
+    public Command TestConnection { get; }
+    public TaskCommand ShowAdvancedOptions { get; }
+    public TaskCommand RefreshDatabases { get; }
+    public TaskCommand InitDatabases { get; }
 
-            _initializeTimer.Elapsed += OnInitializeTimerElapsed;
+    public FastObservableCollection<string> Servers => CachedServers;
+    public FastObservableCollection<string> Databases { get; } = new();
+
+    private void OnInitializeTimerElapsed(object? sender, ElapsedEventArgs args)
+    {
+        _dispatcherService.Invoke(SetInitialState);
+    }
+
+    protected override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+
+        _initializeTimer.Start();
+    }
+
+    private void SetInitialState()
+    {
+        _initializeTimer.Stop();
+
+        using (SuspendChangeNotifications())
+        {
+            DbProvider = _initalDbProvider;
         }
 
-        public DbConnectionStringProperty? DataSource => ConnectionString?.GetProperty("Data Source")
-                                                      ?? ConnectionString?.GetProperty("Server")
-                                                      ?? ConnectionString?.GetProperty("Host");
-        public DbConnectionStringProperty? UserId => ConnectionString?.GetProperty("User ID")
-                                                  ?? ConnectionString?.GetProperty("User name");
-        public DbConnectionStringProperty? Password => ConnectionString?.GetProperty("Password");
+        ConnectionString = _initalDbProvider?.CreateConnectionString(_initialConnectionString);
+    }
 
-        public DbConnectionStringProperty? Port => ConnectionString?.GetProperty("Port");
-        public DbConnectionStringProperty? IntegratedSecurity => ConnectionString?.GetProperty("Integrated Security");
-
-        public DbConnectionStringProperty? InitialCatalog => ConnectionString?.GetProperty("Initial Catalog")
-                                                          ?? ConnectionString?.GetProperty("Database");
-
-        public bool IsAdvancedOptionsReadOnly { get; set; }
-
-        public bool? IntegratedSecurityValue
+    private void OnDbProviderChanged()
+    {
+        var dbProvider = DbProvider;
+        if (dbProvider is null)
         {
-            get => IntegratedSecurity?.Value as bool?;
-            set
+            return;
+        }
+
+        IsServersInitialized = false;
+        _isDatabasesInitialized = false;
+        Databases.Clear();
+        Servers.Clear();
+
+        ConnectionString = dbProvider.CreateConnectionString(string.Empty);
+        SetIntegratedSecurityToDefault();
+    }
+
+    private void SetIntegratedSecurityToDefault()
+    {
+        var integratedSecurityProperty = IntegratedSecurity;
+        if (integratedSecurityProperty is null)
+        {
+            return;
+        }
+
+        integratedSecurityProperty.Value = true;
+        RaisePropertyChanged(nameof(IntegratedSecurity));
+    }
+
+    private async Task OnShowAdvancedOptionsAsync()
+    {
+        var connectionString = ConnectionString;
+        if (connectionString is null)
+        {
+            return;
+        }
+
+        var advancedOptionsViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ConnectionStringAdvancedOptionsViewModel>(connectionString);
+        advancedOptionsViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
+
+        await _uiVisualizerService.ShowDialogAsync(advancedOptionsViewModel);
+    }
+
+    private void OnTestConnection()
+    {
+        if (ConnectionString is null)
+        {
+            Log.Warning("Can't test connection, because connection string is not set");
+
+            _messageService.ShowAsync("Connection string is not specified", "Connection test result");
+
+            return;
+        }
+
+        ConnectionState = ConnectionString.GetConnectionState();
+
+        _messageService.ShowAsync($"{ConnectionState} connection!", "Connection test result");
+    }
+
+    private void OnDataSourceChanged()
+    {
+        _isDatabasesInitialized = false;
+        InitDatabases.RaiseCanExecuteChanged();
+    }
+
+    public bool CanInitDatabases()
+    {
+        return !IsDatabasesRefreshing;
+    }
+
+    private Task InitServersAsync()
+    {
+        return IsServersInitialized 
+            ? Task.CompletedTask 
+            : RefreshServersAsync();
+    }
+
+    private async Task RefreshServersAsync()
+    {
+        var connectionString = ConnectionString;
+        if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
+        {
+            return;
+        }
+
+        IsServersRefreshing = true;
+
+        Servers.Clear();
+
+        await Task.Run(() =>
+        {
+            var provider = Database.DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
+            var dataSources = provider.GetDataSources();
+            Servers.AddItems(dataSources.Select(x => x.InstanceName));
+
+            IsServersRefreshing = false;
+            IsServersInitialized = true;
+            IsServerListVisible = true;
+        });
+    }
+
+    private async Task InitDatabasesAsync()
+    {
+        if (_isDatabasesInitialized)
+        {
+            return;
+        }
+
+        await RefreshDatabasesAsync();
+    }
+
+    private async Task RefreshDatabasesAsync()
+    {
+        var connectionString = ConnectionString;
+        if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
+        {
+            return;
+        }
+
+        IsDatabasesRefreshing = true;
+
+        Databases.Clear();
+
+        await Task.Run(() =>
+        {
+            var connectionState = connectionString.GetConnectionState();
+            if (connectionState != ConnectionState.Invalid)
             {
-                if (IntegratedSecurity is null)
+                var schema = connectionString.GetDataSourceSchema();
+                if (schema is not null)
                 {
-                    return;
+                    Databases.AddItems(schema.Databases);
                 }
-
-                if (Equals(IntegratedSecurity.Value, value))
-                {
-                    return;
-                }
-
-                IntegratedSecurity.Value = value;
-                RaisePropertyChanged(nameof(IntegratedSecurityValue));
             }
-        }
-        public bool CanLogOnToServer => Password is not null || UserId is not null;
-        public bool IsLogOnEnabled => CanLogOnToServer && !(IntegratedSecurityValue ?? false);
-
-        public bool IsServerListVisible { get; set; }
-        public bool IsDatabaseListVisible { get; set; }
-        public bool IsServersRefreshing { get; private set; }
-        public bool IsDatabasesRefreshing { get; private set; }
-        public ConnectionState ConnectionState { get; private set; } = ConnectionState.Undefined;
-        public override string Title => "Connection properties";
-        public DbConnectionString? ConnectionString { get; private set; }
-
-        public DbProviderInfo? DbProvider { get; set; }
-
-        public TaskCommand RefreshServers { get; }
-        public TaskCommand InitServers { get; }
-        public Command TestConnection { get; }
-        public TaskCommand ShowAdvancedOptions { get; }
-        public TaskCommand RefreshDatabases { get; }
-        public TaskCommand InitDatabases { get; }
-
-        public FastObservableCollection<string> Servers => CachedServers;
-        public FastObservableCollection<string> Databases { get; } = new FastObservableCollection<string>();
-
-        private void OnInitializeTimerElapsed(object? sender, ElapsedEventArgs args)
-        {
-            _dispatcherService.Invoke(SetInitialState);
-        }
-
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
-
-            _initializeTimer.Start();
-        }
-
-        private void SetInitialState()
-        {
-            _initializeTimer.Stop();
-
-            using (SuspendChangeNotifications())
+            else
             {
-                DbProvider = _initalDbProvider;
+                ConnectionState = connectionState;
             }
 
-            ConnectionString = _initalDbProvider?.CreateConnectionString(_initialConnectionString);
-        }
-
-        private void OnDbProviderChanged()
-        {
-            var dbProvider = DbProvider;
-            if (dbProvider is null)
-            {
-                return;
-            }
-
-            IsServersInitialized = false;
-            _isDatabasesInitialized = false;
-            Databases.Clear();
-            Servers.Clear();
-
-            ConnectionString = dbProvider.CreateConnectionString(string.Empty);
-            SetIntegratedSecurityToDefault();
-        }
-
-        private void SetIntegratedSecurityToDefault()
-        {
-            var integratedSecurityProperty = IntegratedSecurity;
-            if (integratedSecurityProperty is null)
-            {
-                return;
-            }
-
-            integratedSecurityProperty.Value = true;
-            RaisePropertyChanged(nameof(IntegratedSecurity));
-        }
-
-        private async Task OnShowAdvancedOptionsAsync()
-        {
-            var connectionString = ConnectionString;
-            if (connectionString is null)
-            {
-                return;
-            }
-
-            var advancedOptionsViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ConnectionStringAdvancedOptionsViewModel>(connectionString);
-            advancedOptionsViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
-
-            await _uiVisualizerService.ShowDialogAsync(advancedOptionsViewModel);
-        }
-
-        private void OnTestConnection()
-        {
-            if (ConnectionString is null)
-            {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Connection string is not set");
-            }
-
-            ConnectionState = ConnectionString.GetConnectionState();
-
-            _messageService.ShowAsync($"{ConnectionState} connection!", "Connection test result");
-        }
-
-        private void OnDataSourceChanged()
-        {
-            _isDatabasesInitialized = false;
-            InitDatabases.RaiseCanExecuteChanged();
-        }
-
-        public bool CanInitDatabases()
-        {
-            return !IsDatabasesRefreshing;
-        }
-
-        private Task InitServersAsync()
-        {
-            if (IsServersInitialized)
-            {
-                return Task.CompletedTask;
-            }
-
-            return RefreshServersAsync();
-        }
-
-        private async Task RefreshServersAsync()
-        {
-            var connectionString = ConnectionString;
-            if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
-            {
-                return;
-            }
-
-            IsServersRefreshing = true;
-
-            Servers.Clear();
-
-            await Task.Run(() =>
-            {
-                var provider = Database.DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
-                var dataSources = provider.GetDataSources();
-                Servers.AddItems(dataSources.Select(x => x.InstanceName));
-
-                IsServersRefreshing = false;
-                IsServersInitialized = true;
-                IsServerListVisible = true;
-            });
-        }
-
-        private async Task InitDatabasesAsync()
-        {
-            if (_isDatabasesInitialized)
-            {
-                return;
-            }
-
-            await RefreshDatabasesAsync();
-        }
-
-        private async Task RefreshDatabasesAsync()
-        {
-            var connectionString = ConnectionString;
-            if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
-            {
-                return;
-            }
-
-            IsDatabasesRefreshing = true;
-
-            Databases.Clear();
-
-            await Task.Run(() =>
-            {
-                var connectionState = connectionString.GetConnectionState();
-                if (connectionState != ConnectionState.Invalid)
-                {
-                    var schema = connectionString.GetDataSourceSchema();
-                    if (schema is not null)
-                    {
-                        Databases.AddItems(schema.Databases);
-                    }
-                }
-                else
-                {
-                    ConnectionState = connectionState;
-                }
-
-                IsDatabasesRefreshing = false;
-                _isDatabasesInitialized = true;
-                IsDatabaseListVisible = true;
-            });
-        }
+            IsDatabasesRefreshing = false;
+            _isDatabasesInitialized = true;
+            IsDatabaseListVisible = true;
+        });
     }
 }

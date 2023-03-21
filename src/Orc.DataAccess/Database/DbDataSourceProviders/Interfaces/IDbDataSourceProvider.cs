@@ -1,9 +1,8 @@
-﻿namespace Orc.DataAccess.Database
-{
-    using System.Collections.Generic;
+﻿namespace Orc.DataAccess.Database;
 
-    public interface IDbDataSourceProvider
-    {
-        IList<DbDataSource> GetDataSources();
-    }
+using System.Collections.Generic;
+
+public interface IDbDataSourceProvider
+{
+    IList<DbDataSource> GetDataSources();
 }

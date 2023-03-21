@@ -1,10 +1,6 @@
-﻿namespace Orc.DataAccess.Controls
+﻿namespace Orc.DataAccess.Controls;
+
+public sealed partial class ConnectionStringEditWindow
 {
-    public sealed partial class ConnectionStringEditWindow
-    {
-        public ConnectionStringEditWindow()
-        {
-            InitializeComponent();
-        }
-    }
+    public ConnectionStringEditWindow() => InitializeComponent();
 }

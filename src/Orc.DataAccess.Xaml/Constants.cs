@@ -1,7 +1,6 @@
-﻿namespace Orc.DataAccess
+﻿namespace Orc.DataAccess;
+
+public static class DataSourcePath
 {
-    public static class DataSourcePath
-    {
-        public const string MicrosoftSqlServerRegPath = @"SOFTWARE\Microsoft\Microsoft SQL Server";
-    }
+    public const string MicrosoftSqlServerRegPath = @"SOFTWARE\Microsoft\Microsoft SQL Server";
 }
