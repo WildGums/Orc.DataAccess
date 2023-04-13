@@ -25,7 +25,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
     <PackageReference Include="PublicApiGenerator" Version="11.0.0" PrivateAssets="all" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-    <PackageReference Include="Verify.NUnit" Version="19.12.1" />
+    <PackageReference Include="Verify.NUnit" Version="19.12.2" />
   </ItemGroup>
 
   <ItemGroup>
