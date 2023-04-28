@@ -39,7 +39,6 @@ public class DbConnectionString : ModelBase
         var sensitivePropertiesHashSet = new HashSet<string>();
         sensitivePropertiesHashSet.AddRange(sensitiveProperties);
 
-
         var propDescriptor = _connectionStringBuilder as ICustomTypeDescriptor;
         var props = propDescriptor.GetProperties().OfType<PropertyDescriptor>().Where(x => x.GetType().Name == "DbConnectionStringBuilderDescriptor").ToList();
 
