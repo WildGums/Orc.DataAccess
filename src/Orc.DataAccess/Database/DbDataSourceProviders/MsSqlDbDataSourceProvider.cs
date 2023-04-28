@@ -14,8 +14,8 @@ public class MsSqlDbDataSourceProvider : IDbDataSourceProvider
 
     public IList<DbDataSource> GetDataSources()
     {
-        var localServers = GetLocalSqlServerInstances();
-        var remoteServers = GetRemoteSqlServerInstances();
+        var localServers = GetLocalSqlServerInstances().ToList();
+        var remoteServers = GetRemoteSqlServerInstances().ToList();
 
         return localServers.Union(remoteServers)
             .Distinct()

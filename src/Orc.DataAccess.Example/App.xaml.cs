@@ -6,7 +6,6 @@ using System.Windows;
 using Catel.IoC;
 using Catel.Logging;
 using Catel.Services;
-using Microsoft.Data.SqlClient;
 using Orchestra;
 using Theming;
 
@@ -52,7 +51,7 @@ public partial class App
         StyleHelper.CreateStyleForwardersForDefaultStyles();
 
 #if NETCORE
-        DbProviderFactories.RegisterFactory("System.Data.SqlClient", SqlClientFactory.Instance);
+        DbProviderFactories.RegisterFactory("System.Data.SqlClient",  System.Data.SqlClient.SqlClientFactory.Instance);
 #endif
 
         base.OnStartup(e);
