@@ -81,6 +81,7 @@ public static class DbProviderExtensions
         }
     }
 
+    //TODO: Make it async
     public static IList<DbDataSource> GetDataSources(this DbProvider dbProvider)
     {
         ArgumentNullException.ThrowIfNull(dbProvider);

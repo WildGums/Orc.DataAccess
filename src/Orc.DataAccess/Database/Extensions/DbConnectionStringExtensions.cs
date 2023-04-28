@@ -22,6 +22,7 @@ public static class DbConnectionStringExtensions
             : null;
     }
 
+    //TODO: Make it async
     public static DbDataSourceSchema? GetDataSourceSchema(this DbConnectionString connectionString)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
