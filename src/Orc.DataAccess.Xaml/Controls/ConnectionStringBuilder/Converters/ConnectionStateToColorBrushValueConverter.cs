@@ -1,6 +1,7 @@
 ﻿namespace Orc.DataAccess.Controls;
 
 using System;
+using System.Windows;
 using System.Windows.Media;
 using Catel.MVVM.Converters;
 using Database;
@@ -11,9 +12,9 @@ public class ConnectionStateToColorBrushValueConverter : ValueConverterBase<Conn
     {
         return value switch
         {
-            ConnectionState.Undefined => new SolidColorBrush(Colors.Gray),
-            ConnectionState.Valid => new SolidColorBrush(Colors.Green),
-            ConnectionState.Invalid => new SolidColorBrush(Colors.Red),
+            ConnectionState.Undefined => Application.Current.FindResource("Orc.Brushes.Control.Default.Border") as SolidColorBrush ?? Brushes.Gray,
+            ConnectionState.Valid => Brushes.Green,
+            ConnectionState.Invalid => Brushes.Red,
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
         };
     }

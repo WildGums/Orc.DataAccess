@@ -8,6 +8,7 @@ using Catel.Logging;
 using Catel.Services;
 using Microsoft.Data.SqlClient;
 using Orchestra;
+using Theming;
 
 public partial class App
 {
@@ -47,6 +48,8 @@ public partial class App
         Log.Info("This log message should show up as debug");
 
         this.ApplyTheme();
+
+        StyleHelper.CreateStyleForwardersForDefaultStyles();
 
 #if NETCORE
         DbProviderFactories.RegisterFactory("System.Data.SqlClient", SqlClientFactory.Instance);
