@@ -33,11 +33,17 @@ public class ConnectionStringBuilder : Control
 
         _uiVisualizerService = serviceLocator.ResolveRequiredType<IUIVisualizerService>();
 
-        var editCommandBinding = new CommandBinding {Command = EditCommand};
+        var editCommandBinding = new CommandBinding
+        {
+            Command = EditCommand
+        };
         editCommandBinding.Executed += OnEditCommandExecuted;
         CommandBindings.Add(editCommandBinding);
 
-        var clearCommandBinding = new CommandBinding {Command = ClearCommand};
+        var clearCommandBinding = new CommandBinding
+        {
+            Command = ClearCommand
+        };
         clearCommandBinding.Executed += OnClearCommandExecuted;
         clearCommandBinding.CanExecute += CanClearCommandExecute;
         CommandBindings.Add(clearCommandBinding);
@@ -137,6 +143,15 @@ public class ConnectionStringBuilder : Control
 
     public static readonly DependencyProperty IsAdvancedOptionsReadOnlyProperty = DependencyProperty.Register(
         nameof(IsAdvancedOptionsReadOnly), typeof(bool), typeof(ConnectionStringBuilder), new PropertyMetadata(false));
+    
+    public bool IsEditable
+    {
+        get { return (bool)GetValue(IsEditableProperty); }
+        set { SetValue(IsEditableProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register(
+        nameof(IsEditable), typeof(bool), typeof(ConnectionStringBuilder), new PropertyMetadata(false));
     #endregion
 
     public override void OnApplyTemplate()
@@ -148,6 +163,18 @@ public class ConnectionStringBuilder : Control
         {
             throw Log.ErrorAndCreateException<InvalidOperationException>("Can't find template part 'PART_ConnectionStringTextBox'");
         }
+
+        _connectionStringTextBox.TextChanged += OnTextChanged;
+    }
+
+    private void OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (_connectionStringTextBox is null)
+        {
+            return;
+        }
+
+        SetCurrentValue(ConnectionStringProperty, _connectionStringTextBox.Text);
     }
 
     private void OnConnectionStringChanged()

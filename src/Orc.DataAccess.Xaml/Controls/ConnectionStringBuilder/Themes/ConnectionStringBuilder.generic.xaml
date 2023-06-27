@@ -19,7 +19,7 @@
                             <TextBox x:Name="PART_ConnectionStringTextBox"
                                      Grid.Column="0"
                                      VerticalContentAlignment="Center"
-                                     IsReadOnly="True"
+                                     IsReadOnly="{Binding Path=IsEditable, RelativeSource={RelativeSource TemplatedParent}, Converter={catel:BooleanToOppositeBooleanConverter}}"
                                      Margin="0,0,4,0">
                                 <b:Interaction.Triggers>
                                     <b:EventTrigger EventName="MouseDoubleClick">
@@ -38,8 +38,7 @@
                                     Margin="0"
                                     VerticalAlignment="Stretch"
                                     Command="{x:Static controls:ConnectionStringBuilder.EditCommand}" 
-                                    ToolTip="Edit">
-                            </Button>
+                                    ToolTip="Edit"/>
 
                             <Button x:Name="PART_ClearButton"
                                     Grid.Column="2"
@@ -48,7 +47,9 @@
                                     Command="{x:Static controls:ConnectionStringBuilder.ClearCommand}"
                                     ToolTip="Clear">
                                 <Button.Content>
-                                    <Image Source="/Orc.Controls;component/Resources/Images/Delete.png" Width="16" Height="16" />
+                                    <Image Source="/Orc.Controls;component/Resources/Images/Delete.png" 
+                                           Width="16" 
+                                           Height="16" />
                                 </Button.Content>
                             </Button>
 

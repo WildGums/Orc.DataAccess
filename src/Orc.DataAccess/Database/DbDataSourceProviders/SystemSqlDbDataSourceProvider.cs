@@ -7,8 +7,8 @@ using System.Data.Common;
 using System.Linq;
 using Microsoft.Win32;
 
-[ConnectToProvider("Microsoft.Data.SqlClient")]
-public class MsSqlDbDataSourceProvider : IDbDataSourceProvider
+[ConnectToProvider("System.Data.SqlClient")]
+public class SystemSqlDbDataSourceProvider : IDbDataSourceProvider
 {
     private const string MicrosoftSqlServerRegPath = @"SOFTWARE\Microsoft\Microsoft SQL Server";
 
@@ -20,7 +20,7 @@ public class MsSqlDbDataSourceProvider : IDbDataSourceProvider
         return localServers.Union(remoteServers)
             .Distinct()
             .OrderBy(x => x)
-            .Select(x => new DbDataSource("Microsoft.Data.SqlClient", x))
+            .Select(x => new DbDataSource("System.Data.SqlClient", x))
             .ToList();
     }
 
@@ -45,7 +45,7 @@ public class MsSqlDbDataSourceProvider : IDbDataSourceProvider
 
     private static IEnumerable<string> GetRemoteSqlServerInstances()
     {
-        var sqlFactory = DbProviderFactories.GetFactory("Microsoft.Data.SqlClient");
+        var sqlFactory = DbProviderFactories.GetFactory("System.Data.SqlClient");
 
         if (!sqlFactory.CanCreateDataSourceEnumerator)
         {
