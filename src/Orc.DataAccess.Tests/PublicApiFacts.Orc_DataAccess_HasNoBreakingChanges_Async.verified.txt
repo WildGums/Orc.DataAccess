@@ -317,13 +317,13 @@ namespace Orc.DataAccess.Database
     {
         System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources();
     }
-    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
+    [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
     public class MsSqlDataSourceSchemaProvider : Orc.DataAccess.Database.IDataSourceSchemaProvider
     {
         public MsSqlDataSourceSchemaProvider() { }
         public Orc.DataAccess.Database.DbDataSourceSchema? GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString) { }
     }
-    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
+    [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
     public class MsSqlDbDataSourceProvider : Orc.DataAccess.Database.IDbDataSourceProvider
     {
         public MsSqlDbDataSourceProvider() { }
@@ -421,6 +421,18 @@ namespace Orc.DataAccess.Database
         public static string DecryptConnectionString(this string connectionString, string providerName) { }
         public static string EncryptConnectionString(this string connectionString, string providerName) { }
         public static string? GetConnectionStringProperty(this string connectionString, string providerName, string propertyName) { }
+    }
+    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
+    public class SystemSqlDataSourceSchemaProvider : Orc.DataAccess.Database.IDataSourceSchemaProvider
+    {
+        public SystemSqlDataSourceSchemaProvider() { }
+        public Orc.DataAccess.Database.DbDataSourceSchema? GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString) { }
+    }
+    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
+    public class SystemSqlDbDataSourceProvider : Orc.DataAccess.Database.IDbDataSourceProvider
+    {
+        public SystemSqlDbDataSourceProvider() { }
+        public System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
     }
     public enum TableType
     {
