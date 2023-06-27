@@ -37,12 +37,14 @@ namespace Orc.DataAccess.Controls
         public static readonly System.Windows.DependencyProperty ConnectionStringProperty;
         public static readonly System.Windows.DependencyProperty DatabaseProviderProperty;
         public static readonly System.Windows.DependencyProperty IsAdvancedOptionsReadOnlyProperty;
+        public static readonly System.Windows.DependencyProperty IsEditableProperty;
         public static readonly System.Windows.DependencyProperty IsInEditModeProperty;
         public ConnectionStringBuilder() { }
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; set; }
         public string? ConnectionString { get; set; }
         public string? DatabaseProvider { get; set; }
         public bool IsAdvancedOptionsReadOnly { get; set; }
+        public bool IsEditable { get; set; }
         public bool IsInEditMode { get; set; }
         public static System.Windows.Input.RoutedCommand ClearCommand { get; }
         public static System.Windows.Input.RoutedCommand EditCommand { get; }
