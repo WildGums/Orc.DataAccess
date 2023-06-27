@@ -12,6 +12,7 @@
            BasedOn="{StaticResource {x:Type controls:ConnectionStringBuilder}}">
         <Setter Property="MinHeight" Value="{DynamicResource Size.MinHeight}" />
         <Setter Property="Margin" Value="{DynamicResource Margin.TextBox}" />
+        <Setter Property="Height" Value="{DynamicResource Size.Height}" />
     </Style>
 
 </ResourceDictionary>

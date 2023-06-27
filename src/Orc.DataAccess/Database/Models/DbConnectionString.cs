@@ -32,21 +32,27 @@ public class DbConnectionString : ModelBase
 
     private void UpdateProperties()
     {
-        var sensitiveProperties = TypeDescriptor.GetProperties(_connectionStringBuilder, new Attribute[] { PasswordPropertyTextAttribute.Yes })
+        var sensitiveProperties = TypeDescriptor.GetProperties(_connectionStringBuilder, new Attribute[]
+            {
+                PasswordPropertyTextAttribute.Yes
+            })
             .OfType<PropertyDescriptor>()
-            .Select(x => x.DisplayName.ToUpperInvariant());
+            .Select(x => x.DisplayName);
 
-        var sensitivePropertiesHashSet = new HashSet<string>();
+        var sensitivePropertiesHashSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         sensitivePropertiesHashSet.AddRange(sensitiveProperties);
-
+        sensitivePropertiesHashSet.Add("Password");
 
         var propDescriptor = _connectionStringBuilder as ICustomTypeDescriptor;
-        var props = propDescriptor.GetProperties().OfType<PropertyDescriptor>().Where(x => x.GetType().Name == "DbConnectionStringBuilderDescriptor").ToList();
+        var props = propDescriptor.GetProperties()
+            .OfType<PropertyDescriptor>()
+            .Where(x => x.GetType().Name == "DbConnectionStringBuilderDescriptor")
+            .ToList();
 
         Properties = props
             .ToDictionary(x => x.DisplayName.ToUpperInvariant(), x =>
             {
-                var isSensitive = sensitivePropertiesHashSet.Contains(x.DisplayName.ToUpperInvariant());
+                var isSensitive = sensitivePropertiesHashSet.Contains(x.DisplayName);
                 return new DbConnectionStringProperty(isSensitive, _connectionStringBuilder, x);
             });
     }

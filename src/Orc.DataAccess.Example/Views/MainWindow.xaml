@@ -30,6 +30,9 @@
                     <CheckBox Content="Advanced options readonly" 
                               IsChecked="{Binding ElementName=ConnectionStringBuilderControl, Path=IsAdvancedOptionsReadOnly}"/>
 
+                    <CheckBox Content="Is editable" 
+                              IsChecked="{Binding ElementName=ConnectionStringBuilderControl, Path=IsEditable}"/>
+
                     <orccontrols:StackGrid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>

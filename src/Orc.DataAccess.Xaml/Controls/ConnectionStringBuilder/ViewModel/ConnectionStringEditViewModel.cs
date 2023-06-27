@@ -232,7 +232,8 @@ public class ConnectionStringEditViewModel : ViewModelBase
         {
             var provider = Database.DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
             var dataSources = provider.GetDataSources();
-            Servers.AddItems(dataSources.Select(x => x.InstanceName));
+
+            _dispatcherService.BeginInvoke(() => Servers.AddItems(dataSources.Select(x => x.InstanceName)));
 
             IsServersRefreshing = false;
             IsServersInitialized = true;
@@ -270,12 +271,12 @@ public class ConnectionStringEditViewModel : ViewModelBase
                 var schema = connectionString.GetDataSourceSchema();
                 if (schema is not null)
                 {
-                    Databases.AddItems(schema.Databases);
+                    _dispatcherService.BeginInvoke(() => Databases.AddItems(schema.Databases));
                 }
             }
             else
             {
-                ConnectionState = connectionState;
+                _dispatcherService.BeginInvoke(() => ConnectionState = connectionState);
             }
 
             IsDatabasesRefreshing = false;
