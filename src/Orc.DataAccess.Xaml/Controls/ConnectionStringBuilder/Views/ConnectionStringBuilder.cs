@@ -54,6 +54,8 @@ public class ConnectionStringBuilder : Control
 
     private async void OnEditCommandExecuted(object sender, ExecutedRoutedEventArgs e)
     {
+        UpdateConnectionString();
+
         using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance.SetCurrentValue(IsInEditModeProperty, true), 
                    x => x.Instance.SetCurrentValue(IsInEditModeProperty, false)))
         {
@@ -174,7 +176,16 @@ public class ConnectionStringBuilder : Control
             return;
         }
 
-        SetCurrentValue(ConnectionStringProperty, _connectionStringTextBox.Text);
+        if (_isConnectionStringUpdating)
+        {
+            return;
+        }
+
+        using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance._isConnectionStringUpdating = true,
+                   x => x.Instance._isConnectionStringUpdating = false))
+        {
+            SetCurrentValue(ConnectionStringProperty, _connectionStringTextBox.Text);
+        }
     }
 
     private void OnConnectionStringChanged()
@@ -226,7 +237,23 @@ public class ConnectionStringBuilder : Control
             {
                 if (providers.TryGetValue(providerName, out dbProvider))
                 {
-                    displayedConnectionsString = dbProvider.CreateConnectionString(connectionString);
+                    try
+                    {
+                        displayedConnectionsString = dbProvider.CreateConnectionString(connectionString);
+                    }
+                    catch
+                    {
+                        if (DatabaseProvider is not null)
+                        {
+                            SetCurrentValue(DatabaseProviderProperty, null);
+
+                            _isConnectionStringUpdating = false;
+
+                            UpdateConnectionString();
+
+                            return;
+                        }
+                    }
                 }
             }
 
