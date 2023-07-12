@@ -14,7 +14,7 @@
             <ColumnDefinition Width="Auto"/>
         </orccontrols:StackGrid.ColumnDefinitions>
         
-        <TextBox Text="{Binding DbProvider.InvariantName, Mode=OneWay}" 
+        <TextBox Text="{Binding DbProvider.Name, Mode=OneWay}" 
                  IsReadOnly="True">
             <xamlbehaviors:Interaction.Triggers>
                 <xamlbehaviors:EventTrigger EventName="MouseDoubleClick">

@@ -47,6 +47,8 @@ public class ConnectionStringBuilder : Control
         clearCommandBinding.Executed += OnClearCommandExecuted;
         clearCommandBinding.CanExecute += CanClearCommandExecute;
         CommandBindings.Add(clearCommandBinding);
+
+        SetCurrentValue(DefaultPropertiesProperty, new DbConnectionPropertyDefinitionCollection());
     }
 
     #region Routed Commands
@@ -61,6 +63,7 @@ public class ConnectionStringBuilder : Control
         {
             var connectionStringEditViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
             connectionStringEditViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
+            connectionStringEditViewModel.DefaultProperties = DefaultProperties;
 
             if ((await _uiVisualizerService.ShowDialogAsync(connectionStringEditViewModel)).DialogResult == false)
             {
@@ -154,6 +157,15 @@ public class ConnectionStringBuilder : Control
 
     public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register(
         nameof(IsEditable), typeof(bool), typeof(ConnectionStringBuilder), new PropertyMetadata(false));
+    
+    public DbConnectionPropertyDefinitionCollection? DefaultProperties
+    {
+        get { return (DbConnectionPropertyDefinitionCollection?)GetValue(DefaultPropertiesProperty); }
+        set { SetValue(DefaultPropertiesProperty, value); }
+    }
+
+    public static readonly DependencyProperty DefaultPropertiesProperty = DependencyProperty.Register(
+        nameof(DefaultProperties), typeof(DbConnectionPropertyDefinitionCollection), typeof(ConnectionStringBuilder), new PropertyMetadata(default(DbConnectionPropertyDefinitionCollection)));
     #endregion
 
     public override void OnApplyTemplate()

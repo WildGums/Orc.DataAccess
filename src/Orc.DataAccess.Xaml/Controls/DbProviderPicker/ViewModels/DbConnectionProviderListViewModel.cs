@@ -40,7 +40,7 @@ public class DbConnectionProviderListViewModel : ViewModelBase
             return;
         }
 
-        await Task.Run(async () => await CloseViewModelAsync(true));
+        await CloseViewModelAsync(true);
     }
 
     private void OnRefresh()

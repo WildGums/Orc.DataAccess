@@ -4,6 +4,8 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:catel="http://schemas.catelproject.com"
+                  xmlns:orccontrols="http://schemas.wildgums.com/orc/controls"
+                  xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                   Width="400"
                   Height="400"
                   MinHeight="200"
@@ -14,14 +16,34 @@
                   mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400">
 
     <Grid>
-        <DataGrid ItemsSource="{Binding ConnectionStringProperties}"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <orccontrols:FilterBox Height="23"
+                               Watermark="Search..."
+                               Padding="2 0 0 0"
+                               MinHeight="23"
+                               Margin="6 2 2 2"
+                               HorizontalAlignment="Stretch"
+                               Text="{Binding PropertyFilter}"/>
+
+        <DataGrid x:Name="PropertiesDataGrid"
+                  Grid.Row="1"
+                  ItemsSource="{Binding ConnectionStringPropertiesCollectionView}"
                   AutoGenerateColumns="False"
                   HeadersVisibility="Column"
                   IsReadOnly="{Binding IsAdvancedOptionsReadOnly}">
+            <b:Interaction.Behaviors>
+                <catel:Focus FocusMoment="Loaded" FocusDelay="200"/>
+            </b:Interaction.Behaviors>
+
+
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{catel:LanguageBinding Controls_ConnectionStringAdvancedOptionsWindow_DataGridTextColumn_Header_Property}" 
                                     Binding="{Binding Name}"
-                                    MaxWidth="150"
+                                    MaxWidth="200"
                                     IsReadOnly="True"/>
                 <DataGridTextColumn Header="{catel:LanguageBinding Controls_ConnectionStringAdvancedOptionsWindow_DataGridTextColumn_Header_Value}"
                                     MinWidth="150"

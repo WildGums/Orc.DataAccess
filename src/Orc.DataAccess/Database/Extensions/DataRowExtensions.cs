@@ -9,9 +9,13 @@ public static class DataRowExtensions
     {
         ArgumentNullException.ThrowIfNull(row);
 
-        var name = row["Name"].ToString() ?? row["InvariantName"].ToString() ?? "- nameless -";
-        var description = row["Description"].ToString();
         var invariantName = row["InvariantName"].ToString();
+        var name = row["Name"].ToString();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            name = invariantName?.Replace(".", " ") ?? "- nameless -";
+        }
+        var description = row["Description"].ToString();
         var assemblyQualifiedName = row["AssemblyQualifiedName"].ToString();
 
         var providerInfo = new DbProviderInfo(name,

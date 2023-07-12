@@ -16,12 +16,16 @@ namespace Orc.DataAccess.Controls
     }
     public class ConnectionStringAdvancedOptionsViewModel : Catel.MVVM.ViewModelBase
     {
+        public static readonly Catel.Data.IPropertyData ConnectionStringPropertiesCollectionViewProperty;
         public static readonly Catel.Data.IPropertyData ConnectionStringPropertiesProperty;
         public static readonly Catel.Data.IPropertyData IsAdvancedOptionsReadOnlyProperty;
+        public static readonly Catel.Data.IPropertyData PropertyFilterProperty;
         public ConnectionStringAdvancedOptionsViewModel(Orc.DataAccess.Database.DbConnectionString connectionString) { }
         public Orc.DataAccess.Database.DbConnectionString ConnectionString { get; }
-        public System.Collections.Generic.IList<Orc.DataAccess.Database.DbConnectionStringProperty> ConnectionStringProperties { get; }
+        public Orc.DataAccess.Database.DbConnectionStringProperty[] ConnectionStringProperties { get; }
+        public System.ComponentModel.ICollectionView? ConnectionStringPropertiesCollectionView { get; }
         public bool IsAdvancedOptionsReadOnly { get; set; }
+        public string? PropertyFilter { get; set; }
         public override string Title { get; }
         protected override System.Threading.Tasks.Task InitializeAsync() { }
     }
@@ -36,6 +40,7 @@ namespace Orc.DataAccess.Controls
         public static readonly System.Windows.DependencyProperty ConnectionStateProperty;
         public static readonly System.Windows.DependencyProperty ConnectionStringProperty;
         public static readonly System.Windows.DependencyProperty DatabaseProviderProperty;
+        public static readonly System.Windows.DependencyProperty DefaultPropertiesProperty;
         public static readonly System.Windows.DependencyProperty IsAdvancedOptionsReadOnlyProperty;
         public static readonly System.Windows.DependencyProperty IsEditableProperty;
         public static readonly System.Windows.DependencyProperty IsInEditModeProperty;
@@ -43,6 +48,7 @@ namespace Orc.DataAccess.Controls
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; set; }
         public string? ConnectionString { get; set; }
         public string? DatabaseProvider { get; set; }
+        public Orc.DataAccess.Controls.DbConnectionPropertyDefinitionCollection? DefaultProperties { get; set; }
         public bool IsAdvancedOptionsReadOnly { get; set; }
         public bool IsEditable { get; set; }
         public bool IsInEditMode { get; set; }
@@ -55,6 +61,7 @@ namespace Orc.DataAccess.Controls
         public static readonly Catel.Data.IPropertyData ConnectionStateProperty;
         public static readonly Catel.Data.IPropertyData ConnectionStringProperty;
         public static readonly Catel.Data.IPropertyData DbProviderProperty;
+        public static readonly Catel.Data.IPropertyData DefaultPropertiesProperty;
         public static readonly Catel.Data.IPropertyData IsAdvancedOptionsReadOnlyProperty;
         public static readonly Catel.Data.IPropertyData IsDatabaseListVisibleProperty;
         public static readonly Catel.Data.IPropertyData IsDatabasesRefreshingProperty;
@@ -67,6 +74,7 @@ namespace Orc.DataAccess.Controls
         public Orc.DataAccess.Database.DbConnectionStringProperty? DataSource { get; }
         public Catel.Collections.FastObservableCollection<string> Databases { get; }
         public Orc.DataAccess.Database.DbProviderInfo? DbProvider { get; set; }
+        public System.Collections.Generic.IReadOnlyCollection<Orc.DataAccess.Controls.DbConnectionPropertyDefinition>? DefaultProperties { get; set; }
         public Catel.MVVM.TaskCommand InitDatabases { get; }
         public Catel.MVVM.TaskCommand InitServers { get; }
         public Orc.DataAccess.Database.DbConnectionStringProperty? InitialCatalog { get; }
@@ -95,6 +103,16 @@ namespace Orc.DataAccess.Controls
     {
         public ConnectionStringEditWindow() { }
         public void InitializeComponent() { }
+    }
+    public class DbConnectionPropertyDefinition
+    {
+        public DbConnectionPropertyDefinition() { }
+        public string? Name { get; set; }
+        public object? Value { get; set; }
+    }
+    public class DbConnectionPropertyDefinitionCollection : System.Collections.ObjectModel.ObservableCollection<Orc.DataAccess.Controls.DbConnectionPropertyDefinition>
+    {
+        public DbConnectionPropertyDefinitionCollection() { }
     }
     public class DbConnectionProviderListViewModel : Catel.MVVM.ViewModelBase
     {
