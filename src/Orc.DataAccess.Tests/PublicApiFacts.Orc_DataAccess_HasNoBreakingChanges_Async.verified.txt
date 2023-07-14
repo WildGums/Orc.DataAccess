@@ -1,4 +1,6 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DynamicProxyGenAssembly2")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.DataAccess.Tests")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName=".NET 6.0")]
 public static class ModuleInitializer
 {
@@ -324,10 +326,16 @@ namespace Orc.DataAccess.Database
         public Orc.DataAccess.Database.DbDataSourceSchema? GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString) { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
-    public class MsSqlDbDataSourceProvider : Orc.DataAccess.Database.IDbDataSourceProvider
+    public class MsSqlDbDataSourceProvider : Orc.DataAccess.Database.MsSqlDbDataSourceProviderBase
     {
         public MsSqlDbDataSourceProvider() { }
-        public System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
+        protected override string ProviderName { get; }
+    }
+    public abstract class MsSqlDbDataSourceProviderBase : Orc.DataAccess.Database.IDbDataSourceProvider
+    {
+        protected MsSqlDbDataSourceProviderBase() { }
+        protected abstract string ProviderName { get; }
+        public virtual System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
     public class MsSqlDbSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
@@ -429,10 +437,10 @@ namespace Orc.DataAccess.Database
         public Orc.DataAccess.Database.DbDataSourceSchema? GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString) { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
-    public class SystemSqlDbDataSourceProvider : Orc.DataAccess.Database.IDbDataSourceProvider
+    public class SystemSqlDbDataSourceProvider : Orc.DataAccess.Database.MsSqlDbDataSourceProviderBase
     {
         public SystemSqlDbDataSourceProvider() { }
-        public System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
+        protected override string ProviderName { get; }
     }
     public enum TableType
     {
