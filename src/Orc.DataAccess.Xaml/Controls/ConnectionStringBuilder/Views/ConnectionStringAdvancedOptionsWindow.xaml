@@ -39,7 +39,6 @@
                 <catel:Focus FocusMoment="Loaded" FocusDelay="200"/>
             </b:Interaction.Behaviors>
 
-
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{catel:LanguageBinding Controls_ConnectionStringAdvancedOptionsWindow_DataGridTextColumn_Header_Property}" 
                                     Binding="{Binding Name}"

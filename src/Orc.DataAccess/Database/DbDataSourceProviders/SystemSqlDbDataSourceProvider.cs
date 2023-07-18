@@ -60,8 +60,10 @@ public class SystemSqlDbDataSourceProvider : IDbDataSourceProvider
 
         for (var i = 0; i < serversCount; i++)
         {
-            var name = dataTable.Rows[i]["ServerName"].ToString();
-            var instance = dataTable.Rows[i]["InstanceName"].ToString();
+            var row = dataTable.Rows[i];
+
+            var name = row["ServerName"].ToString();
+            var instance = row["InstanceName"].ToString();
 
             if (string.IsNullOrEmpty(name))
             {
@@ -71,7 +73,7 @@ public class SystemSqlDbDataSourceProvider : IDbDataSourceProvider
             servers[i] = name;
             if (!string.IsNullOrEmpty(instance))
             {
-                servers[i] += "\\" + instance;
+                servers[i] += $"\\{instance}";
             }
         }
 

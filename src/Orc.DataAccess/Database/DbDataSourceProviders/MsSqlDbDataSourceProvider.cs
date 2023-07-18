@@ -71,7 +71,7 @@ public class MsSqlDbDataSourceProvider : IDbDataSourceProvider
             servers[i] = name;
             if (!string.IsNullOrEmpty(instance))
             {
-                servers[i] += "\\" + instance;
+                servers[i] += $"\\{instance}";
             }
         }
 
