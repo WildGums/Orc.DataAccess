@@ -1,6 +1,7 @@
 ﻿namespace Orc.DataAccess.Database;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -14,16 +15,24 @@ public static class DbProviderExtensions
 {
     private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    private static readonly CacheStorage<string, CacheStorage<Type, IList<Type>>> ConnectedTypes = new();
-    private static readonly CacheStorage<string, CacheStorage<Type, object>> ConnectedInstances = new();
+    private static readonly Dictionary<string, Dictionary<Type, IList<Type>>> ConnectedTypes = new();
+    private static readonly Dictionary<string, Dictionary<Type, object>> ConnectedInstances = new();
 
     public static T GetOrCreateConnectedInstance<T>(this DbProvider dbProvider)
         where T : notnull
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
 
-        var instanceCache = ConnectedInstances.GetFromCacheOrFetch(dbProvider.ProviderInvariantName, () => new CacheStorage<Type, object>());
-        return (T)instanceCache.GetFromCacheOrFetch(typeof(T), () => CreateConnectedInstance<T>(dbProvider));
+        var providerInvariantName = dbProvider.ProviderInvariantName;
+        var instances = GetConnectedInstances(providerInvariantName);
+
+        if (!instances.TryGetValue(typeof(T), out var instance))
+        {
+            instance = CreateConnectedInstance<T>(dbProvider);
+            instances.Add(typeof(T), instance);
+        }
+
+        return (T)instance;
     }
 
     public static T CreateConnectedInstance<T>(this DbProvider dbProvider, params object[] parameters)
@@ -43,8 +52,33 @@ public static class DbProviderExtensions
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
 
-        var connectedTypesCache = ConnectedTypes.GetFromCacheOrFetch(dbProvider.ProviderInvariantName, () => new CacheStorage<Type, IList<Type>>());
-        return connectedTypesCache.GetFromCacheOrFetch(typeof(T), () => dbProvider.FindConnectedTypes<T>().ToList());
+        var connectedTypes = ConnectedTypes;
+        var invariantName = dbProvider.ProviderInvariantName;
+        if (!connectedTypes.TryGetValue(invariantName, out var typeBatch))
+        {
+            typeBatch = new Dictionary<Type, IList<Type>>();
+            connectedTypes.Add(invariantName, typeBatch);
+        }
+
+        if (!typeBatch.TryGetValue(typeof(T), out var types))
+        {
+            types = dbProvider.FindConnectedTypes<T>().ToList();
+            typeBatch.Add(typeof(T), types);
+        }
+
+        return types;
+    }
+
+    private static Dictionary<Type, object> GetConnectedInstances(string providerInvariantName)
+    {
+        var connectedInstances = ConnectedInstances;
+        if (!connectedInstances.TryGetValue(providerInvariantName, out var instances))
+        {
+            instances = new Dictionary<Type, object>();
+            connectedInstances.Add(providerInvariantName, instances);
+        }
+
+        return instances;
     }
 
     public static void ConnectType<TBaseType>(this DbProvider dbProvider, Type type)
@@ -52,12 +86,19 @@ public static class DbProviderExtensions
         ArgumentNullException.ThrowIfNull(dbProvider);
         ArgumentNullException.ThrowIfNull(type);
 
-        var connectedTypesCache = ConnectedTypes.GetFromCacheOrFetch(dbProvider.ProviderInvariantName, () => new CacheStorage<Type, IList<Type>>());
-        var types = connectedTypesCache.GetFromCacheOrFetch(typeof(TBaseType), () => dbProvider.FindConnectedTypes<TBaseType>().ToList());
+        var types = GetConnectedTypes<TBaseType>(dbProvider);
         if (!types.Contains(type))
         {
             types.Add(type);
         }
+    }
+
+    public static void ConnectInstance<TBaseType>(this DbProvider dbProvider, TBaseType instance)
+    {
+        ArgumentNullException.ThrowIfNull(instance);
+
+        var instances = GetConnectedInstances(dbProvider.ProviderInvariantName);
+        instances[typeof(TBaseType)] = instance;
     }
 
     private static IEnumerable<Type> FindConnectedTypes<T>(this DbProvider dbProvider)

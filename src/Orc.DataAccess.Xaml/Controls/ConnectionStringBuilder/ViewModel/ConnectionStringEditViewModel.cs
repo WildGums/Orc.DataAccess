@@ -286,7 +286,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
     private async Task RefreshServersAsync()
     {
         var connectionString = ConnectionString;
-        if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
+        if (connectionString is null)
         {
             return;
         }
@@ -321,7 +321,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
     private async Task RefreshDatabasesAsync()
     {
         var connectionString = ConnectionString;
-        if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
+        if (connectionString is null)
         {
             return;
         }

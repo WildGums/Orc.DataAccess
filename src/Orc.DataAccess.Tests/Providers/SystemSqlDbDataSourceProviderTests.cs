@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using Automation.Tests;
 using NUnit.Framework;
 using Database;
 using Microsoft.Win32;
 using Moq;
+using Orc.Automation.Tests;
 using Registry;
 
 [TestFixture]

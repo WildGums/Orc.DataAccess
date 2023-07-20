@@ -2,6 +2,7 @@
 
 using System;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Catel;
@@ -9,6 +10,7 @@ using Catel.IoC;
 using Catel.Logging;
 using Catel.Services;
 using Database;
+using Orc.DataAccess.Automation.Controls;
 
 #pragma warning disable IDISP006 // Implement IDisposable
 [TemplatePart(Name = "PART_ConnectionStringTextBox", Type = typeof(TextBox))]
@@ -273,6 +275,11 @@ public class ConnectionStringBuilder : Control
             SetCurrentValue(DatabaseProviderProperty, dbProvider?.ProviderInvariantName);
             _dbProvider = dbProvider?.Info;
         }
+    }
+
+    protected override AutomationPeer OnCreateAutomationPeer()
+    {
+        return new ConnectionStringBuilderAutomationPeer(this);
     }
 }
 #pragma warning restore IDISP006 // Implement IDisposable
