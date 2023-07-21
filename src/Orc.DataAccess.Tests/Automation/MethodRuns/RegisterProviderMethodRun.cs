@@ -6,7 +6,7 @@ using Catel.Reflection;
 using Database;
 using Orc.Automation;
 
-public class InitProviderMethodRun : NamedAutomationMethodRun
+public class RegisterProviderMethodRun : NamedAutomationMethodRun
 {
     public override bool TryInvoke(FrameworkElement owner, AutomationMethod method, out AutomationValue? result)
     {
@@ -14,8 +14,10 @@ public class InitProviderMethodRun : NamedAutomationMethodRun
 
         var providerInvariantName = (string) method.Parameters[0].ExtractValue();
 
-        var customProvider = new DbProvider(new DbProviderInfo(providerInvariantName, providerInvariantName,
-            "For test sake", typeof(TestDbProviderFactory).GetSafeFullName()));
+        var providerInfo = new DbProviderInfo(providerInvariantName, providerInvariantName,
+            "For test sake", typeof(TestDbProviderFactory).GetSafeFullName());
+
+        var customProvider = new DbProvider(providerInfo);
 
         var dataSourceProvider = new TestDbDataSourceProvider(customProvider);
         dataSourceProvider.AddDataSource("Data source 1");
@@ -37,6 +39,10 @@ public class InitProviderMethodRun : NamedAutomationMethodRun
         testFactory.AddPropertyDescription<string>("Initial Catalog");
         testFactory.AddPropertyDescription<string>("Server");
         testFactory.AddPropertyDescription<string>("Password");
+
+        testFactory.AddPropertyDescription<string>("AdvProperty_1");
+        testFactory.AddPropertyDescription<string>("AdvProperty_2");
+        testFactory.AddPropertyDescription<string>("AdvProperty_3");
         DbProviderFactories.RegisterFactory(customProvider.ProviderInvariantName, testFactory);
 
         return true;

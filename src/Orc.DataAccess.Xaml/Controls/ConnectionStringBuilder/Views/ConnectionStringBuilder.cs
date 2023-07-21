@@ -1,6 +1,7 @@
 ﻿namespace Orc.DataAccess.Controls;
 
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -230,10 +231,8 @@ public class ConnectionStringBuilder : Control
             DbProvider? dbProvider = null;
             if (string.IsNullOrEmpty(providerName))
             {
-                foreach (var providerKeyValue in providers)
+                foreach (var currentProvider in providers.Values)
                 {
-                    var currentProvider = providerKeyValue.Value;
-
                     try
                     {
                         displayedConnectionsString = currentProvider.CreateConnectionString(connectionString);
@@ -243,8 +242,14 @@ public class ConnectionStringBuilder : Control
                         continue;
                     }
 
+                    //Stop iterate, if there is another candidate
+                    if (dbProvider is not null)
+                    {
+                        dbProvider = null;
+                        break;
+                    }
+
                     dbProvider = currentProvider;
-                    break;
                 }
             }
             else

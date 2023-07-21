@@ -68,6 +68,7 @@
 
                 <Label Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Label_Content_Provider}"
                        IsEnabled="{Binding IsServersRefreshing, Converter={catel:BooleanToOppositeBooleanConverter}}"/>
+               
                 <controls:DbProviderPicker DbProvider="{Binding DbProvider, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                            IsEnabled="{Binding IsServersRefreshing, Converter={catel:BooleanToOppositeBooleanConverter}}"/>
 
@@ -196,7 +197,8 @@
                     ToolTip="{Binding ConnectionState, Mode=OneWay}"
                     HorizontalAlignment="Left"/>
             
-            <Button Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Button_Content_Advanced}"
+            <Button x:Name="ShowAdvancedOptionsButton"
+                    Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Button_Content_Advanced}"
                     Command="{Binding ShowAdvancedOptions}"
                     HorizontalAlignment="Right"/>
         </Grid>

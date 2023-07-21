@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using Catel;
 using Catel.Collections;
 using Catel.Logging;
 
@@ -56,6 +57,8 @@ public class DbProvider
     {
         ArgumentNullException.ThrowIfNull(providerInfo);
 
+        IsProvidersInitialized = false;
+
         ProviderFactoryRepository.Remove(providerInfo);
     }
 
@@ -84,6 +87,8 @@ public class DbProvider
         {
             return providers;
         }
+
+        providers.Clear();
 
         using var dataTable = DbProviderFactories.GetFactoryClasses();
         dataTable.Rows.OfType<DataRow>()

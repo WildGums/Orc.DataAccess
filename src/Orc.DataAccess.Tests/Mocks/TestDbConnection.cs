@@ -8,9 +8,12 @@ public class TestDbConnection : DbConnection
 {
     public bool IsValid { get; set; } = true;
 
-    protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel) => null;
+    public Func<DbCommand>? CreateCommandFunc { get; set; }
+    public Func<DbTransaction>? CreateTransactionFunc { get; set; }
 
-    protected override DbCommand CreateDbCommand() => null;
+    protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel) => CreateTransactionFunc?.Invoke()!;
+
+    protected override DbCommand CreateDbCommand() => CreateCommandFunc?.Invoke()!;
 
     public override void ChangeDatabase(string databaseName)
     {

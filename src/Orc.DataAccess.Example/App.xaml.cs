@@ -63,6 +63,7 @@ public partial class App
 #if NETCORE
         var factory = System.Data.SqlClient.SqlClientFactory.Instance;
         DbProviderFactories.RegisterFactory("System.Data.SqlClient", factory);
+        DbProviderFactories.RegisterFactory("Microsoft.Data.SqlClient", SqlClientFactory.Instance);
 #endif
 
         base.OnStartup(e);
