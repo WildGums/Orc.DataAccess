@@ -1,13 +1,52 @@
 ﻿namespace Orc.DataAccess.Tests;
 
-using System.Linq;
 using Controls;
 using NUnit.Framework;
+using Orc.Automation;
+using Orc.DataAccess.Automation.Controls;
 
 [Explicit]
 [TestFixture]
 public class ConnectionStringBuilderControlTests : ConnectionStringBuilderControlTestsBase
 {
+    [Test]
+    public void DoubleClick_On_ProviderPicker_Must_Not_Freeze_Application()
+    {
+        //Prepare
+        var control = Target;
+
+        using (StartProvider("PR_1"))
+        using (StartProvider("PR_2"))
+        {
+            var edit = control.OpenEditWindow();
+
+            //NOTE:Vladimir: If control doesn't match this MAP anymore - remove test
+            var editMap = edit.Map<ConnectionStringEditWindowMap>();
+
+            var providerPicker = editMap.ProviderPicker;
+            var providersListWindow = providerPicker.ShowProviderListWindow();
+
+            //NOTE:Vladimir: If control doesn't match this MAP anymore - remove test
+            var providersListWindowMap = providersListWindow.Map<DbConnectionProviderListWindowMap>();
+
+            var providersList = providersListWindowMap.ProvidersList;
+            var item = providersList.Items[1];
+
+            item.MouseClick();
+            item.MouseClick();
+
+            Wait.UntilInputProcessed(500);
+
+            //Window should be closed
+            Assert.That(providersListWindow.IsVisible(), Is.False);
+
+            var provider = edit.SelectedProvider;
+            Assert.That(provider, Is.EqualTo("PR_2"));
+
+            edit.Close();
+        }
+    }
+
     [Test]
     public void Provider_Should_Be_Selected_Automatically_In_EditConnectionStringWindow_If_Its_Only_One_Matching_Provider_In_A_List()
     {

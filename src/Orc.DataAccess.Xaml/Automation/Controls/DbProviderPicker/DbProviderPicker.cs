@@ -36,7 +36,7 @@ public class DbProviderPicker : FrameworkElement<DbProviderPickerModel, DbProvid
         dbConnectionProviderListWindow.AcceptAndClose();
     }
     
-    private DbConnectionProviderListWindow ShowProviderListWindow()
+    public DbConnectionProviderListWindow ShowProviderListWindow()
     {
         Map.ChangeDbProviderButton.Click();
 
