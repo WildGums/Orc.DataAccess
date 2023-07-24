@@ -255,6 +255,7 @@ namespace Orc.DataAccess.Database
     }
     public static class DbProviderExtensions
     {
+        public static void ConnectInstance<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, TBaseType instance) { }
         public static void ConnectType<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, System.Type type) { }
         public static T CreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider, params object[] parameters)
             where T :  notnull { }
