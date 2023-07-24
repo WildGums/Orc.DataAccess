@@ -29,7 +29,7 @@ public static class DbProviderExtensions
         if (!instances.TryGetValue(typeof(T), out var instance))
         {
             instance = CreateConnectedInstance<T>(dbProvider);
-            instances.Add(typeof(T), instance);
+            instances[typeof(T)] = instance;
         }
 
         return (T)instance;
