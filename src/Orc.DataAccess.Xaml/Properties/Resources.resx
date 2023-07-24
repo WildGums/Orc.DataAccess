@@ -159,6 +159,9 @@
   <data name="Controls_ConnectionStringAdvancedOptionsWindow_DataGridTextColumn_Header_Value" xml:space="preserve">
     <value>Value</value>
   </data>
+  <data name="Controls_ConnectionStringBuilder_Search_WaterMark" xml:space="preserve">
+    <value>Search...</value>
+  </data>
   <data name="Controls_ConnectionStringEditWindow_Button_Content_Advanced" xml:space="preserve">
     <value>Advanced...</value>
   </data>
@@ -347,6 +350,9 @@
   </data>
   <data name="Controls_DbConnectionProviderListWindow_Button_Content_Refresh" xml:space="preserve">
     <value>Refresh</value>
+  </data>
+  <data name="Controls_DbConnectionProviderList_Title" xml:space="preserve">
+    <value>Select provider</value>
   </data>
   <data name="Controls_DbProviderControl_Button_Content_Change" xml:space="preserve">
     <value>Change...</value>

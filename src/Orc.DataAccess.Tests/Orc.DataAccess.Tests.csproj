@@ -18,7 +18,7 @@
     <PackageReference Include="Fody" Version="6.8.0" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MethodBoundaryAspect.Fody" Version="2.0.149" />
+    <PackageReference Include="MethodBoundaryAspect.Fody" Version="2.0.149" PrivateAssets="all"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="all" />
     <PackageReference Include="Moq" Version="4.18.4" />

@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using Catel.IoC;
 using Catel.Logging;
-using Registry;
+using Services;
 
 public abstract class MsSqlDbDataSourceProviderBase : IDbDataSourceProvider
 {
@@ -60,7 +60,7 @@ public abstract class MsSqlDbDataSourceProviderBase : IDbDataSourceProvider
         using var regView = _registryKeyService.OpenBaseKey(RegistryHive.LocalMachine, registryView);
         using var sqlServerNode = regView.OpenSubKey(MicrosoftSqlServerRegPath);
 
-        return sqlServerNode?.GetValue("InstalledInstances") as IList<string> ?? Array.Empty<string>();
+        return sqlServerNode?.GetValue("InstalledInstances") as IEnumerable<string> ?? Enumerable.Empty<string>();
     }
 
     private IEnumerable<string> GetRemoteSqlServerInstances()

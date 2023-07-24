@@ -188,6 +188,15 @@ namespace Orc.DataAccess.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search....
+        /// </summary>
+        internal static string Controls_ConnectionStringBuilder_Search_WaterMark {
+            get {
+                return ResourceManager.GetString("Controls_ConnectionStringBuilder_Search_WaterMark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Advanced....
         /// </summary>
         internal static string Controls_ConnectionStringEditWindow_Button_Content_Advanced {
@@ -743,6 +752,15 @@ namespace Orc.DataAccess.Properties {
         internal static string Controls_DateTimePickerControl_ToggleButton_Content_YearAbbreviation {
             get {
                 return ResourceManager.GetString("Controls_DateTimePickerControl_ToggleButton_Content_YearAbbreviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select provider.
+        /// </summary>
+        internal static string Controls_DbConnectionProviderList_Title {
+            get {
+                return ResourceManager.GetString("Controls_DbConnectionProviderList_Title", resourceCulture);
             }
         }
         

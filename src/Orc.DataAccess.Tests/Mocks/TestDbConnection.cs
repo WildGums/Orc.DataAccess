@@ -7,6 +7,11 @@ using System.Data.Common;
 public class TestDbConnection : DbConnection
 {
     public bool IsValid { get; set; } = true;
+    public override string ConnectionString { get; set; }
+    public override string Database { get; }
+    public override System.Data.ConnectionState State { get; }
+    public override string DataSource { get; }
+    public override string ServerVersion { get; }
 
     public Func<DbCommand>? CreateCommandFunc { get; set; }
     public Func<DbTransaction>? CreateTransactionFunc { get; set; }
@@ -32,10 +37,4 @@ public class TestDbConnection : DbConnection
             throw new Exception("Invalid connection");
         }
     }
-
-    public override string ConnectionString { get; set; }
-    public override string Database { get; }
-    public override System.Data.ConnectionState State { get; }
-    public override string DataSource { get; }
-    public override string ServerVersion { get; }
 }

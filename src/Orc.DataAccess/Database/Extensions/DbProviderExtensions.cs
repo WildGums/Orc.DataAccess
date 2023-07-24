@@ -63,7 +63,7 @@ public static class DbProviderExtensions
         if (!typeBatch.TryGetValue(typeof(T), out var types))
         {
             types = dbProvider.FindConnectedTypes<T>().ToList();
-            typeBatch.Add(typeof(T), types);
+            typeBatch[typeof(T)] = types;
         }
 
         return types;

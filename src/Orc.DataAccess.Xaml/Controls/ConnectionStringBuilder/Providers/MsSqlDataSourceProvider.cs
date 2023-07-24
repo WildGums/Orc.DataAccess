@@ -38,7 +38,7 @@ public class MsSqlDataSourceProvider : IDataSourceProvider
     {
         using var regView = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView);
         using var sqlServerNode = regView.OpenSubKey(DataSourcePath.MicrosoftSqlServerRegPath, false);
-        return sqlServerNode?.GetValue("InstalledInstances") as IList<string> ?? new List<string>();
+        return sqlServerNode?.GetValue("InstalledInstances") as IEnumerable<string> ?? Enumerable.Empty<string>();
     }
 
     private static IEnumerable<string> GetRemoteSqlServerInstances()

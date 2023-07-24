@@ -24,7 +24,7 @@ public class SystemSqlDataSourceSchemaProvider : IDataSourceSchemaProvider
 
         using var command = sqlConnection.CreateCommand();
         command.Connection = sqlConnection;
-        command.CommandText = "SELECT name from sys.databases";
+        command.CommandText = "SELECT name from [sys].[databases]";
         command.CommandType = CommandType.Text;
 
         using var dataReader = command.ExecuteReader();

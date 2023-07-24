@@ -9,7 +9,7 @@ using Database;
 using Microsoft.Win32;
 using Moq;
 using Orc.Automation.Tests;
-using Registry;
+using Services;
 
 [TestFixture]
 public class SystemSqlDbDataSourceProviderTests

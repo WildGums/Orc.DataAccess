@@ -23,7 +23,7 @@
 
         <orccontrols:FilterBox x:Name="AdvancedPropertiesFilterBox"
                                Height="23"
-                               Watermark="Search..."
+                               Watermark="{catel:LanguageBinding Controls_ConnectionStringBuilder_Search_WaterMark}"
                                Padding="2 0 0 0"
                                MinHeight="23"
                                Margin="6 2 2 2"

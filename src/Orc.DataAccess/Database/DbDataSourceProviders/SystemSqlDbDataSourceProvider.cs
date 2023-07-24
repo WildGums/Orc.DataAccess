@@ -1,6 +1,6 @@
 ﻿namespace Orc.DataAccess.Database;
 
-using Registry;
+using Services;
 
 [ConnectToProvider("System.Data.SqlClient")]
 public class SystemSqlDbDataSourceProvider : MsSqlDbDataSourceProviderBase
