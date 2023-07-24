@@ -8,7 +8,6 @@ using System;
 using System.Linq;
 using Catel.IoC;
 using Catel.Logging;
-using Services;
 
 public abstract class MsSqlDbDataSourceProviderBase : IDbDataSourceProvider
 {

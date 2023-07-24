@@ -9,7 +9,6 @@ using Database;
 using Microsoft.Win32;
 using Moq;
 using Orc.Automation.Tests;
-using Services;
 
 [TestFixture]
 public class SystemSqlDbDataSourceProviderTests

@@ -1,4 +1,4 @@
-﻿namespace Orc.DataAccess.Services;
+﻿namespace Orc.DataAccess;
 
 using Microsoft.Win32;
 

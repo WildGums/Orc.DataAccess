@@ -1,6 +1,7 @@
 ﻿using Catel.IoC;
 using Catel.Services;
-using Orc.DataAccess.Services;
+using Orc.DataAccess;
+
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.
 /// </summary>
