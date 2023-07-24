@@ -141,12 +141,11 @@ public class ExcelReader : ReaderBase
             AddValidationError($"File '{filePath}' not found");
             return;
         }
-#if NETCORE
+
         // Register additional encodings as they supported by default only in .NET Framework
         var encodingProvider = CodePagesEncodingProvider.Instance;
         Encoding.RegisterProvider(encodingProvider);
 
-#endif
 #pragma warning disable IDISP001 // Dispose created.
         // Note: need to keep this stream open as long as the reader lives
         var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);

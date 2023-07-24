@@ -57,6 +57,8 @@ public class DbProvider
     {
         ArgumentNullException.ThrowIfNull(providerInfo);
 
+        IsProvidersInitialized = false;
+
         ProviderFactoryRepository.Remove(providerInfo);
     }
 
@@ -85,6 +87,8 @@ public class DbProvider
         {
             return providers;
         }
+
+        providers.Clear();
 
         using var dataTable = DbProviderFactories.GetFactoryClasses();
         dataTable.Rows.OfType<DataRow>()

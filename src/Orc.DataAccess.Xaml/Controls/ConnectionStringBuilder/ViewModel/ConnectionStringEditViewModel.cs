@@ -1,6 +1,7 @@
 ﻿namespace Orc.DataAccess.Controls;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -28,6 +29,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
     private readonly ITypeFactory _typeFactory;
     private readonly IUIVisualizerService _uiVisualizerService;
     private readonly Timer _initializeTimer = new(200);
+
     private bool _isDatabasesInitialized;
 
     public ConnectionStringEditViewModel(string connectionString, DbProviderInfo? provider, IMessageService messageService,
@@ -72,6 +74,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
                                                          ?? ConnectionString?.GetProperty("Database");
 
     public bool IsAdvancedOptionsReadOnly { get; set; }
+    public IReadOnlyCollection<DbConnectionPropertyDefinition>? DefaultProperties { get; set; }
 
     public bool? IntegratedSecurityValue
     {
@@ -115,11 +118,6 @@ public class ConnectionStringEditViewModel : ViewModelBase
     public FastObservableCollection<string> Servers => CachedServers;
     public FastObservableCollection<string> Databases { get; } = new();
 
-    private void OnInitializeTimerElapsed(object? sender, ElapsedEventArgs args)
-    {
-        _dispatcherService.Invoke(SetInitialState);
-    }
-
     protected override async Task InitializeAsync()
     {
         await base.InitializeAsync();
@@ -127,16 +125,37 @@ public class ConnectionStringEditViewModel : ViewModelBase
         _initializeTimer.Start();
     }
 
-    private void SetInitialState()
+    private void OnInitializeTimerElapsed(object? sender, ElapsedEventArgs args)
     {
         _initializeTimer.Stop();
 
-        using (SuspendChangeNotifications())
+        _dispatcherService.Invoke(SetInitialState);
+    }
+    
+    private void SetInitialState()
+    {
+        if (_initalDbProvider is not null)
         {
-            DbProvider = _initalDbProvider;
+            using (SuspendChangeNotifications())
+            {
+                DbProvider = _initalDbProvider;
+            }
+            ConnectionString = _initalDbProvider.CreateConnectionString(_initialConnectionString);
+
+            //Only apply default properties if connection string was empty
+            if (string.IsNullOrWhiteSpace(_initialConnectionString))
+            {
+                ApplyDefaultProperties();
+            }
+
+            return;
         }
 
-        ConnectionString = _initalDbProvider?.CreateConnectionString(_initialConnectionString);
+        var allKnownProviders = Database.DbProvider.GetRegisteredProviders().Select(x => x.Value.Info).ToArray();
+        if (allKnownProviders.Length == 1)
+        {
+            DbProvider = allKnownProviders.Single();
+        }
     }
 
     private void OnDbProviderChanged()
@@ -153,7 +172,48 @@ public class ConnectionStringEditViewModel : ViewModelBase
         Servers.Clear();
 
         ConnectionString = dbProvider.CreateConnectionString(string.Empty);
+        ApplyDefaultProperties();
         SetIntegratedSecurityToDefault();
+    }
+
+    private void OnDefaultPropertiesChanged()
+    {
+        ApplyDefaultProperties();
+    }
+    
+    private void ApplyDefaultProperties()
+    {
+        var defaultProperties = DefaultProperties;
+        if (defaultProperties is null)
+        {
+            return;
+        }
+
+        var connectionString = ConnectionString;
+        if (connectionString is null)
+        {
+            return;
+        }
+
+        foreach (var property in defaultProperties)
+        {
+            var propertyName = property.Name;
+            if (string.IsNullOrWhiteSpace(propertyName))
+            {
+                continue;
+            }
+
+            var existingProperty = connectionString.GetProperty(propertyName)
+                                   ?? connectionString.GetProperty(propertyName.Replace(" ", string.Empty));
+            if (existingProperty is null)
+            {
+                continue;
+            }
+
+            existingProperty.Value = property.Value;
+        }
+
+        RaisePropertyChanged(nameof(ConnectionString));
     }
 
     private void SetIntegratedSecurityToDefault()
@@ -180,6 +240,13 @@ public class ConnectionStringEditViewModel : ViewModelBase
         advancedOptionsViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
 
         await _uiVisualizerService.ShowDialogAsync(advancedOptionsViewModel);
+
+        _dispatcherService.BeginInvoke(() =>
+        {
+            ConnectionState = ConnectionState.Undefined;
+
+            _isDatabasesInitialized = Databases.Any();
+        });
     }
 
     private void OnTestConnection()
@@ -219,7 +286,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
     private async Task RefreshServersAsync()
     {
         var connectionString = ConnectionString;
-        if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
+        if (connectionString is null)
         {
             return;
         }
@@ -254,7 +321,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
     private async Task RefreshDatabasesAsync()
     {
         var connectionString = ConnectionString;
-        if (string.IsNullOrWhiteSpace(connectionString?.ToString()))
+        if (connectionString is null)
         {
             return;
         }

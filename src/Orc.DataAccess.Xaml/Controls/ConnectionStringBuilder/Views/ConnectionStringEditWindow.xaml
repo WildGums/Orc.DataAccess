@@ -68,10 +68,12 @@
 
                 <Label Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Label_Content_Provider}"
                        IsEnabled="{Binding IsServersRefreshing, Converter={catel:BooleanToOppositeBooleanConverter}}"/>
+               
                 <controls:DbProviderPicker DbProvider="{Binding DbProvider, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                            IsEnabled="{Binding IsServersRefreshing, Converter={catel:BooleanToOppositeBooleanConverter}}"/>
 
-                <Label Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Label_Content_Server}" Visibility="{Binding DataSource, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"/>
+                <Label Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Label_Content_Server}"
+                       Visibility="{Binding DataSource, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"/>
                 <orccontrols:StackGrid Visibility="{Binding DataSource, Converter={catel:ReferenceToCollapsingVisibilityConverter}}">
                     <orccontrols:StackGrid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -140,7 +142,8 @@
                         <TextBox Text="{Binding UserId.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                  Visibility="{Binding UserId, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"/>
 
-                        <Label Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Label_Content_Password}" Visibility="{Binding Password, UpdateSourceTrigger=PropertyChanged, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"/>
+                        <Label Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Label_Content_Password}" 
+                               Visibility="{Binding Password, UpdateSourceTrigger=PropertyChanged, Converter={catel:ReferenceToCollapsingVisibilityConverter}}"/>
                         <PasswordBox Visibility="{Binding Password, Converter={catel:ReferenceToCollapsingVisibilityConverter}}">
                             <xamlbehaviors:Interaction.Behaviors>
                                 <orccontrols:PasswordBindBehavior Password="{Binding Password.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
@@ -194,7 +197,8 @@
                     ToolTip="{Binding ConnectionState, Mode=OneWay}"
                     HorizontalAlignment="Left"/>
             
-            <Button Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Button_Content_Advanced}"
+            <Button x:Name="ShowAdvancedOptionsButton"
+                    Content="{catel:LanguageBinding Controls_ConnectionStringEditWindow_Button_Content_Advanced}"
                     Command="{Binding ShowAdvancedOptions}"
                     HorizontalAlignment="Right"/>
         </Grid>

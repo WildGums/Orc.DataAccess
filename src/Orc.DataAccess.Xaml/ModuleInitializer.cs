@@ -21,6 +21,6 @@ public static class ModuleInitializer
         viewModelLocator.Register(typeof(DbConnectionProviderListWindow), typeof(DbConnectionProviderListViewModel));
 
         var languageService = serviceLocator.ResolveRequiredType<ILanguageService>();
-        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.DataAccess", "Orc.DataAccess.Properties", "Resources"));
+        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.DataAccess.Xaml", "Orc.DataAccess.Properties", "Resources"));
     }
 }

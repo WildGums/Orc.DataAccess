@@ -1,13 +1,23 @@
 ﻿namespace Orc.DataAccess.Example;
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Windows;
 using Catel.IoC;
 using Catel.Logging;
+using Catel.Reflection;
 using Catel.Services;
+using Microsoft.Data.SqlClient;
+using Newtonsoft.Json.Linq;
+using Orc.DataAccess.Database;
 using Orchestra;
 using Theming;
+using ConnectionState = System.Data.ConnectionState;
 
 public partial class App
 {
@@ -50,9 +60,9 @@ public partial class App
 
         StyleHelper.CreateStyleForwardersForDefaultStyles();
 
-#if NETCORE
-        DbProviderFactories.RegisterFactory("System.Data.SqlClient",  System.Data.SqlClient.SqlClientFactory.Instance);
-#endif
+        var factory = System.Data.SqlClient.SqlClientFactory.Instance;
+        DbProviderFactories.RegisterFactory("System.Data.SqlClient", factory);
+        DbProviderFactories.RegisterFactory("Microsoft.Data.SqlClient", SqlClientFactory.Instance);
 
         base.OnStartup(e);
     }

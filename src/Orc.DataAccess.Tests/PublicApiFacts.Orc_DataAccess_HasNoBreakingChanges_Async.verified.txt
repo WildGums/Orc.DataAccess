@@ -1,4 +1,6 @@
 ﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DynamicProxyGenAssembly2")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Orc.DataAccess.Tests")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName=".NET 6.0")]
 public static class ModuleInitializer
 {
@@ -253,6 +255,7 @@ namespace Orc.DataAccess.Database
     }
     public static class DbProviderExtensions
     {
+        public static void ConnectInstance<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, TBaseType instance) { }
         public static void ConnectType<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, System.Type type) { }
         public static T CreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider, params object[] parameters)
             where T :  notnull { }
@@ -317,17 +320,23 @@ namespace Orc.DataAccess.Database
     {
         System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources();
     }
-    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
+    [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
     public class MsSqlDataSourceSchemaProvider : Orc.DataAccess.Database.IDataSourceSchemaProvider
     {
         public MsSqlDataSourceSchemaProvider() { }
         public Orc.DataAccess.Database.DbDataSourceSchema? GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString) { }
     }
-    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
-    public class MsSqlDbDataSourceProvider : Orc.DataAccess.Database.IDbDataSourceProvider
+    [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
+    public class MsSqlDbDataSourceProvider : Orc.DataAccess.Database.MsSqlDbDataSourceProviderBase
     {
         public MsSqlDbDataSourceProvider() { }
-        public System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
+        protected override string ProviderName { get; }
+    }
+    public abstract class MsSqlDbDataSourceProviderBase : Orc.DataAccess.Database.IDbDataSourceProvider
+    {
+        protected MsSqlDbDataSourceProviderBase() { }
+        protected abstract string ProviderName { get; }
+        public virtual System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
     public class MsSqlDbSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
@@ -421,6 +430,18 @@ namespace Orc.DataAccess.Database
         public static string DecryptConnectionString(this string connectionString, string providerName) { }
         public static string EncryptConnectionString(this string connectionString, string providerName) { }
         public static string? GetConnectionStringProperty(this string connectionString, string providerName, string propertyName) { }
+    }
+    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
+    public class SystemSqlDataSourceSchemaProvider : Orc.DataAccess.Database.IDataSourceSchemaProvider
+    {
+        public SystemSqlDataSourceSchemaProvider() { }
+        public Orc.DataAccess.Database.DbDataSourceSchema? GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString) { }
+    }
+    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
+    public class SystemSqlDbDataSourceProvider : Orc.DataAccess.Database.MsSqlDbDataSourceProviderBase
+    {
+        public SystemSqlDbDataSourceProvider() { }
+        protected override string ProviderName { get; }
     }
     public enum TableType
     {

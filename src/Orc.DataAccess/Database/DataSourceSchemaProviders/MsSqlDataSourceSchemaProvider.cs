@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 
-[ConnectToProvider("System.Data.SqlClient")]
+[ConnectToProvider("Microsoft.Data.SqlClient")]
 public class MsSqlDataSourceSchemaProvider : IDataSourceSchemaProvider
 {
     public DbDataSourceSchema? GetSchema(DbConnectionString connectionString)

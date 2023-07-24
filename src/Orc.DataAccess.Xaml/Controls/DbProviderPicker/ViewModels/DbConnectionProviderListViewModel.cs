@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Catel;
 using Catel.MVVM;
 using Database;
 
@@ -19,8 +20,8 @@ public class DbConnectionProviderListViewModel : ViewModelBase
 
         DbProviders = new List<DbProviderInfo>();
     }
-    public override string Title => "Select provider";
 
+    public override string Title => LanguageHelper.GetRequiredString(nameof(Properties.Resources.Controls_DbConnectionProviderList_Title));
     public DbProviderInfo? DbProvider { get; set; }
     public IList<DbProviderInfo> DbProviders { get; private set; }
     public Command Refresh { get; }
@@ -40,7 +41,7 @@ public class DbConnectionProviderListViewModel : ViewModelBase
             return;
         }
 
-        await Task.Run(async () => await CloseViewModelAsync(true));
+        await CloseViewModelAsync(true);
     }
 
     private void OnRefresh()

@@ -1,7 +1,9 @@
 ﻿namespace Orc.DataAccess.Controls;
 
 using System;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Catel;
@@ -9,6 +11,7 @@ using Catel.IoC;
 using Catel.Logging;
 using Catel.Services;
 using Database;
+using Orc.DataAccess.Automation.Controls;
 
 #pragma warning disable IDISP006 // Implement IDisposable
 [TemplatePart(Name = "PART_ConnectionStringTextBox", Type = typeof(TextBox))]
@@ -33,14 +36,22 @@ public class ConnectionStringBuilder : Control
 
         _uiVisualizerService = serviceLocator.ResolveRequiredType<IUIVisualizerService>();
 
-        var editCommandBinding = new CommandBinding {Command = EditCommand};
+        var editCommandBinding = new CommandBinding
+        {
+            Command = EditCommand
+        };
         editCommandBinding.Executed += OnEditCommandExecuted;
         CommandBindings.Add(editCommandBinding);
 
-        var clearCommandBinding = new CommandBinding {Command = ClearCommand};
+        var clearCommandBinding = new CommandBinding
+        {
+            Command = ClearCommand
+        };
         clearCommandBinding.Executed += OnClearCommandExecuted;
         clearCommandBinding.CanExecute += CanClearCommandExecute;
         CommandBindings.Add(clearCommandBinding);
+
+        SetCurrentValue(DefaultPropertiesProperty, new DbConnectionPropertyDefinitionCollection());
     }
 
     #region Routed Commands
@@ -48,11 +59,14 @@ public class ConnectionStringBuilder : Control
 
     private async void OnEditCommandExecuted(object sender, ExecutedRoutedEventArgs e)
     {
+        UpdateConnectionString();
+
         using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance.SetCurrentValue(IsInEditModeProperty, true), 
                    x => x.Instance.SetCurrentValue(IsInEditModeProperty, false)))
         {
             var connectionStringEditViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
             connectionStringEditViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
+            connectionStringEditViewModel.DefaultProperties = DefaultProperties;
 
             if ((await _uiVisualizerService.ShowDialogAsync(connectionStringEditViewModel)).DialogResult == false)
             {
@@ -137,6 +151,24 @@ public class ConnectionStringBuilder : Control
 
     public static readonly DependencyProperty IsAdvancedOptionsReadOnlyProperty = DependencyProperty.Register(
         nameof(IsAdvancedOptionsReadOnly), typeof(bool), typeof(ConnectionStringBuilder), new PropertyMetadata(false));
+    
+    public bool IsEditable
+    {
+        get { return (bool)GetValue(IsEditableProperty); }
+        set { SetValue(IsEditableProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register(
+        nameof(IsEditable), typeof(bool), typeof(ConnectionStringBuilder), new PropertyMetadata(false));
+    
+    public DbConnectionPropertyDefinitionCollection? DefaultProperties
+    {
+        get { return (DbConnectionPropertyDefinitionCollection?)GetValue(DefaultPropertiesProperty); }
+        set { SetValue(DefaultPropertiesProperty, value); }
+    }
+
+    public static readonly DependencyProperty DefaultPropertiesProperty = DependencyProperty.Register(
+        nameof(DefaultProperties), typeof(DbConnectionPropertyDefinitionCollection), typeof(ConnectionStringBuilder), new PropertyMetadata(default(DbConnectionPropertyDefinitionCollection)));
     #endregion
 
     public override void OnApplyTemplate()
@@ -147,6 +179,27 @@ public class ConnectionStringBuilder : Control
         if (_connectionStringTextBox is null)
         {
             throw Log.ErrorAndCreateException<InvalidOperationException>("Can't find template part 'PART_ConnectionStringTextBox'");
+        }
+
+        _connectionStringTextBox.TextChanged += OnTextChanged;
+    }
+
+    private void OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (_connectionStringTextBox is null)
+        {
+            return;
+        }
+
+        if (_isConnectionStringUpdating)
+        {
+            return;
+        }
+
+        using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance._isConnectionStringUpdating = true,
+                   x => x.Instance._isConnectionStringUpdating = false))
+        {
+            SetCurrentValue(ConnectionStringProperty, _connectionStringTextBox.Text);
         }
     }
 
@@ -178,10 +231,8 @@ public class ConnectionStringBuilder : Control
             DbProvider? dbProvider = null;
             if (string.IsNullOrEmpty(providerName))
             {
-                foreach (var providerKeyValue in providers)
+                foreach (var currentProvider in providers.Values)
                 {
-                    var currentProvider = providerKeyValue.Value;
-
                     try
                     {
                         displayedConnectionsString = currentProvider.CreateConnectionString(connectionString);
@@ -191,15 +242,37 @@ public class ConnectionStringBuilder : Control
                         continue;
                     }
 
+                    //Stop iterate, if there is another candidate
+                    if (dbProvider is not null)
+                    {
+                        dbProvider = null;
+                        break;
+                    }
+
                     dbProvider = currentProvider;
-                    break;
                 }
             }
             else
             {
                 if (providers.TryGetValue(providerName, out dbProvider))
                 {
-                    displayedConnectionsString = dbProvider.CreateConnectionString(connectionString);
+                    try
+                    {
+                        displayedConnectionsString = dbProvider.CreateConnectionString(connectionString);
+                    }
+                    catch
+                    {
+                        if (DatabaseProvider is not null)
+                        {
+                            SetCurrentValue(DatabaseProviderProperty, null);
+
+                            _isConnectionStringUpdating = false;
+
+                            UpdateConnectionString();
+
+                            return;
+                        }
+                    }
                 }
             }
 
@@ -207,6 +280,11 @@ public class ConnectionStringBuilder : Control
             SetCurrentValue(DatabaseProviderProperty, dbProvider?.ProviderInvariantName);
             _dbProvider = dbProvider?.Info;
         }
+    }
+
+    protected override AutomationPeer OnCreateAutomationPeer()
+    {
+        return new ConnectionStringBuilderAutomationPeer(this);
     }
 }
 #pragma warning restore IDISP006 // Implement IDisposable

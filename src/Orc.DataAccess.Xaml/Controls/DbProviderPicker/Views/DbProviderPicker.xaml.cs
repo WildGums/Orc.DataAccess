@@ -1,8 +1,10 @@
 ﻿namespace Orc.DataAccess.Controls;
 
 using System.Windows;
+using System.Windows.Automation.Peers;
 using Catel.MVVM.Views;
 using Database;
+using Orc.DataAccess.Automation.Controls;
 
 public sealed partial class DbProviderPicker
 {
@@ -21,5 +23,10 @@ public sealed partial class DbProviderPicker
     {
         get { return (DbProviderInfo?)GetValue(DbProviderProperty); }
         set { SetValue(DbProviderProperty, value); }
+    }
+
+    protected override AutomationPeer OnCreateAutomationPeer()
+    {
+        return new DbProviderPickerAutomationPeer(this);
     }
 }
