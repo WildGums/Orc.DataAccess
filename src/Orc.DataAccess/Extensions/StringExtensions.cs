@@ -7,6 +7,7 @@ using System.Text;
 
 public static class StringExtensions
 {
+    private static byte[]? _salt;
     private const int Keysize = 256; // This constant is used to determine the keysize of the encryption algorithm.
     public const string InitVector = "tu89geji340t89u2";
 
@@ -18,7 +19,13 @@ public static class StringExtensions
         var initVectorBytes = Encoding.UTF8.GetBytes(InitVector);
         var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-        using var password = new Rfc2898DeriveBytes(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+        _salt ??= new byte[8];
+        using (var randomGenerator = RandomNumberGenerator.Create())
+        {
+            randomGenerator.GetBytes(_salt);
+        }
+
+        using var password = new Rfc2898DeriveBytes(passPhrase, _salt);
         var keyBytes = password.GetBytes(Keysize / 8);
         using var symmetricKey = Aes.Create();
         var encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes); ////To encrypt
@@ -44,7 +51,13 @@ public static class StringExtensions
             var initVectorBytes = Encoding.ASCII.GetBytes(InitVector);
             var cipherTextBytes = Convert.FromBase64String(cipherText);
 
-            using var password = new Rfc2898DeriveBytes(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            _salt ??= new byte[8];
+            using (var randomGenerator = RandomNumberGenerator.Create())
+            {
+                randomGenerator.GetBytes(_salt);
+            }
+
+            using var password = new Rfc2898DeriveBytes(passPhrase, _salt);
             var keyBytes = password.GetBytes(Keysize / 8);
             using var symmetricKey = Aes.Create();
             var decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
