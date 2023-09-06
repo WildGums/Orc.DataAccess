@@ -152,9 +152,25 @@ public class ConnectionStringEditViewModel : ViewModelBase
         }
 
         var allKnownProviders = Database.DbProvider.GetRegisteredProviders().Select(x => x.Value.Info).ToArray();
-        if (allKnownProviders.Length == 1)
+        foreach (var provider in allKnownProviders)
         {
-            DbProvider = allKnownProviders.Single();
+            var connectionString = provider.CreateConnectionString(_initialConnectionString);
+            if (connectionString is null)
+            {
+                continue;
+            }
+
+            try
+            {
+                using var testConnection = provider.GetProvider().CreateConnection(connectionString.ToString());
+            }
+            catch
+            {
+                continue;
+            }
+
+            DbProvider = provider;
+            ConnectionString = connectionString;
         }
     }
 
