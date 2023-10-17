@@ -13,6 +13,7 @@ using System.Windows.Markup;
 [assembly: XmlnsPrefix("http://schemas.wildgums.com/orc/dataaccess", "orcdataaccess")]
 [assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess")]
 //[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess.Behaviors")]
+[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess.Controls")]
 //[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess.Converters")]
 //[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess.Fonts")]
 //[assembly: XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess.Markup")]
