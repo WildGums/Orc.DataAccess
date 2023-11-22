@@ -7,6 +7,8 @@ using System.Text;
 
 public static class StringExtensions
 {
+    private static readonly HashAlgorithmName HashAlgorithm = HashAlgorithmName.SHA256;
+    private const int Iterations = 80234;
     private const int Keysize = 256; // This constant is used to determine the keysize of the encryption algorithm.
     public const string InitVector = "tu89geji340t89u2";
 
@@ -18,7 +20,7 @@ public static class StringExtensions
         var initVectorBytes = Encoding.UTF8.GetBytes(InitVector);
         var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-        using var password = new Rfc2898DeriveBytes(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+        using var password = new Rfc2898DeriveBytes(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, Iterations, HashAlgorithm);
         var keyBytes = password.GetBytes(Keysize / 8);
         using var symmetricKey = Aes.Create();
         var encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes); ////To encrypt
@@ -44,7 +46,7 @@ public static class StringExtensions
             var initVectorBytes = Encoding.ASCII.GetBytes(InitVector);
             var cipherTextBytes = Convert.FromBase64String(cipherText);
 
-            using var password = new Rfc2898DeriveBytes(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            using var password = new Rfc2898DeriveBytes(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, Iterations, HashAlgorithm);
             var keyBytes = password.GetBytes(Keysize / 8);
             using var symmetricKey = Aes.Create();
             var decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
