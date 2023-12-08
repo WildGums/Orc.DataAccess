@@ -71,6 +71,6 @@ public class SystemSqlDbDataSourceProviderTests
 
         var sources = dbProvider.GetDataSources();
 
-        CollectionAssert.AreEquivalent(new []{ new DbDataSource(providerName, expectedServerName) }, sources);
+        Assert.That(sources, Is.EquivalentTo(new []{ new DbDataSource(providerName, expectedServerName) }));
     }
 }

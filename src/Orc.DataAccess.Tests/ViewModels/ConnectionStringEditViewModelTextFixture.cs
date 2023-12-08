@@ -18,11 +18,11 @@ public class ConnectionStringEditViewModelTextFixture
     {
         [TestCase("Server=mycomputer.test.xxx.com,8888;Database=DataAcess;User Id=myUsername;Password=myPassword;", null, "mycomputer.test.xxx.com,8888",
             "DataAcess", false, "myPassword", "myUsername")]
-        public async Task ArePropertiesReturnsValuesFromConnectionStringAsync(string connectionString, string expectedPort, string expectedDataSource,
+        public async Task ArePropertiesReturnsValuesFromConnectionStringAsync(string connectionString, string? expectedPort, string expectedDataSource,
             string expectedInitialCatalog, bool expectedIntegratedSecurity, string expectedPassword, string expectedUserId)
         {
-            Assert.IsNotNull(connectionString);
-            Assert.IsNotEmpty(connectionString);
+            Assert.That(connectionString, Is.Not.Null);
+            Assert.That(connectionString, Is.Not.Empty);
 
             DbProviderFactories.RegisterFactory("System.Data.SqlClient", typeof(SqlClientFactory));
 
@@ -48,12 +48,12 @@ public class ConnectionStringEditViewModelTextFixture
             await Task.Delay(1000);
 
             // Attention null can come here if port parsed as part of data source
-            Assert.AreEqual(expectedPort, vm.Port);
-            Assert.AreEqual(expectedDataSource, vm.DataSource.Value);
-            Assert.AreEqual(expectedInitialCatalog, vm.InitialCatalog.Value);
-            Assert.AreEqual(expectedIntegratedSecurity, vm.IntegratedSecurity.Value);
-            Assert.AreEqual(expectedPassword, vm.Password.Value);
-            Assert.AreEqual(expectedUserId, vm.UserId.Value);
+            Assert.That(vm.Port.ToString(), Is.EqualTo(expectedPort));
+            Assert.That(vm.DataSource.Value, Is.EqualTo(expectedDataSource));
+            Assert.That(vm.InitialCatalog.Value, Is.EqualTo(expectedInitialCatalog));
+            Assert.That(vm.IntegratedSecurity.Value, Is.EqualTo(expectedIntegratedSecurity));
+            Assert.That(vm.Password.Value, Is.EqualTo(expectedPassword));
+            Assert.That(vm.UserId.Value, Is.EqualTo(expectedUserId));
         }
     }
 }

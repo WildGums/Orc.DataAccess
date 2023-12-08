@@ -19,7 +19,7 @@ public class KeyValueStringParserFacts
         var expectedKeyValues = expectedKeys.Zip(expectedValues, (key, value) => new KeyValuePair<string, string>(key, value)).OrderBy(x => x.Key);
 
         var isEquals = results.OrderBy(x => x.Key).SequenceEqual(expectedKeyValues);
-        Assert.IsTrue(isEquals);
+        Assert.That(isEquals, Is.True);
     }
 
     [TestCase(new[] {"ConnectionString", "Table", "Dialect"}, new[] {@"Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;", "RelationOperations", "SQLSERVER_2008"},
@@ -32,7 +32,7 @@ public class KeyValueStringParserFacts
 
         var result = KeyValueStringParser.FormatToKeyValueString(sourceKeyValues);
 
-        Assert.AreEqual(result, expectedResult);
+        Assert.That(expectedResult, Is.EqualTo(result));
     }
 
     [TestCase(@"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;, Table=RelationOperations, Dialect=SQLSERVER_2008", "Catalog",
@@ -44,6 +44,6 @@ public class KeyValueStringParserFacts
     {
         var result = KeyValueStringParser.SetValue(source, key, value);
 
-        Assert.AreEqual(result, expectedSource);
+        Assert.That(expectedSource, Is.EqualTo(result));
     }
 }

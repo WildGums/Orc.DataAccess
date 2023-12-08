@@ -26,7 +26,7 @@ public class ExcelReaderFacts
             }
         }
 
-        Assert.AreEqual(reader.TotalRecordCount, 8);
+        Assert.That(reader.TotalRecordCount, Is.EqualTo(8));
     }
 
     private static string GetDataDirectory([CallerFilePath] string sourceFilePath = "")

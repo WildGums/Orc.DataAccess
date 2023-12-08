@@ -87,18 +87,17 @@ public class ConnectionStringBuilderControlTests : ConnectionStringBuilderContro
             //Set filter
             advPropertiesWindow.SetFilter("Adv");
             var propertiesAfterFilter = advPropertiesWindow.Properties;
-            CollectionAssert.AreEquivalent(new[]
+            Assert.That(propertiesAfterFilter, Is.EquivalentTo(new[]
                 {
                     "ADVPROPERTY_1",
                     "ADVPROPERTY_2",
                     "ADVPROPERTY_3"
-                },
-                propertiesAfterFilter);
+                }));
 
             //Return to initial state
             advPropertiesWindow.SetFilter(string.Empty);
             var returnToInitialStateProperties = advPropertiesWindow.Properties;
-            CollectionAssert.AreEquivalent(initialProperties, returnToInitialStateProperties);
+            Assert.That(returnToInitialStateProperties, Is.EquivalentTo(initialProperties));
 
             advPropertiesWindow.Close();
             connectionStringEditWindow.Close();
