@@ -48,7 +48,7 @@ public class ConnectionStringEditViewModelTextFixture
             await Task.Delay(1000);
 
             // Attention null can come here if port parsed as part of data source
-            Assert.That(vm.Port.ToString(), Is.EqualTo(expectedPort));
+            Assert.That(vm.Port?.ToString(), Is.EqualTo(expectedPort));
             Assert.That(vm.DataSource.Value, Is.EqualTo(expectedDataSource));
             Assert.That(vm.InitialCatalog.Value, Is.EqualTo(expectedInitialCatalog));
             Assert.That(vm.IntegratedSecurity.Value, Is.EqualTo(expectedIntegratedSecurity));
