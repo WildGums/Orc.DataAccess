@@ -1,10 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ModuleInitializer.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-using Catel.IoC;
+﻿using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
 using Orc.DataAccess.Controls;
@@ -21,12 +15,12 @@ public static class ModuleInitializer
     {
         var serviceLocator = ServiceLocator.Default;
 
-        var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
+        var viewModelLocator = serviceLocator.ResolveRequiredType<IViewModelLocator>();
         viewModelLocator.Register(typeof(ConnectionStringEditWindow), typeof(ConnectionStringEditViewModel));
         viewModelLocator.Register(typeof(ConnectionStringAdvancedOptionsWindow), typeof(ConnectionStringAdvancedOptionsViewModel));
         viewModelLocator.Register(typeof(DbConnectionProviderListWindow), typeof(DbConnectionProviderListViewModel));
 
-        var languageService = serviceLocator.ResolveType<ILanguageService>();
-        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.DataAccess", "Orc.DataAccess.Properties", "Resources"));
+        var languageService = serviceLocator.ResolveRequiredType<ILanguageService>();
+        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.DataAccess.Xaml", "Orc.DataAccess.Properties", "Resources"));
     }
 }

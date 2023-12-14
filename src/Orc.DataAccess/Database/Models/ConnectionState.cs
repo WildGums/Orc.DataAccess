@@ -1,16 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConnectionState.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
-
-namespace Orc.DataAccess.Database
+public enum ConnectionState
 {
-    public enum ConnectionState
-    {
-        Undefined,
-        Valid,
-        Invalid
-    }
+    Undefined = 0,
+    Valid = 1,
+    Invalid = 2
 }

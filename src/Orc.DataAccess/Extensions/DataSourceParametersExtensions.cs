@@ -1,88 +1,78 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DataSourceParametersExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Orc.DataAccess
+public static class DataSourceParametersExtensions
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    public static class DataSourceParametersExtensions
+    public static string ToArgsValueString(this DataSourceParameters queryParameters)
     {
-        #region Methods
-        public static string ToArgsValueString(this DataSourceParameters queryParameters)
+        ArgumentNullException.ThrowIfNull(queryParameters);
+
+        return string.Join(",", queryParameters.Parameters.Select(x => $"'{x.Value}'"));
+    }
+
+    public static string ToArgsNamesString(this DataSourceParameters queryParameters, string argsPrefix = "")
+    {
+        ArgumentNullException.ThrowIfNull(queryParameters);
+
+        return string.Join(",", queryParameters.Parameters.Select(x => $"{argsPrefix}{x.Name}"));
+    }
+
+    public static bool IsEmpty(this DataSourceParameters databaseQueryParameters)
+    {
+        ArgumentNullException.ThrowIfNull(databaseQueryParameters);
+
+        return !databaseQueryParameters.Parameters.Any();
+    }
+
+    public static bool IsSameAs(this DataSourceParameters databaseQueryParameters, DataSourceParameters other)
+    {
+        if (ReferenceEquals(databaseQueryParameters, other))
         {
-            return queryParameters is not null ? string.Join(",", queryParameters.Parameters?.Select(x => $"'{x.Value}'") ?? new List<string>()) : string.Empty;
+            return true;
         }
 
-        public static string ToArgsNamesString(this DataSourceParameters queryParameters, string argsPrefix = "")
+        if (databaseQueryParameters.IsEmpty() && other.IsEmpty())
         {
-            return queryParameters is not null ? string.Join(",", queryParameters.Parameters?.Select(x => $"{argsPrefix}{x.Name}") ?? new List<string>()) : string.Empty;
+            return true;
         }
 
-        public static bool IsEmpty(this DataSourceParameters databaseQueryParameters)
-        {
-            return databaseQueryParameters?.Parameters is null || !databaseQueryParameters.Parameters.Any();
-        }
+        var parameters = databaseQueryParameters.Parameters;
+        var otherParameters = other.Parameters;
 
-        public static bool IsSameAs(this DataSourceParameters databaseQueryParameters, DataSourceParameters other)
+        return parameters.SequenceEqual(otherParameters, new NameAndTypeEqualsEquallyComparer());
+    }
+
+    #region Nested type: NameAndTypeEqualsEqualyComparer
+    private class NameAndTypeEqualsEquallyComparer : IEqualityComparer<DataSourceParameter>
+    {
+        public bool Equals(DataSourceParameter? x, DataSourceParameter? y)
         {
-            if (ReferenceEquals(databaseQueryParameters, other))
+            if (ReferenceEquals(x, y))
             {
                 return true;
             }
 
-            if (databaseQueryParameters.IsEmpty() && other.IsEmpty())
-            {
-                return true;
-            }
-
-            var parameters = databaseQueryParameters?.Parameters;
-            var otherParameters = other?.Parameters;
-
-            if (parameters is null || otherParameters is null)
+            if (x is null || y is null)
             {
                 return false;
             }
 
-            return parameters.SequenceEqual(otherParameters, new NameAndTypeEqualsEqualyComparer());
+            return x.Name == y.Name && x.Type == y.Type;
         }
-        #endregion
 
-        #region Nested type: NameAndTypeEqualsEqualyComparer
-        private class NameAndTypeEqualsEqualyComparer : IEqualityComparer<DataSourceParameter>
+        public int GetHashCode(DataSourceParameter obj)
         {
-            #region IEqualityComparer<DataSourceParameter> Members
-            public bool Equals(DataSourceParameter x, DataSourceParameter y)
+            unchecked
             {
-                if (ReferenceEquals(x, y))
-                {
-                    return true;
-                }
-
-                if (x is null || y is null)
-                {
-                    return false;
-                }
-
-                return x.Name == y.Name && x.Type == y.Type;
+                var hashCode = 1168257605;
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Name);
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Type);
+                return hashCode;
             }
-
-            public int GetHashCode(DataSourceParameter obj)
-            {
-                unchecked
-                {
-                    var hashCode = 1168257605;
-                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Name);
-                    hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(obj.Type);
-                    return hashCode;
-                }
-            }
-            #endregion
         }
-        #endregion
     }
+    #endregion
 }

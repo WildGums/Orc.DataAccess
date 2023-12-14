@@ -14,7 +14,9 @@
             <ColumnDefinition Width="Auto"/>
         </orccontrols:StackGrid.ColumnDefinitions>
         
-        <TextBox Text="{Binding DbProvider.Name}" IsReadOnly="True">
+        <TextBox x:Name="DbProviderTextBox"
+                 Text="{Binding DbProvider.Name, Mode=OneWay}" 
+                 IsReadOnly="True">
             <xamlbehaviors:Interaction.Triggers>
                 <xamlbehaviors:EventTrigger EventName="MouseDoubleClick">
                     <catel:EventToCommand Command="{Binding ChangeDbProvider}" 
@@ -24,8 +26,10 @@
                 </xamlbehaviors:EventTrigger>
             </xamlbehaviors:Interaction.Triggers>
         </TextBox>
-        
-        <Button Command="{Binding ChangeDbProvider}" Content="{catel:LanguageBinding Controls_DbProviderPicker_Button_Content_Change}"/>
+
+        <Button x:Name="ChangeDbProviderButton"
+                Command="{Binding ChangeDbProvider}"
+                Content="{catel:LanguageBinding Controls_DbProviderPicker_Button_Content_Change}"/>
     </orccontrols:StackGrid>
 </catel:UserControl>
  

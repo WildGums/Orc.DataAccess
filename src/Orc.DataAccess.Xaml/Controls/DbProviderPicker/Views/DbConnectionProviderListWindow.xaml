@@ -17,7 +17,8 @@
             <RowDefinition Height="Auto"/>
         </orccontrols:StackGrid.RowDefinitions>
 
-         <ListView ItemsSource="{Binding DbProviders}"
+         <ListView x:Name="ProvidersList"
+                   ItemsSource="{Binding DbProviders}"
                    SelectedItem="{Binding DbProvider, Mode=TwoWay}">
              <xamlbehaviors:Interaction.Triggers>
                  <xamlbehaviors:EventTrigger EventName="MouseDoubleClick">
@@ -36,7 +37,7 @@
 
              <ListView.ItemTemplate>
                  <DataTemplate>
-                     <TextBlock Text="{Binding Name}"/>
+                     <TextBlock Text="{Binding InvariantName}"/>
                  </DataTemplate>
              </ListView.ItemTemplate>
          </ListView>

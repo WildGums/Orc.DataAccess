@@ -1,46 +1,85 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConnectionStringAdvancedOptionsViewModel.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Controls;
 
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Threading;
+using Catel;
+using Catel.MVVM;
+using Database;
 
-namespace Orc.DataAccess.Controls
+public class ConnectionStringAdvancedOptionsViewModel : ViewModelBase
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Catel;
-    using Catel.MVVM;
-    using Database;
+    private readonly DispatcherTimer _updateFilterTimer = new();
 
-    public class ConnectionStringAdvancedOptionsViewModel : ViewModelBase
+    private CollectionViewSource? _propertiesCollectionViewSource;
+
+    public ConnectionStringAdvancedOptionsViewModel(DbConnectionString connectionString)
     {
-        #region Constructors
-        public ConnectionStringAdvancedOptionsViewModel(DbConnectionString connectionString)
+        ArgumentNullException.ThrowIfNull(connectionString);
+
+        ConnectionString = connectionString;
+        ConnectionStringProperties = Array.Empty<DbConnectionStringProperty>();
+
+        _updateFilterTimer.Interval = TimeSpan.FromMilliseconds(200);
+        _updateFilterTimer.Tick += OnUpdateFilterTimerTick;
+    }
+
+    public override string Title => "Advanced options";
+    public DbConnectionStringProperty[] ConnectionStringProperties { get; private set; }
+    public bool IsAdvancedOptionsReadOnly { get; set; }
+    public DbConnectionString ConnectionString { get; }
+    public string? PropertyFilter { get; set; }
+    public ICollectionView? ConnectionStringPropertiesCollectionView { get; private set; }
+
+    protected override Task InitializeAsync()
+    {
+        ConnectionStringProperties = ConnectionString.Properties.Values.Where(x => !x.IsSensitive)
+            .OrderBy(x => x.Name)
+            .ToArray();
+
+        _propertiesCollectionViewSource = new CollectionViewSource
         {
-            Argument.IsNotNull(() => connectionString);
+            Source = ConnectionStringProperties
+        };
+        _propertiesCollectionViewSource.Filter += OnFilter;
 
-            ConnectionString = connectionString;
-        }
-        #endregion
+        ConnectionStringPropertiesCollectionView = _propertiesCollectionViewSource.View;
 
-        #region Properties
-        public override string Title => "Advanced options";
-        public IList<DbConnectionStringProperty> ConnectionStringProperties { get; private set; }
-        public bool IsAdvancedOptionsReadOnly { get; set; }
-        public DbConnectionString ConnectionString { get; }
-        #endregion
+        return base.InitializeAsync();
+    }
 
-        #region Methods
-        protected override Task InitializeAsync()
+    private void OnPropertyFilterChanged()
+    {
+        _updateFilterTimer.Stop();
+        _updateFilterTimer.Start();
+    }
+
+    private void OnUpdateFilterTimerTick(object? sender, EventArgs e)
+    {
+        _updateFilterTimer.Stop();
+
+        ConnectionStringPropertiesCollectionView?.Refresh();
+    }
+
+    private void OnFilter(object sender, FilterEventArgs e)
+    {
+        if (e.Item is not DbConnectionStringProperty property)
         {
-            ConnectionStringProperties = ConnectionString.Properties.Values.Where(x => !x.IsSensitive)
-                .OrderBy(x => x.Name)
-                .ToList();
-
-            return base.InitializeAsync();
+            e.Accepted = false;
+            return;
         }
-        #endregion
+
+        var propertyFilter = PropertyFilter;
+        if (string.IsNullOrWhiteSpace(propertyFilter))
+        {
+            e.Accepted = true;
+            return;
+        }
+
+        e.Accepted = property.Name.ContainsIgnoreCase(propertyFilter)
+            || property.Value?.ToString()?.ContainsIgnoreCase(propertyFilter) == true;
     }
 }

@@ -1,20 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DataSourceBaseExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess;
 
-namespace Orc.DataAccess
+using System;
+
+public static class DataSourceBaseExtensions
 {
-    using Catel;
-
-    public static class DataSourceBaseExtensions
+    public static bool IsValid(this DataSourceBase dataSource)
     {
-        public static bool IsValid(this DataSourceBase dataSource)
-        {
-            Argument.IsNotNull(() => dataSource);
+        ArgumentNullException.ThrowIfNull(dataSource);
 
-            return !dataSource.ValidationContext.HasErrors;
-        }
+        return !dataSource.ValidationContext.HasErrors;
     }
 }

@@ -1,24 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DbObject.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
-
-namespace Orc.DataAccess.Database
+public class DbObject
 {
-    public class DbObject
+    public DbObject(TableType type)
     {
-        #region Constructors
-        public DbObject(TableType type)
-        {
-            Type = type;
-        }
-        #endregion
-
-        #region Properties
-        public string Name { get; set; }
-        public TableType Type { get; }
-        #endregion
+        Type = type;
+        Name = string.Empty;
     }
+
+    public string Name { get; set; }
+    public TableType Type { get; }
 }

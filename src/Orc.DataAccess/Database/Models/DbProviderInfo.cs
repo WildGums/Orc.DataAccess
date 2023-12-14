@@ -1,51 +1,49 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DbProviderInfo.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
+using System;
 
-namespace Orc.DataAccess.Database
+public class DbProviderInfo
 {
-    public class DbProviderInfo
+    public DbProviderInfo(string name, string invariantName, string description, string assemblyQualifiedName)
     {
-        #region Properties
-        public string Name { get; set; }
-        public string InvariantName { get; set; }
-        public string Description { get; set; }
-        public string AssemblyQualifiedName { get; set; }
-        #endregion
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(invariantName);
+        ArgumentNullException.ThrowIfNull(description);
+        ArgumentNullException.ThrowIfNull(assemblyQualifiedName);
 
-        #region Methods
-        protected bool Equals(DbProviderInfo other)
+        Name = name;
+        InvariantName = invariantName;
+        Description = description;
+        AssemblyQualifiedName = assemblyQualifiedName;
+    }
+
+    public string Name { get; }
+    public string InvariantName { get; }
+    public string Description { get; }
+    public string AssemblyQualifiedName { get; }
+
+    protected bool Equals(DbProviderInfo other)
+    {
+        return string.Equals(InvariantName, other.InvariantName);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
         {
-            return string.Equals(InvariantName, other.InvariantName);
+            return false;
         }
 
-        public override bool Equals(object obj)
+        if (ReferenceEquals(this, obj))
         {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((DbProviderInfo)obj);
+            return true;
         }
 
-        public override int GetHashCode()
-        {
-            return (InvariantName is not null ? InvariantName.GetHashCode() : 0);
-        }
-        #endregion
+        return obj.GetType() == GetType() && Equals((DbProviderInfo)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return InvariantName.GetHashCode();
     }
 }

@@ -1,12 +1,11 @@
-﻿namespace Orc.DataAccess.Example.Views
-{
-    public partial class MainWindow
-    {
-        public MainWindow()
-        {
-            InitializeComponent();
+﻿namespace Orc.DataAccess.Example.Views;
 
-            CanCloseUsingEscape = false;
-        }
+public partial class MainWindow
+{
+    public MainWindow()
+    {
+        InitializeComponent();
+
+        CanCloseUsingEscape = false;
     }
 }

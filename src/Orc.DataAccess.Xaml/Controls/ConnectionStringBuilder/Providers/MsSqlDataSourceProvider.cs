@@ -1,96 +1,48 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MsSqlDataSourceProvider.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Controls;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Catel.Logging;
+using Microsoft.Win32;
 
-namespace Orc.DataAccess.Controls
+public class MsSqlDataSourceProvider : IDataSourceProvider
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Catel.Logging;
-    using Microsoft.Win32;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public class MsSqlDataSourceProvider : IDataSourceProvider
+    public string DataBasesQuery => "SELECT name from sys.databases";
+
+    public IList<string> GetDataSources()
     {
-        #region Constants
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-        #endregion
+        var localServers = GetLocalSqlServerInstances();
+        var remoteServers = GetRemoteSqlServerInstances();
 
-        #region Properties
-        public string DataBasesQuery => "SELECT name from sys.databases";
-        #endregion
+        return localServers.Union(remoteServers)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToList();
+    }
 
-        #region IDataSourceProvider Members
-        public IList<string> GetDataSources()
-        {
-            var localServers = GetLocalSqlServerInstances();
-            var remoteServers = GetRemoteSqlServerInstances();
+    private static IEnumerable<string> GetLocalSqlServerInstances()
+    {
+        var machineName = Environment.MachineName;
 
-            return localServers.Union(remoteServers)
-                .Distinct()
-                .OrderBy(x => x)
-                .ToList();
-        }
-        #endregion
+        var localSqlInstances32 = GetInstalledInstancesInRegistryView(RegistryView.Registry32);
+        var localSqlInstances64 = GetInstalledInstancesInRegistryView(RegistryView.Registry64);
 
-        #region Methods
-        private IEnumerable<string> GetLocalSqlServerInstances()
-        {
-            var machineName = Environment.MachineName;
+        return localSqlInstances32.Union(localSqlInstances64)
+            .Select(x => $"{machineName}\\{x}");
+    }
 
-            var localSqlInstances32 = GetInstalledInstancesInRegistryView(RegistryView.Registry32);
-            var localSqlInstances64 = GetInstalledInstancesInRegistryView(RegistryView.Registry64);
+    private static IEnumerable<string> GetInstalledInstancesInRegistryView(RegistryView registryView)
+    {
+        using var regView = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView);
+        using var sqlServerNode = regView.OpenSubKey(DataSourcePath.MicrosoftSqlServerRegPath, false);
+        return sqlServerNode?.GetValue("InstalledInstances") as IEnumerable<string> ?? Enumerable.Empty<string>();
+    }
 
-            return localSqlInstances32.Union(localSqlInstances64)
-                .Select(x => $"{machineName}\\{x}");
-        }
-
-        private IList<string> GetInstalledInstancesInRegistryView(RegistryView registryView)
-        {
-            using (var regView = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
-            {
-                using var sqlServNode = regView.OpenSubKey(DataSourcePath.MicrosoftSqlServerRegPath, false);
-                return sqlServNode?.GetValue("InstalledInstances") as IList<string> ?? new List<string>();
-            }
-        }
-
-        private IList<string> GetRemoteSqlServerInstances()
-        {
-#if NETCORE
-            throw Log.ErrorAndCreateException<NotSupportedException>($"Not supported on .NET Core, SqlDataSourceEnumerator is not (yet) available. See https://github.com/dotnet/corefx/issues/32874");
-#else
-            DataTable dataTable;
-
-            try
-            {
-                dataTable = SqlDataSourceEnumerator.Instance.GetDataSources();
-            }
-            catch
-            {
-                dataTable = new DataTable { Locale = CultureInfo.InvariantCulture };
-            }
-
-            var serversCount = dataTable.Rows.Count;
-            var servers = new string[serversCount];
-
-            for (var i = 0; i < serversCount; i++)
-            {
-                var name = dataTable.Rows[i]["ServerName"].ToString();
-                var instance = dataTable.Rows[i]["InstanceName"].ToString();
-
-                servers[i] = name;
-                if (instance.Any())
-                {
-                    servers[i] += "\\" + instance;
-                }
-            }
-
-            return servers;
-#endif
-        }
-        #endregion
+    private static IEnumerable<string> GetRemoteSqlServerInstances()
+    {
+        throw Log.ErrorAndCreateException<NotSupportedException>($"Not supported on .NET Core, SqlDataSourceEnumerator is not (yet) available. See https://github.com/dotnet/corefx/issues/32874");
     }
 }

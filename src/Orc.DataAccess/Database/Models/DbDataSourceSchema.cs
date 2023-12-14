@@ -1,15 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DbDataSourceSchema.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
-namespace Orc.DataAccess.Database
+using System.Collections.Generic;
+
+public class DbDataSourceSchema
 {
-    using System.Collections.Generic;
-
-    public class DbDataSourceSchema
+    public DbDataSourceSchema()
     {
-        public List<string> Databases { get; set; }
+        Databases = new();
     }
+
+    public List<string> Databases { get; set; }
 }

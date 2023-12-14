@@ -1,55 +1,50 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DatabaseSourceExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using Catel;
+using Catel.Logging;
 
-namespace Orc.DataAccess.Database
+public static class DatabaseSourceExtensions
 {
-    using System.Collections.Generic;
-    using System.Data.Common;
-    using Catel;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public static class DatabaseSourceExtensions
+    public static IList<DbObject> GetObjectsOfType(this DatabaseSource databaseSource, TableType tableType)
     {
-        #region Methods
-        public static IList<DbObject> GetObjectsOfType(this DatabaseSource databaseSource, TableType tableType)
+        ArgumentNullException.ThrowIfNull(databaseSource);
+
+        var dataSourceCopy = new DatabaseSource(databaseSource.ToString())
         {
-            Argument.IsNotNull(() => databaseSource);
+            TableType = tableType
+        };
 
-            var dataSourceCopy = new DatabaseSource(databaseSource.ToString())
-            {
-                TableType = tableType
-            };
+        var gateway = dataSourceCopy.CreateGateway();
 
-            var gateway = dataSourceCopy.CreateGateway();
+        return gateway?.GetObjects() ?? new List<DbObject>();
+    }
 
-            return gateway?.GetObjects() ?? new List<DbObject>();
-        }
+    public static DbConnection? CreateConnection(this DatabaseSource databaseSource)
+    {
+        ArgumentNullException.ThrowIfNull(databaseSource);
 
-        public static DbConnection CreateConnection(this DatabaseSource databaseSource)
-        {
-            Argument.IsNotNull(() => databaseSource);
+        var provider = databaseSource.GetProvider();
+        return provider.CreateConnection(databaseSource);
+    }
 
-            var provider = databaseSource.GetProvider();
-            return provider?.CreateConnection(databaseSource);
-        }
+    public static DbSourceGatewayBase? CreateGateway(this DatabaseSource databaseSource)
+    {
+        ArgumentNullException.ThrowIfNull(databaseSource);
 
-        public static DbSourceGatewayBase CreateGateway(this DatabaseSource databaseSource)
-        {
-            Argument.IsNotNull(() => databaseSource);
+        var dbProvider = databaseSource.GetProvider();
+        return dbProvider.CreateDbSourceGateway(databaseSource);
+    }
 
-            var dbProvider = databaseSource.GetProvider();
-            return dbProvider?.CreateDbSourceGateway(databaseSource);
-        }
+    public static DbProvider GetProvider(this DatabaseSource databaseSource)
+    {
+        ArgumentNullException.ThrowIfNull(databaseSource);
+        Argument.IsNotNullOrEmpty(databaseSource.ProviderName, "databaseSource.ProviderName");
 
-        public static DbProvider GetProvider(this DatabaseSource databaseSource)
-        {
-            Argument.IsNotNull(() => databaseSource);
-
-            return DbProvider.GetRegisteredProvider(databaseSource.ProviderName);
-        }
-        #endregion
+        return DbProvider.GetRegisteredProvider(databaseSource.ProviderName);
     }
 }

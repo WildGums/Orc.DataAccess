@@ -1,129 +1,170 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DbProviderExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
+using Catel;
+using Catel.Caching;
+using Catel.IoC;
+using Catel.Logging;
+using Catel.Reflection;
 
-namespace Orc.DataAccess.Database
+public static class DbProviderExtensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.Common;
-    using System.Linq;
-    using Catel;
-    using Catel.Caching;
-    using Catel.IoC;
-    using Catel.Reflection;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public static class DbProviderExtensions
+    private static readonly Dictionary<string, Dictionary<Type, IList<Type>>> ConnectedTypes = new();
+    private static readonly Dictionary<string, Dictionary<Type, object>> ConnectedInstances = new();
+
+    public static T GetOrCreateConnectedInstance<T>(this DbProvider dbProvider)
+        where T : notnull
     {
-        #region Fields
-        private static readonly CacheStorage<string, CacheStorage<Type, IList<Type>>> ConnectedTypes = new CacheStorage<string, CacheStorage<Type, IList<Type>>>();
-        private static readonly CacheStorage<string, CacheStorage<Type, object>> ConnectedInstances = new CacheStorage<string, CacheStorage<Type, object>>();
-        #endregion
+        ArgumentNullException.ThrowIfNull(dbProvider);
 
-        #region Methods
-        public static T GetOrCreateConnectedInstance<T>(this DbProvider dbProvider)
+        var providerInvariantName = dbProvider.ProviderInvariantName;
+        var instances = GetConnectedInstances(providerInvariantName);
+
+        if (!instances.TryGetValue(typeof(T), out var instance))
         {
-            Argument.IsNotNull(() => dbProvider);
-
-            var instanceCache = ConnectedInstances.GetFromCacheOrFetch(dbProvider.ProviderInvariantName, () => new CacheStorage<Type, object>());
-            return (T)instanceCache.GetFromCacheOrFetch(typeof(T), () => CreateConnectedInstance<T>(dbProvider));
+            instance = CreateConnectedInstance<T>(dbProvider);
+            instances[typeof(T)] = instance;
         }
 
-        public static T CreateConnectedInstance<T>(this DbProvider dbProvider, params object[] parameters)
-        {
-            Argument.IsNotNull(() => dbProvider);
+        return (T)instance;
+    }
 
-            var connectedType = dbProvider.GetConnectedTypes<T>().FirstOrDefault();
-            if (connectedType is null)
+    public static T CreateConnectedInstance<T>(this DbProvider dbProvider, params object[] parameters)
+        where T : notnull
+    {
+        ArgumentNullException.ThrowIfNull(dbProvider);
+
+        var connectedType = dbProvider.GetConnectedTypes<T>().First();
+
+#pragma warning disable IDISP001 // Dispose created
+        var typeFactory = dbProvider.GetTypeFactory();
+#pragma warning restore IDISP001 // Dispose created
+        return (T)typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion(connectedType, parameters);
+    }
+
+    public static IList<Type> GetConnectedTypes<T>(this DbProvider dbProvider)
+    {
+        ArgumentNullException.ThrowIfNull(dbProvider);
+
+        var connectedTypes = ConnectedTypes;
+        var invariantName = dbProvider.ProviderInvariantName;
+        if (!connectedTypes.TryGetValue(invariantName, out var typeBatch))
+        {
+            typeBatch = new Dictionary<Type, IList<Type>>();
+            connectedTypes.Add(invariantName, typeBatch);
+        }
+
+        if (!typeBatch.TryGetValue(typeof(T), out var types))
+        {
+            types = dbProvider.FindConnectedTypes<T>().ToList();
+            typeBatch[typeof(T)] = types;
+        }
+
+        return types;
+    }
+
+    private static Dictionary<Type, object> GetConnectedInstances(string providerInvariantName)
+    {
+        var connectedInstances = ConnectedInstances;
+        if (!connectedInstances.TryGetValue(providerInvariantName, out var instances))
+        {
+            instances = new Dictionary<Type, object>();
+            connectedInstances.Add(providerInvariantName, instances);
+        }
+
+        return instances;
+    }
+
+    public static void ConnectType<TBaseType>(this DbProvider dbProvider, Type type)
+    {
+        ArgumentNullException.ThrowIfNull(dbProvider);
+        ArgumentNullException.ThrowIfNull(type);
+
+        var types = GetConnectedTypes<TBaseType>(dbProvider);
+        if (!types.Contains(type))
+        {
+            types.Add(type);
+        }
+    }
+
+    public static void ConnectInstance<TBaseType>(this DbProvider dbProvider, TBaseType instance)
+    {
+        ArgumentNullException.ThrowIfNull(instance);
+
+        var instances = GetConnectedInstances(dbProvider.ProviderInvariantName);
+        instances[typeof(TBaseType)] = instance;
+    }
+
+    private static IEnumerable<Type> FindConnectedTypes<T>(this DbProvider dbProvider)
+    {
+        ArgumentNullException.ThrowIfNull(dbProvider);
+
+        var providerInvariantName = dbProvider.ProviderInvariantName;
+        var attributedSqlCompilerTypes = typeof(T).GetAllAssignableFrom();
+        foreach (var attributedSqlCompilerType in attributedSqlCompilerTypes)
+        {
+            var connectToProviderAttribute = attributedSqlCompilerType.GetCustomAttributeEx(typeof(ConnectToProviderAttribute), true) as ConnectToProviderAttribute;
+            if (connectToProviderAttribute is null)
             {
-                return default;
+                continue;
             }
 
-            var typeFactory = dbProvider.GetTypeFactory();
-            return (T)typeFactory.CreateInstanceWithParametersAndAutoCompletion(connectedType, parameters);
-        }
-
-        public static IList<Type> GetConnectedTypes<T>(this DbProvider provider)
-        {
-            Argument.IsNotNull(() => provider);
-
-            var connectedTypesCache = ConnectedTypes.GetFromCacheOrFetch(provider.ProviderInvariantName, () => new CacheStorage<Type, IList<Type>>());
-            return connectedTypesCache.GetFromCacheOrFetch(typeof(T), () => provider.FindConnectedTypes<T>().ToList());
-        }
-
-        public static void ConnectType<TBaseType>(this DbProvider provider, Type type)
-        {
-            Argument.IsNotNull(() => provider);
-            Argument.IsNotNull(() => type);
-
-            var connectedTypesCache = ConnectedTypes.GetFromCacheOrFetch(provider.ProviderInvariantName, () => new CacheStorage<Type, IList<Type>>());
-            var types = connectedTypesCache.GetFromCacheOrFetch(typeof(TBaseType), () => provider.FindConnectedTypes<TBaseType>().ToList());
-            if (!types.Contains(type))
+            if (connectToProviderAttribute.ProviderInvariantName == providerInvariantName)
             {
-                types.Add(type);
+                yield return attributedSqlCompilerType;
             }
         }
+    }
 
-        private static IEnumerable<Type> FindConnectedTypes<T>(this DbProvider provider)
+    //TODO: Make it async
+    public static IList<DbDataSource> GetDataSources(this DbProvider dbProvider)
+    {
+        ArgumentNullException.ThrowIfNull(dbProvider);
+
+        var dataSourceProvider = dbProvider.GetOrCreateConnectedInstance<IDbDataSourceProvider>();
+        return dataSourceProvider.GetDataSources();
+    }
+
+    public static DbConnection? CreateConnection(this DbProvider dbProvider, DatabaseSource databaseSource)
+    {
+        ArgumentNullException.ThrowIfNull(dbProvider);
+        ArgumentNullException.ThrowIfNull(databaseSource);
+
+        if (string.IsNullOrEmpty(databaseSource.ConnectionString))
         {
-            var providerInvariantName = provider.ProviderInvariantName;
-            var attributedSqlCompilerTypes = typeof(T).GetAllAssignableFrom();
-            foreach (var attributedSqlCompilerType in attributedSqlCompilerTypes)
-            {
-                var connectToProviderAttribute = attributedSqlCompilerType.GetCustomAttributeEx(typeof(ConnectToProviderAttribute), true) as ConnectToProviderAttribute;
-                if (connectToProviderAttribute is null)
-                {
-                    continue;
-                }
-
-                if (connectToProviderAttribute.ProviderInvariantName == providerInvariantName)
-                {
-                    yield return attributedSqlCompilerType;
-                }
-            }
+            throw Log.ErrorAndCreateException<InvalidOperationException>("Invalid source");
         }
 
-        public static IList<DbDataSource> GetDataSources(this DbProvider dbProvider)
-        {
-            Argument.IsNotNull(() => dbProvider);
+        return CreateConnection(dbProvider, databaseSource.ConnectionString);
+    }
 
-            var dataSourceProvider = dbProvider.GetOrCreateConnectedInstance<IDbDataSourceProvider>();
-            return dataSourceProvider?.GetDataSources() ?? new List<DbDataSource>();
+    public static DbSourceGatewayBase CreateDbSourceGateway(this DbProvider dbProvider, DatabaseSource databaseSource)
+    {
+        ArgumentNullException.ThrowIfNull(dbProvider);
+        ArgumentNullException.ThrowIfNull(databaseSource);
+
+        return dbProvider.CreateConnectedInstance<DbSourceGatewayBase>(databaseSource);
+    }
+
+    public static DbConnection? CreateConnection(this DbProvider dbProvider, string connectionString)
+    {
+        ArgumentNullException.ThrowIfNull(dbProvider);
+        Argument.IsNotNullOrEmpty(() => connectionString);
+
+        var connection = dbProvider.CreateConnection();
+        if (connection is null)
+        {
+            return null;
         }
 
-        public static DbConnection CreateConnection(this DbProvider dbProvider, DatabaseSource databaseSource)
-        {
-            Argument.IsNotNull(() => dbProvider);
-            Argument.IsNotNull(() => databaseSource);
+        connection.ConnectionString = connectionString;
 
-            return CreateConnection(dbProvider, databaseSource.ConnectionString);
-        }
-
-        public static DbSourceGatewayBase CreateDbSourceGateway(this DbProvider dbProvider, DatabaseSource databaseSource)
-        {
-            Argument.IsNotNull(() => databaseSource);
-
-            return dbProvider.CreateConnectedInstance<DbSourceGatewayBase>(databaseSource);
-        }
-
-        public static DbConnection CreateConnection(this DbProvider dbProvider, string connectionString)
-        {
-            Argument.IsNotNull(() => dbProvider);
-
-            var connection = dbProvider.CreateConnection();
-            if (connection is null)
-            {
-                return null;
-            }
-
-            connection.ConnectionString = connectionString;
-
-            return connection;
-        }
-        #endregion
+        return connection;
     }
 }

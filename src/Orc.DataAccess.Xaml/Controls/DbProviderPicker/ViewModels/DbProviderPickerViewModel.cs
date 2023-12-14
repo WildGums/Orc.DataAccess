@@ -1,53 +1,38 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DbProviderPickerViewModel.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Controls;
 
+using System;
+using System.Threading.Tasks;
+using Catel.IoC;
+using Catel.MVVM;
+using Catel.Services;
+using Database;
 
-namespace Orc.DataAccess.Controls
+public class DbProviderPickerViewModel : ViewModelBase
 {
-    using System.Threading.Tasks;
-    using Catel;
-    using Catel.IoC;
-    using Catel.MVVM;
-    using Catel.Services;
-    using Database;
+    private readonly ITypeFactory _typeFactory;
+    private readonly IUIVisualizerService _uiVisualizerService;
 
-    public class DbProviderPickerViewModel : ViewModelBase
+    public DbProviderPickerViewModel(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
     {
-        #region Fields
-        private readonly ITypeFactory _typeFactory;
-        private readonly IUIVisualizerService _uiVisualizerService;
-        #endregion
+        ArgumentNullException.ThrowIfNull(uiVisualizerService);
+        ArgumentNullException.ThrowIfNull(typeFactory);
 
-        #region Constructors
-        public DbProviderPickerViewModel(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
+        _uiVisualizerService = uiVisualizerService;
+        _typeFactory = typeFactory;
+
+        ChangeDbProvider = new TaskCommand(OnChangeDbProviderAsync);
+    }
+
+    public DbProviderInfo? DbProvider { get; set; }
+    public TaskCommand ChangeDbProvider { get; }
+
+    private async Task OnChangeDbProviderAsync()
+    {
+        var dbProviderListViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<DbConnectionProviderListViewModel>(DbProvider);
+        var dialogResult = await _uiVisualizerService.ShowDialogAsync(dbProviderListViewModel);
+        if (dialogResult.DialogResult ?? false)
         {
-            Argument.IsNotNull(() => uiVisualizerService);
-            Argument.IsNotNull(() => typeFactory);
-
-            _uiVisualizerService = uiVisualizerService;
-            _typeFactory = typeFactory;
-
-            ChangeDbProvider = new TaskCommand(OnChangeDbProviderAsync);
+            DbProvider = dbProviderListViewModel.DbProvider;
         }
-        #endregion
-
-        #region Properties
-        public DbProviderInfo DbProvider { get; set; }
-        public TaskCommand ChangeDbProvider { get; }
-        #endregion
-
-        #region Methods
-        private async Task OnChangeDbProviderAsync()
-        {
-            var dbProviderListViewModel = _typeFactory.CreateInstanceWithParametersAndAutoCompletion<DbConnectionProviderListViewModel>(DbProvider);
-            if (await _uiVisualizerService.ShowDialogAsync(dbProviderListViewModel) ?? false)
-            {
-                DbProvider = dbProviderListViewModel.DbProvider;
-            }
-        }
-        #endregion
     }
 }

@@ -1,91 +1,78 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TemporaryFilesContext.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Tests;
 
-namespace Orc.DataAccess.Tests
+using System;
+using System.IO;
+using Catel.Logging;
+
+public sealed class TemporaryFilesContext : IDisposable
 {
-    using System;
-    using System.IO;
-    using Catel.Logging;
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-    public sealed class TemporaryFilesContext : IDisposable
+    private readonly Guid _randomGuid = Guid.NewGuid();
+    private readonly string _rootDirectory;
+
+    public TemporaryFilesContext(string name = null)
     {
-        #region Constructors
-        public TemporaryFilesContext(string name = null)
+        if (string.IsNullOrWhiteSpace(name))
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                name = _randomGuid.ToString();
-            }
-
-            _rootDirectory = Path.Combine(Path.GetTempPath(), "Rantt.Tests", name);
-
-            Directory.CreateDirectory(_rootDirectory);
-        }
-        #endregion
-
-        #region Methods
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
-
-            try
-            {
-                if (Directory.Exists(_rootDirectory))
-                {
-                    Directory.Delete(_rootDirectory, true);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Failed to delete temporary files");
-            }
-        }
-        #endregion
-
-        public string GetDirectory(string relativeDirectoryName)
-        {
-            var fullPath = Path.Combine(_rootDirectory, relativeDirectoryName);
-
-            if (!Directory.Exists(fullPath))
-            {
-                Directory.CreateDirectory(fullPath);
-            }
-
-            return fullPath;
+            name = _randomGuid.ToString();
         }
 
-        public string GetFile(string relativeFilePath, bool deleteIfExists = false)
+        _rootDirectory = Path.Combine(Path.GetTempPath(), "Rantt.Tests", name);
+
+        Directory.CreateDirectory(_rootDirectory);
+    }
+
+    /// <summary>
+    ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
+    public void Dispose()
+    {
+        Log.Info("Deleting temporary files from '{0}'", _rootDirectory);
+
+        try
         {
-            var fullPath = Path.Combine(_rootDirectory, relativeFilePath);
-
-            var directory = Path.GetDirectoryName(fullPath);
-            if (!Directory.Exists(directory))
+            if (Directory.Exists(_rootDirectory))
             {
-                Directory.CreateDirectory(directory);
+                Directory.Delete(_rootDirectory, true);
             }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to delete temporary files");
+        }
+    }
 
-            if (deleteIfExists)
-            {
-                if (File.Exists(fullPath))
-                {
-                    File.Delete(fullPath);
-                }
-            }
+    public string GetDirectory(string relativeDirectoryName)
+    {
+        var fullPath = Path.Combine(_rootDirectory, relativeDirectoryName);
 
-            return fullPath;
+        if (!Directory.Exists(fullPath))
+        {
+            Directory.CreateDirectory(fullPath);
         }
 
-        #region Fields
-        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+        return fullPath;
+    }
 
-        private readonly Guid _randomGuid = Guid.NewGuid();
-        private readonly string _rootDirectory;
-        #endregion
+    public string GetFile(string relativeFilePath, bool deleteIfExists = false)
+    {
+        var fullPath = Path.Combine(_rootDirectory, relativeFilePath);
+
+        var directory = Path.GetDirectoryName(fullPath);
+        if (!Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        if (deleteIfExists)
+        {
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+            }
+        }
+
+        return fullPath;
     }
 }

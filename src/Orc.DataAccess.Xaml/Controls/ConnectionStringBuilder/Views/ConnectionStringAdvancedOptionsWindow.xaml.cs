@@ -1,22 +1,16 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConnectionStringAdvancedOptionsWindow.xaml.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Controls;
 
+using System.Windows.Automation.Peers;
+using Catel.Windows;
+using Orc.DataAccess.Automation.Controls;
 
-namespace Orc.DataAccess.Controls
+public sealed partial class ConnectionStringAdvancedOptionsWindow
 {
-    using Catel.Windows;
+    public ConnectionStringAdvancedOptionsWindow()
+        : base(DataWindowMode.Close) => InitializeComponent();
 
-    public sealed partial class ConnectionStringAdvancedOptionsWindow
+    protected override AutomationPeer OnCreateAutomationPeer()
     {
-        #region Constructors
-        public ConnectionStringAdvancedOptionsWindow()
-            : base(DataWindowMode.Close)
-        {
-            InitializeComponent();
-        }
-        #endregion
+        return new ConnectionStringAdvancedOptionsWindowPeer(this);
     }
 }

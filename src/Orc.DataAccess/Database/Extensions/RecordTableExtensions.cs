@@ -1,25 +1,14 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RecordTableExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess;
 
+using System;
+using System.Linq;
 
-namespace Orc.DataAccess
+public static class RecordTableExtensions
 {
-    using System.Linq;
-    using Catel;
-    using DataAccess;
-
-    public static class RecordTableExtensions
+    public static bool HasHeaders(this RecordTable table)
     {
-        #region Methods
-        public static bool HasHeaders(this RecordTable table)
-        {
-            Argument.IsNotNull(() => table);
+        ArgumentNullException.ThrowIfNull(table);
 
-            return table.Headers?.Any() ?? false;
-        }
-        #endregion
+        return table.Headers.Any();
     }
 }

@@ -1,18 +1,10 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TableType.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
-
-namespace Orc.DataAccess.Database
+public enum TableType
 {
-    public enum TableType
-    {
-        Table,
-        View,
-        StoredProcedure,
-        Function,
-        Sql
-    }
+    Table = 0,
+    View = 1,
+    StoredProcedure = 2,
+    Function = 3,
+    Sql = 4
 }

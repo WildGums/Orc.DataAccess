@@ -1,87 +1,77 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MsSqlDbSourceGateway.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using Catel;
+using DataAccess;
 
-namespace Orc.DataAccess.Database
+[ConnectToProvider("System.Data.SqlClient")]
+public class MsSqlDbSourceGateway : SqlDbSourceGatewayBase
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Common;
-    using DataAccess;
-
-    [ConnectToProvider("System.Data.SqlClient")]
-    public class MsSqlDbSourceGateway : SqlDbSourceGatewayBase
+    public MsSqlDbSourceGateway(DatabaseSource source)
+        : base(source)
     {
-        #region Constructors
-        public MsSqlDbSourceGateway(DatabaseSource source)
-            : base(source)
-        {
-        }
-        #endregion
+    }
 
-        #region Properties
 #pragma warning disable IDISP012 // Property should not return created disposable.
-        protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
-            new Dictionary<TableType, Func<DbConnection, DbCommand>>
-            {
-                {TableType.Table, c => CreateGetObjectsCommand(c, "U")},
-                {TableType.View, c => CreateGetObjectsCommand(c, "V")},
-                {TableType.StoredProcedure, c => CreateGetObjectsCommand(c, "P")},
-                {TableType.Function, c => CreateGetObjectsCommand(c, "IF")},
-            };
+    protected override Dictionary<TableType, Func<DbConnection, DbCommand>> GetObjectListCommandsFactory =>
+        new()
+        {
+            {TableType.Table, c => CreateGetObjectsCommand(c, "U")},
+            {TableType.View, c => CreateGetObjectsCommand(c, "V")},
+            {TableType.StoredProcedure, c => CreateGetObjectsCommand(c, "P")},
+            {TableType.Function, c => CreateGetObjectsCommand(c, "IF")},
+        };
 #pragma warning restore IDISP012 // Property should not return created disposable.
 
-        protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new Dictionary<TableType, Func<DataSourceParameters>>
+    protected override Dictionary<TableType, Func<DataSourceParameters>> DataSourceParametersFactory => new()
+    {
+        {TableType.StoredProcedure, () => GetArgs(GetArgsQuery)},
+        {TableType.Function, () => GetArgs(GetArgsQuery)},
+    };
+
+    private string GetArgsQuery => $"SELECT [name], type_name(user_type_id) as type FROM [sys].[parameters] WHERE [object_id] = object_id('{GetFullTableName(Source)}')";
+
+    protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+
+        var fullTableName = GetFullTableName(Source);
+        string query;
+        if (isPagingEnabled)
         {
-            {TableType.StoredProcedure, () => GetArgs(GetArgsQuery)},
-            {TableType.Function, () => GetArgs(GetArgsQuery)},
-        };
-
-        private string GetArgsQuery => $"SELECT [name], type_name(user_type_id) as type FROM [sys].[parameters] WHERE [object_id] = object_id('{GetFullTableName(Source)}')";
-        #endregion
-
-        #region Methods
-        protected override DbCommand CreateGetTableRecordsCommand(DbConnection connection, DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled)
+            query = offset == 0
+                ? $"SELECT TOP ({fetchCount}) * FROM {fullTableName}"
+                : $"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY (SELECT 0)) AS [row_num] FROM {fullTableName}) AS [results_wrapper] WHERE [row_num] BETWEEN {offset + 1} AND {offset + fetchCount}";
+        }
+        else
         {
-            var source = Source;
-            var fullTableName = GetFullTableName(source);
-            string query;
-            if (isPagingEnabled)
-            {
-                query = offset == 0
-                    ? $"SELECT TOP ({fetchCount}) * FROM {fullTableName}"
-                    : $"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY (SELECT 0)) AS [row_num] FROM {fullTableName}) AS [results_wrapper] WHERE [row_num] BETWEEN {offset + 1} AND {offset + fetchCount}";
-            }
-            else
-            {
-                query = $"SELECT * FROM {fullTableName}";
-            }
-
-            return connection.CreateCommand(query);
+            query = $"SELECT * FROM {fullTableName}";
         }
 
-        protected override DbCommand CreateTableCountCommand(DbConnection connection)
-        {
-            return connection.CreateCommand($"SELECT COUNT(*) AS [count] FROM {GetFullTableName(Source)}");
-        }
+        return connection.CreateCommand(query);
+    }
 
-        private DbCommand CreateGetObjectsCommand(DbConnection connection, string commandParameter)
-        {
-            return connection.CreateCommand($"SELECT name FROM dbo.sysobjects WHERE uid = 1 AND type = '{commandParameter}' ORDER BY name;");
-        }
+    protected override DbCommand CreateTableCountCommand(DbConnection connection)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
 
-        private string GetFullTableName(DatabaseSource source)
-        {
-            if (string.IsNullOrWhiteSpace(source.Schema))
-            {
-                return $"[{source.Table}]";
-            }
+        return connection.CreateCommand($"SELECT COUNT(*) AS [count] FROM {GetFullTableName(Source)}");
+    }
 
-            return $"[{source.Schema}].[{source.Table}]";
-        }
-        #endregion
+    private static DbCommand CreateGetObjectsCommand(DbConnection connection, string commandParameter)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        Argument.IsNotNullOrEmpty(() => commandParameter);
+
+        return connection.CreateCommand($"SELECT name FROM dbo.sysobjects WHERE uid = 1 AND type = '{commandParameter}' ORDER BY name;");
+    }
+
+    private static string GetFullTableName(DatabaseSource source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+
+        return string.IsNullOrWhiteSpace(source.Schema) ? $"[{source.Table}]" : $"[{source.Schema}].[{source.Table}]";
     }
 }

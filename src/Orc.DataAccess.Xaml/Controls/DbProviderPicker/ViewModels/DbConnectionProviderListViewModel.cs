@@ -1,67 +1,52 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DbConnectionProviderListViewModel.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Controls;
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Catel;
+using Catel.MVVM;
+using Database;
 
-namespace Orc.DataAccess.Controls
+public class DbConnectionProviderListViewModel : ViewModelBase
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Catel.MVVM;
-    using Catel.Threading;
-    using Database;
+    private readonly DbProviderInfo _selectedProvider;
 
-    public class DbConnectionProviderListViewModel : ViewModelBase
+    public DbConnectionProviderListViewModel(DbProviderInfo selectedProvider)
     {
-        #region Fields
-        private readonly DbProviderInfo _selectedProvider;
-        #endregion
+        _selectedProvider = selectedProvider;
 
-        #region Constructors
-        public DbConnectionProviderListViewModel(DbProviderInfo selectedProvider)
+        Open = new TaskCommand(OnOpenAsync);
+        Refresh = new Command(OnRefresh);
+
+        DbProviders = new List<DbProviderInfo>();
+    }
+
+    public override string Title => LanguageHelper.GetRequiredString(nameof(Properties.Resources.Controls_DbConnectionProviderList_Title));
+    public DbProviderInfo? DbProvider { get; set; }
+    public IList<DbProviderInfo> DbProviders { get; private set; }
+    public Command Refresh { get; }
+    public TaskCommand Open { get; }
+
+    protected override Task InitializeAsync()
+    {
+        OnRefresh();
+
+        return base.InitializeAsync();
+    }
+
+    private async Task OnOpenAsync()
+    {
+        if (DbProvider is null)
         {
-            _selectedProvider = selectedProvider;
-
-            Open = new Command(OnOpen);
-            Refresh = new Command(OnRefresh);
-        }
-        #endregion
-
-        #region Properties
-        public override string Title => "Select provider";
-
-        public DbProviderInfo DbProvider { get; set; }
-        public IList<DbProviderInfo> DbProviders { get; private set; }
-        public Command Refresh { get; }
-        public Command Open { get; }
-        #endregion
-
-        #region Methods
-        protected override Task InitializeAsync()
-        {
-            OnRefresh();
-
-            return base.InitializeAsync();
+            return;
         }
 
-        private void OnOpen()
-        {
-            if (DbProvider is null)
-            {
-                return;
-            }
+        await CloseViewModelAsync(true);
+    }
 
-            TaskHelper.RunAndWaitAsync(async () => await CloseViewModelAsync(true));
-        }
-
-        private void OnRefresh()
-        {
-            DbProviders = Database.DbProvider.GetRegisteredProviders().Select(x => x.Value.Info).ToList();
-            DbProvider = DbProviders.FirstOrDefault(x => x.Equals(_selectedProvider));
-        }
-        #endregion
+    private void OnRefresh()
+    {
+        DbProviders = Database.DbProvider.GetRegisteredProviders().Select(x => x.Value.Info).ToList();
+        DbProvider = DbProviders.FirstOrDefault(x => x.Equals(_selectedProvider));
     }
 }

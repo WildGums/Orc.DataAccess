@@ -1,27 +1,20 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DbProviderInfoExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
-namespace Orc.DataAccess.Database
+using System;
+
+public static class DbProviderInfoExtensions
 {
-    using Catel;
-
-    public static class DbProviderInfoExtensions
+    public static DbConnectionString? CreateConnectionString(this DbProviderInfo dbProviderInfo, string connectionString)
     {
-        public static DbConnectionString CreateConnectionString(this DbProviderInfo dbProviderInfo, string connectionString = null)
-        {
-            Argument.IsNotNull(() => dbProviderInfo);
+        ArgumentNullException.ThrowIfNull(dbProviderInfo);
 
-            return dbProviderInfo.GetProvider()?.CreateConnectionString(connectionString);
-        }
+        return dbProviderInfo.GetProvider().CreateConnectionString(connectionString);
+    }
 
-        public static DbProvider GetProvider(this DbProviderInfo dbProviderInfo)
-        {
-            Argument.IsNotNull(() => dbProviderInfo);
+    public static DbProvider GetProvider(this DbProviderInfo dbProviderInfo)
+    {
+        ArgumentNullException.ThrowIfNull(dbProviderInfo);
 
-            return DbProvider.GetRegisteredProvider(dbProviderInfo.InvariantName);
-        }
+        return DbProvider.GetRegisteredProvider(dbProviderInfo.InvariantName);
     }
 }

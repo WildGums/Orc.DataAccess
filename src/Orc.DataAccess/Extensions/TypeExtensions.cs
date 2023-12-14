@@ -1,42 +1,34 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TypeExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Catel.Reflection;
 
-namespace Orc.DataAccess
+public static class TypeExtensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Catel.Reflection;
-
-    public static class TypeExtensions
+    public static IList<Type> GetAllAssignableFrom(this Type type)
     {
-        #region Methods
-        public static IList<Type> GetAllAssignableFrom(this Type type)
+        ArgumentNullException.ThrowIfNull(type);
+
+        var descendantTypes = new List<Type>();
+        var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+        foreach (var loadedAssembly in loadedAssemblies)
         {
-            var descendantTypes = new List<Type>();
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var loadedAssembly in loadedAssemblies)
+            try
             {
-                try
-                {
-                    var descendantTypesFromCurrentAssembly = loadedAssembly.GetTypesEx()
-                        .Where(x => type.IsAssignableFrom(x) && x.IsClass && !x.IsAbstract && !x.IsGenericType)
-                        .ToList();
+                var descendantTypesFromCurrentAssembly = loadedAssembly.GetTypesEx()
+                    .Where(x => type.IsAssignableFrom(x) && x is { IsClass: true, IsAbstract: false, IsGenericType: false })
+                    .ToList();
 
-                    descendantTypes.AddRange(descendantTypesFromCurrentAssembly);
-                }
-                catch
-                {
-                    //do nothing
-                }
+                descendantTypes.AddRange(descendantTypesFromCurrentAssembly);
             }
-
-            return descendantTypes;
+            catch
+            {
+                //do nothing
+            }
         }
-        #endregion
+
+        return descendantTypes;
     }
 }

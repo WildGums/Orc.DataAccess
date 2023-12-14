@@ -1,42 +1,32 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DbProviderPicker.xaml.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Controls;
 
+using System.Windows;
+using System.Windows.Automation.Peers;
+using Catel.MVVM.Views;
+using Database;
+using Orc.DataAccess.Automation.Controls;
 
-namespace Orc.DataAccess.Controls
+public sealed partial class DbProviderPicker
 {
-    using System.Windows;
-    using Catel.MVVM.Views;
-    using Database;
+    public static readonly DependencyProperty DbProviderProperty = DependencyProperty.Register(
+        nameof(DbProvider), typeof(DbProviderInfo), typeof(DbProviderPicker), new PropertyMetadata(default(DbProviderInfo)));
 
-    public sealed partial class DbProviderPicker
+    static DbProviderPicker()
     {
-        #region Constants
-        public static readonly DependencyProperty DbProviderProperty = DependencyProperty.Register(
-            nameof(DbProvider), typeof(DbProviderInfo), typeof(DbProviderPicker), new PropertyMetadata(default(DbProviderInfo)));
-        #endregion
+        typeof(DbProviderPicker).AutoDetectViewPropertiesToSubscribe();
+    }
 
-        #region Constructors
-        static DbProviderPicker()
-        {
-            typeof(DbProviderPicker).AutoDetectViewPropertiesToSubscribe();
-        }
+    public DbProviderPicker() => InitializeComponent();
 
-        public DbProviderPicker()
-        {
-            InitializeComponent();
-        }
-        #endregion
+    [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
+    public DbProviderInfo? DbProvider
+    {
+        get { return (DbProviderInfo?)GetValue(DbProviderProperty); }
+        set { SetValue(DbProviderProperty, value); }
+    }
 
-        #region Properties
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.TwoWayViewModelWins)]
-        public DbProviderInfo DbProvider
-        {
-            get { return (DbProviderInfo)GetValue(DbProviderProperty); }
-            set { SetValue(DbProviderProperty, value); }
-        }
-        #endregion
+    protected override AutomationPeer OnCreateAutomationPeer()
+    {
+        return new DbProviderPickerAutomationPeer(this);
     }
 }

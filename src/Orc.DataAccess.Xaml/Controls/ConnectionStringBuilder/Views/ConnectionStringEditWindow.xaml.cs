@@ -1,19 +1,14 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConnectionStringEditWindow.xaml.cs" company="WildGums">
-//   Copyright (c) 2008 - 2018 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Controls;
 
+using System.Windows.Automation.Peers;
+using Orc.DataAccess.Automation.Controls;
 
-namespace Orc.DataAccess.Controls
+public sealed partial class ConnectionStringEditWindow
 {
-    public sealed partial class ConnectionStringEditWindow
+    public ConnectionStringEditWindow() => InitializeComponent();
+
+    protected override AutomationPeer OnCreateAutomationPeer()
     {
-        #region Constructors
-        public ConnectionStringEditWindow()
-        {
-            InitializeComponent();
-        }
-        #endregion
+        return new ConnectionStringEditWindowPeer(this);
     }
 }

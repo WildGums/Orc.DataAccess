@@ -1,16 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IDataSourceProvider.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Controls;
 
-
-namespace Orc.DataAccess.Controls
+public interface IDataSourceProvider
 {
-    using System.Collections.Generic;
-
-    public interface IDataSourceProvider
-    {
-        string DataBasesQuery { get; }
-    }
+    string DataBasesQuery { get; }
 }

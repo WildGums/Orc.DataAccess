@@ -1,27 +1,16 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DataSourceParameters.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess;
 
-namespace Orc.DataAccess
+using System;
+using System.Collections.Generic;
+using Catel.Data;
+
+[Serializable]
+public class DataSourceParameters : SavableModelBase<DataSourceParameters>
 {
-    using System;
-    using System.Collections.Generic;
-    using Catel.Data;
-
-    [Serializable]
-    public class DataSourceParameters : SavableModelBase<DataSourceParameters>
+    public DataSourceParameters()
     {
-        #region Constructors
-        public DataSourceParameters()
-        {
-            Parameters = new List<DataSourceParameter>();
-        }
-        #endregion
-
-        #region Properties
-        public List<DataSourceParameter> Parameters { get; set; }
-        #endregion
+        Parameters = new List<DataSourceParameter>();
     }
+
+    public List<DataSourceParameter> Parameters { get; set; }
 }

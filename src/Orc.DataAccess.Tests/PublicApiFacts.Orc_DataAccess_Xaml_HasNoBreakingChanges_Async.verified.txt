@@ -1,0 +1,329 @@
+﻿[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
+[assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess")]
+[assembly: System.Windows.Markup.XmlnsDefinition("http://schemas.wildgums.com/orc/dataaccess", "Orc.DataAccess.Controls")]
+[assembly: System.Windows.Markup.XmlnsPrefix("http://schemas.wildgums.com/orc/dataaccess", "orcdataaccess")]
+[assembly: System.Windows.ThemeInfo(System.Windows.ResourceDictionaryLocation.None, System.Windows.ResourceDictionaryLocation.SourceAssembly)]
+public static class ModuleInitializer
+{
+    public static void Initialize() { }
+}
+namespace Orc.DataAccess.Automation.Controls
+{
+    [Orc.Automation.AutomatedControl(Class=typeof(Orc.DataAccess.Controls.ConnectionStringAdvancedOptionsWindow), ControlTypeName="Window")]
+    public class ConnectionStringAdvancedOptionsWindow : Orc.Automation.Controls.Window<Orc.DataAccess.Automation.Controls.ConnectionStringAdvancedOptionsWindowModel, Orc.DataAccess.Automation.Controls.ConnectionStringAdvancedOptionsWindowMap>
+    {
+        public ConnectionStringAdvancedOptionsWindow(System.Windows.Automation.AutomationElement element) { }
+        public System.Collections.Generic.IReadOnlyCollection<string> Properties { get; }
+        public string GetValue(string propertyName) { }
+        public void SetFilter(string filter) { }
+        public void SetValue(string propertyName, string value) { }
+    }
+    public class ConnectionStringAdvancedOptionsWindowMap : Orc.Automation.AutomationBase
+    {
+        public ConnectionStringAdvancedOptionsWindowMap(System.Windows.Automation.AutomationElement element) { }
+        public Orc.Controls.Automation.FilterBox AdvancedPropertiesFilterBox { get; }
+        public Orc.Automation.DataGrid PropertiesDataGrid { get; }
+    }
+    public class ConnectionStringAdvancedOptionsWindowModel : Orc.Automation.WindowModel
+    {
+        public ConnectionStringAdvancedOptionsWindowModel(Orc.Automation.AutomationElementAccessor accessor) { }
+    }
+    public class ConnectionStringAdvancedOptionsWindowPeer : Orc.Automation.AutomationWindowPeerBase<Orc.DataAccess.Controls.ConnectionStringAdvancedOptionsWindow>
+    {
+        public ConnectionStringAdvancedOptionsWindowPeer(Orc.DataAccess.Controls.ConnectionStringAdvancedOptionsWindow owner) { }
+        protected override System.Windows.Automation.Peers.AutomationControlType GetAutomationControlTypeCore() { }
+    }
+    [Orc.Automation.AutomatedControl(Class=typeof(Orc.DataAccess.Controls.ConnectionStringBuilder))]
+    public class ConnectionStringBuilder : Orc.Automation.Controls.FrameworkElement<Orc.DataAccess.Automation.Controls.ConnectionStringBuilderModel, Orc.DataAccess.Automation.Controls.ConnectionStringBuilderMap>
+    {
+        public ConnectionStringBuilder(System.Windows.Automation.AutomationElement element) { }
+        public Orc.DataAccess.Automation.Controls.ConnectionStringEditWindow OpenEditWindow() { }
+    }
+    public class ConnectionStringBuilderAutomationPeer : Orc.Automation.AutomationControlPeerBase<Orc.DataAccess.Controls.ConnectionStringBuilder>
+    {
+        public ConnectionStringBuilderAutomationPeer(Orc.DataAccess.Controls.ConnectionStringBuilder owner) { }
+    }
+    public class ConnectionStringBuilderMap : Orc.Automation.AutomationBase
+    {
+        public ConnectionStringBuilderMap(System.Windows.Automation.AutomationElement element) { }
+        public Orc.Automation.Controls.Button ClearButton { get; }
+        public Orc.Automation.Controls.Edit ConnectionStringTextBox { get; }
+        public Orc.Automation.Controls.Button EditButton { get; }
+    }
+    [Orc.Automation.ActiveAutomationModel]
+    public class ConnectionStringBuilderModel : Orc.Automation.FrameworkElementModel
+    {
+        public static readonly Catel.Data.IPropertyData? ConnectionStateProperty;
+        public static readonly Catel.Data.IPropertyData? ConnectionStringProperty;
+        public static readonly Catel.Data.IPropertyData? DatabaseProviderProperty;
+        public static readonly Catel.Data.IPropertyData? DefaultPropertiesProperty;
+        public static readonly Catel.Data.IPropertyData? IsAdvancedOptionsReadOnlyProperty;
+        public static readonly Catel.Data.IPropertyData? IsEditableProperty;
+        public static readonly Catel.Data.IPropertyData? IsInEditModeProperty;
+        public ConnectionStringBuilderModel(Orc.Automation.AutomationElementAccessor accessor) { }
+        public Orc.DataAccess.Database.ConnectionState ConnectionState { get; set; }
+        public string? ConnectionString { get; set; }
+        public string? DatabaseProvider { get; set; }
+        public Orc.DataAccess.Controls.DbConnectionPropertyDefinitionCollection? DefaultProperties { get; set; }
+        public bool IsAdvancedOptionsReadOnly { get; set; }
+        public bool IsEditable { get; set; }
+        public bool IsInEditMode { get; set; }
+    }
+    [Orc.Automation.AutomatedControl(Class=typeof(Orc.DataAccess.Controls.ConnectionStringEditWindow), ControlTypeName="Window")]
+    public class ConnectionStringEditWindow : Orc.Automation.Controls.Window<Orc.DataAccess.Automation.Controls.ConnectionStringEditWindowModel, Orc.DataAccess.Automation.Controls.ConnectionStringEditWindowMap>
+    {
+        public ConnectionStringEditWindow(System.Windows.Automation.AutomationElement element) { }
+        public string SelectedProvider { get; set; }
+        public Orc.DataAccess.Automation.Controls.ConnectionStringAdvancedOptionsWindow OpenAdvancedProperties() { }
+    }
+    public class ConnectionStringEditWindowMap : Orc.Automation.AutomationBase
+    {
+        public ConnectionStringEditWindowMap(System.Windows.Automation.AutomationElement element) { }
+        public Orc.DataAccess.Automation.Controls.DbProviderPicker ProviderPicker { get; }
+        public Orc.Automation.Controls.Button ShowAdvancedOptionsButton { get; }
+    }
+    public class ConnectionStringEditWindowModel : Orc.Automation.WindowModel
+    {
+        public ConnectionStringEditWindowModel(Orc.Automation.AutomationElementAccessor accessor) { }
+    }
+    public class ConnectionStringEditWindowPeer : Orc.Automation.AutomationWindowPeerBase<Orc.DataAccess.Controls.ConnectionStringEditWindow>
+    {
+        public ConnectionStringEditWindowPeer(Orc.DataAccess.Controls.ConnectionStringEditWindow owner) { }
+        protected override System.Windows.Automation.Peers.AutomationControlType GetAutomationControlTypeCore() { }
+    }
+    [Orc.Automation.AutomatedControl(Class=typeof(Orc.DataAccess.Controls.DbConnectionProviderListWindow), ControlTypeName="Window")]
+    public class DbConnectionProviderListWindow : Orc.Automation.Controls.Window<Orc.DataAccess.Automation.Controls.DbConnectionProviderListWindowModel, Orc.DataAccess.Automation.Controls.DbConnectionProviderListWindowMap>
+    {
+        public DbConnectionProviderListWindow(System.Windows.Automation.AutomationElement element) { }
+        public System.Collections.Generic.IReadOnlyCollection<string> Providers { get; }
+        public string SelectedProvider { get; set; }
+        public void AcceptAndClose() { }
+        public void CancelAndClose() { }
+    }
+    public class DbConnectionProviderListWindowMap : Orc.Automation.AutomationBase
+    {
+        public DbConnectionProviderListWindowMap(System.Windows.Automation.AutomationElement element) { }
+        public Orc.Automation.Controls.Button CancelButton { get; }
+        public Orc.Automation.Controls.Button OkButton { get; }
+        public Orc.Automation.Controls.List ProvidersList { get; }
+    }
+    public class DbConnectionProviderListWindowModel : Orc.Automation.WindowModel
+    {
+        public DbConnectionProviderListWindowModel(Orc.Automation.AutomationElementAccessor accessor) { }
+    }
+    public class DbConnectionProviderListWindowPeer : Orc.Automation.AutomationWindowPeerBase<Orc.DataAccess.Controls.DbConnectionProviderListWindow>
+    {
+        public DbConnectionProviderListWindowPeer(Orc.DataAccess.Controls.DbConnectionProviderListWindow owner) { }
+        protected override System.Windows.Automation.Peers.AutomationControlType GetAutomationControlTypeCore() { }
+    }
+    [Orc.Automation.AutomatedControl(Class=typeof(Orc.DataAccess.Controls.DbProviderPicker))]
+    public class DbProviderPicker : Orc.Automation.Controls.FrameworkElement<Orc.DataAccess.Automation.Controls.DbProviderPickerModel, Orc.DataAccess.Automation.Controls.DbProviderPickerMap>
+    {
+        public DbProviderPicker(System.Windows.Automation.AutomationElement element) { }
+        public string SelectedProvider { get; }
+        public System.Collections.Generic.IReadOnlyCollection<string> GetAvailableProviders() { }
+        public void SelectProvider(string invariantName) { }
+        public Orc.DataAccess.Automation.Controls.DbConnectionProviderListWindow ShowProviderListWindow() { }
+    }
+    public class DbProviderPickerAutomationPeer : Orc.Automation.AutomationControlPeerBase<Orc.DataAccess.Controls.DbProviderPicker>
+    {
+        public DbProviderPickerAutomationPeer(Orc.DataAccess.Controls.DbProviderPicker owner) { }
+    }
+    public class DbProviderPickerMap : Orc.Automation.AutomationBase
+    {
+        public DbProviderPickerMap(System.Windows.Automation.AutomationElement element) { }
+        public Orc.Automation.Controls.Button ChangeDbProviderButton { get; }
+        public Orc.Automation.Controls.Edit DbProviderTextBox { get; }
+    }
+    [Orc.Automation.ActiveAutomationModel]
+    public class DbProviderPickerModel : Orc.Automation.FrameworkElementModel
+    {
+        public static readonly Catel.Data.IPropertyData DbProviderProperty;
+        public DbProviderPickerModel(Orc.Automation.AutomationElementAccessor accessor) { }
+        public Orc.DataAccess.Database.DbProviderInfo DbProvider { get; set; }
+    }
+}
+namespace Orc.DataAccess.Automation.Converters
+{
+    public class DbProviderInfoAutomationConverter : Orc.Automation.SerializationValueConverterBase<Orc.DataAccess.Database.DbProviderInfo, Orc.DataAccess.Automation.Converters.SerializableDbProviderInfo>
+    {
+        public DbProviderInfoAutomationConverter() { }
+        public override object ConvertFrom(Orc.DataAccess.Database.DbProviderInfo info) { }
+        public override object ConvertTo(Orc.DataAccess.Automation.Converters.SerializableDbProviderInfo serializable) { }
+    }
+    public class SerializableDbProviderInfo
+    {
+        public SerializableDbProviderInfo() { }
+        public string AssemblyQualifiedName { get; set; }
+        public string Description { get; set; }
+        public string InvariantName { get; set; }
+        public string Name { get; set; }
+    }
+}
+namespace Orc.DataAccess.Controls
+{
+    public class ConnectionStateToColorBrushValueConverter : Catel.MVVM.Converters.ValueConverterBase<Orc.DataAccess.Database.ConnectionState, System.Windows.Media.SolidColorBrush>
+    {
+        public ConnectionStateToColorBrushValueConverter() { }
+        protected override object Convert(Orc.DataAccess.Database.ConnectionState value, System.Type targetType, object? parameter) { }
+    }
+    public class ConnectionStringAdvancedOptionsViewModel : Catel.MVVM.ViewModelBase
+    {
+        public static readonly Catel.Data.IPropertyData ConnectionStringPropertiesCollectionViewProperty;
+        public static readonly Catel.Data.IPropertyData ConnectionStringPropertiesProperty;
+        public static readonly Catel.Data.IPropertyData IsAdvancedOptionsReadOnlyProperty;
+        public static readonly Catel.Data.IPropertyData PropertyFilterProperty;
+        public ConnectionStringAdvancedOptionsViewModel(Orc.DataAccess.Database.DbConnectionString connectionString) { }
+        public Orc.DataAccess.Database.DbConnectionString ConnectionString { get; }
+        public Orc.DataAccess.Database.DbConnectionStringProperty[] ConnectionStringProperties { get; }
+        public System.ComponentModel.ICollectionView? ConnectionStringPropertiesCollectionView { get; }
+        public bool IsAdvancedOptionsReadOnly { get; set; }
+        public string? PropertyFilter { get; set; }
+        public override string Title { get; }
+        protected override System.Threading.Tasks.Task InitializeAsync() { }
+    }
+    public sealed class ConnectionStringAdvancedOptionsWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
+    {
+        public ConnectionStringAdvancedOptionsWindow() { }
+        public void InitializeComponent() { }
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() { }
+    }
+    [System.Windows.TemplatePart(Name="PART_ConnectionStringTextBox", Type=typeof(System.Windows.Controls.TextBox))]
+    public class ConnectionStringBuilder : System.Windows.Controls.Control
+    {
+        public static readonly System.Windows.DependencyProperty ConnectionStateProperty;
+        public static readonly System.Windows.DependencyProperty ConnectionStringProperty;
+        public static readonly System.Windows.DependencyProperty DatabaseProviderProperty;
+        public static readonly System.Windows.DependencyProperty DefaultPropertiesProperty;
+        public static readonly System.Windows.DependencyProperty IsAdvancedOptionsReadOnlyProperty;
+        public static readonly System.Windows.DependencyProperty IsEditableProperty;
+        public static readonly System.Windows.DependencyProperty IsInEditModeProperty;
+        public ConnectionStringBuilder() { }
+        public Orc.DataAccess.Database.ConnectionState ConnectionState { get; set; }
+        public string? ConnectionString { get; set; }
+        public string? DatabaseProvider { get; set; }
+        public Orc.DataAccess.Controls.DbConnectionPropertyDefinitionCollection? DefaultProperties { get; set; }
+        public bool IsAdvancedOptionsReadOnly { get; set; }
+        public bool IsEditable { get; set; }
+        public bool IsInEditMode { get; set; }
+        public static System.Windows.Input.RoutedCommand ClearCommand { get; }
+        public static System.Windows.Input.RoutedCommand EditCommand { get; }
+        public override void OnApplyTemplate() { }
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() { }
+    }
+    public class ConnectionStringEditViewModel : Catel.MVVM.ViewModelBase
+    {
+        public static readonly Catel.Data.IPropertyData ConnectionStateProperty;
+        public static readonly Catel.Data.IPropertyData ConnectionStringProperty;
+        public static readonly Catel.Data.IPropertyData DbProviderProperty;
+        public static readonly Catel.Data.IPropertyData DefaultPropertiesProperty;
+        public static readonly Catel.Data.IPropertyData IsAdvancedOptionsReadOnlyProperty;
+        public static readonly Catel.Data.IPropertyData IsDatabaseListVisibleProperty;
+        public static readonly Catel.Data.IPropertyData IsDatabasesRefreshingProperty;
+        public static readonly Catel.Data.IPropertyData IsServerListVisibleProperty;
+        public static readonly Catel.Data.IPropertyData IsServersRefreshingProperty;
+        public ConnectionStringEditViewModel(string connectionString, Orc.DataAccess.Database.DbProviderInfo? provider, Catel.Services.IMessageService messageService, Catel.Services.IUIVisualizerService uiVisualizerService, Catel.IoC.ITypeFactory typeFactory, Catel.Services.IDispatcherService dispatcherService) { }
+        public bool CanLogOnToServer { get; }
+        public Orc.DataAccess.Database.ConnectionState ConnectionState { get; }
+        public Orc.DataAccess.Database.DbConnectionString? ConnectionString { get; }
+        public Orc.DataAccess.Database.DbConnectionStringProperty? DataSource { get; }
+        public Catel.Collections.FastObservableCollection<string> Databases { get; }
+        public Orc.DataAccess.Database.DbProviderInfo? DbProvider { get; set; }
+        public System.Collections.Generic.IReadOnlyCollection<Orc.DataAccess.Controls.DbConnectionPropertyDefinition>? DefaultProperties { get; set; }
+        public Catel.MVVM.TaskCommand InitDatabases { get; }
+        public Catel.MVVM.TaskCommand InitServers { get; }
+        public Orc.DataAccess.Database.DbConnectionStringProperty? InitialCatalog { get; }
+        public Orc.DataAccess.Database.DbConnectionStringProperty? IntegratedSecurity { get; }
+        public bool? IntegratedSecurityValue { get; set; }
+        public bool IsAdvancedOptionsReadOnly { get; set; }
+        public bool IsDatabaseListVisible { get; set; }
+        public bool IsDatabasesRefreshing { get; }
+        public bool IsLogOnEnabled { get; }
+        public bool IsServerListVisible { get; set; }
+        public bool IsServersRefreshing { get; }
+        public Orc.DataAccess.Database.DbConnectionStringProperty? Password { get; }
+        public Orc.DataAccess.Database.DbConnectionStringProperty? Port { get; }
+        public Catel.MVVM.TaskCommand RefreshDatabases { get; }
+        public Catel.MVVM.TaskCommand RefreshServers { get; }
+        public Catel.Collections.FastObservableCollection<string> Servers { get; }
+        public Catel.MVVM.TaskCommand ShowAdvancedOptions { get; }
+        public Catel.MVVM.Command TestConnection { get; }
+        public override string Title { get; }
+        public Orc.DataAccess.Database.DbConnectionStringProperty? UserId { get; }
+        public bool CanInitDatabases() { }
+        protected override System.Threading.Tasks.Task InitializeAsync() { }
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e) { }
+    }
+    public sealed class ConnectionStringEditWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
+    {
+        public ConnectionStringEditWindow() { }
+        public void InitializeComponent() { }
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() { }
+    }
+    public class DbConnectionPropertyDefinition
+    {
+        public DbConnectionPropertyDefinition() { }
+        public string? Name { get; set; }
+        public object? Value { get; set; }
+    }
+    public class DbConnectionPropertyDefinitionCollection : System.Collections.ObjectModel.ObservableCollection<Orc.DataAccess.Controls.DbConnectionPropertyDefinition>
+    {
+        public DbConnectionPropertyDefinitionCollection() { }
+    }
+    public class DbConnectionProviderListViewModel : Catel.MVVM.ViewModelBase
+    {
+        public static readonly Catel.Data.IPropertyData DbProviderProperty;
+        public static readonly Catel.Data.IPropertyData DbProvidersProperty;
+        public DbConnectionProviderListViewModel(Orc.DataAccess.Database.DbProviderInfo selectedProvider) { }
+        public Orc.DataAccess.Database.DbProviderInfo? DbProvider { get; set; }
+        public System.Collections.Generic.IList<Orc.DataAccess.Database.DbProviderInfo> DbProviders { get; }
+        public Catel.MVVM.TaskCommand Open { get; }
+        public Catel.MVVM.Command Refresh { get; }
+        public override string Title { get; }
+        protected override System.Threading.Tasks.Task InitializeAsync() { }
+    }
+    public sealed class DbConnectionProviderListWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
+    {
+        public DbConnectionProviderListWindow() { }
+        public void InitializeComponent() { }
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() { }
+    }
+    public sealed class DbProviderPicker : Catel.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector
+    {
+        public static readonly System.Windows.DependencyProperty DbProviderProperty;
+        public DbProviderPicker() { }
+        [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayViewModelWins)]
+        public Orc.DataAccess.Database.DbProviderInfo? DbProvider { get; set; }
+        public void InitializeComponent() { }
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() { }
+    }
+    public class DbProviderPickerViewModel : Catel.MVVM.ViewModelBase
+    {
+        public static readonly Catel.Data.IPropertyData DbProviderProperty;
+        public DbProviderPickerViewModel(Catel.Services.IUIVisualizerService uiVisualizerService, Catel.IoC.ITypeFactory typeFactory) { }
+        public Catel.MVVM.TaskCommand ChangeDbProvider { get; }
+        public Orc.DataAccess.Database.DbProviderInfo? DbProvider { get; set; }
+    }
+    public interface IDataSourceProvider
+    {
+        string DataBasesQuery { get; }
+    }
+    public class MsSqlDataSourceProvider : Orc.DataAccess.Controls.IDataSourceProvider
+    {
+        public MsSqlDataSourceProvider() { }
+        public string DataBasesQuery { get; }
+        public System.Collections.Generic.IList<string> GetDataSources() { }
+    }
+}
+namespace Orc.DataAccess
+{
+    public static class DataSourcePath
+    {
+        public const string MicrosoftSqlServerRegPath = "SOFTWARE\\Microsoft\\Microsoft SQL Server";
+    }
+    public static class SqlConnectionStringExtensions
+    {
+        public static Orc.DataAccess.Database.DbConnectionStringProperty? GetProperty(this Orc.DataAccess.Database.DbConnectionString connectionString, string propertyName) { }
+    }
+}

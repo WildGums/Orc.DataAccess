@@ -1,28 +1,19 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IValidationContextExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess;
 
-namespace Orc.DataAccess
+using System;
+using Catel.Data;
+
+public static class IValidationContextExtensions
 {
-    using Catel;
-    using Catel.Data;
-
-    public static class IValidationContextExtensions
+    public static void AddValidationError(this IValidationContext validationContext, string message, string? tag = null)
     {
-        #region Methods
-        public static void AddValidationError(this IValidationContext validationContext, string message, string tag = null)
+        ArgumentNullException.ThrowIfNull(validationContext);
+
+        var businessRuleValidationResult = new BusinessRuleValidationResult(ValidationResultType.Error, message)
         {
-            Argument.IsNotNull(() => validationContext);
+            Tag = tag
+        };
 
-            var businessRuleValidationResult = new BusinessRuleValidationResult(ValidationResultType.Error, message)
-            {
-                Tag = tag
-            };
-
-            validationContext.Add(businessRuleValidationResult);
-        }
-        #endregion
+        validationContext.Add(businessRuleValidationResult);
     }
 }

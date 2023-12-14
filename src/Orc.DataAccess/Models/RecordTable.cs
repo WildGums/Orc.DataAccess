@@ -1,17 +1,14 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RecordTable.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess;
 
-namespace Orc.DataAccess
+using System;
+using System.Collections.Generic;
+
+public class RecordTable : List<Record>
 {
-    using System.Collections.Generic;
-
-    public class RecordTable : List<Record>
+    public RecordTable()
     {
-        #region Properties
-        public string[] Headers { get; set; }
-        #endregion
+        Headers = Array.Empty<string>();
     }
+
+    public string[] Headers { get; set; }
 }

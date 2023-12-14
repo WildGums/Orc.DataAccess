@@ -1,35 +1,21 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConnectionStateToColorBrushValueConverter.cs" company="WildGums">
-//   Copyright (c) 2008 - 2017 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Controls;
 
+using System;
+using System.Windows;
+using System.Windows.Media;
+using Catel.MVVM.Converters;
+using Database;
 
-namespace Orc.DataAccess.Controls
+public class ConnectionStateToColorBrushValueConverter : ValueConverterBase<ConnectionState, SolidColorBrush>
 {
-    using System;
-    using System.Windows.Media;
-    using Catel.MVVM.Converters;
-    using Database;
-
-    public class ConnectionStateToColorBrushValueConverter : ValueConverterBase<ConnectionState, SolidColorBrush>
+    protected override object Convert(ConnectionState value, Type targetType, object? parameter)
     {
-        protected override object Convert(ConnectionState value, Type targetType, object parameter)
+        return value switch
         {
-            switch (value)
-            {
-                case ConnectionState.Undefined:
-                    return new SolidColorBrush(Colors.Gray);
-
-                case ConnectionState.Valid:
-                    return new SolidColorBrush(Colors.Green);
-
-                case ConnectionState.Invalid:
-                    return new SolidColorBrush(Colors.Red);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(value), value, null);
-            }
-        }
+            ConnectionState.Undefined => Application.Current.FindResource("Orc.Brushes.Control.Default.Border") as SolidColorBrush ?? Brushes.Gray,
+            ConnectionState.Valid => Brushes.Green,
+            ConnectionState.Invalid => Brushes.Red,
+            _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+        };
     }
 }

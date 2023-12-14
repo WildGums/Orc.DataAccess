@@ -1,42 +1,28 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DataRowExtensions.cs" company="WildGums">
-//   Copyright (c) 2008 - 2019 WildGums. All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace Orc.DataAccess.Database;
 
+using System;
+using System.Data;
 
-namespace Orc.DataAccess.Database
+public static class DataRowExtensions
 {
-    using System.Data;
-    using Catel;
-
-    internal static class DataRowExtensions
+    public static DbProviderInfo ToDbProviderInfo(this DataRow row)
     {
-        #region Methods
-        public static DbProviderInfo ToDbProviderInfo(this DataRow row)
+        ArgumentNullException.ThrowIfNull(row);
+
+        var invariantName = row["InvariantName"].ToString();
+        var name = row["Name"].ToString();
+        if (string.IsNullOrWhiteSpace(name))
         {
-            Argument.IsNotNull(() => row);
-
-            var providerInfo = new DbProviderInfo
-            {
-                Name = row["Name"]?.ToString(),
-                Description = row["Description"]?.ToString(),
-                InvariantName = row["InvariantName"]?.ToString(),
-                AssemblyQualifiedName = row["AssemblyQualifiedName"]?.ToString()
-            };
-
-            if (string.IsNullOrWhiteSpace(providerInfo.Name))
-            {
-                providerInfo.Name = row["InvariantName"]?.ToString();
-
-                if (string.IsNullOrWhiteSpace(providerInfo.Name))
-                {
-                    providerInfo.Name = "- nameless -";
-                }
-            }
-
-            return providerInfo;
+            name = invariantName?.Replace(".", " ") ?? "- nameless -";
         }
-        #endregion
+        var description = row["Description"].ToString();
+        var assemblyQualifiedName = row["AssemblyQualifiedName"].ToString();
+
+        var providerInfo = new DbProviderInfo(name,
+            invariantName ?? string.Empty,
+            description ?? string.Empty,
+            assemblyQualifiedName ?? string.Empty);
+
+        return providerInfo;
     }
 }
