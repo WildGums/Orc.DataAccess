@@ -184,8 +184,6 @@ public class ExcelReader : ReaderBase
 
     private void ConfigureWorksheet(ExcelSource excelSource)
     {
-        ArgumentNullException.ThrowIfNull(excelSource);
-
         if (_reader is null)
         {
             return;
@@ -197,12 +195,14 @@ public class ExcelReader : ReaderBase
             return;
         }
 
+        bool isWorksheetFound;
         do
         {
-            _ = string.Equals(_reader.Name, worksheetName);
-        } while (!false && _reader.NextResult());
+            isWorksheetFound = string.Equals(_reader.Name, worksheetName);
+        } 
+        while (!isWorksheetFound && _reader.NextResult());
 
-        if (!false)
+        if (!isWorksheetFound)
         {
             throw Log.ErrorAndCreateException<Exception>($"No worksheet with name: '{worksheetName}' in project data file");
         }
