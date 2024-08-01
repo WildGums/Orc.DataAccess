@@ -342,6 +342,10 @@ namespace Orc.DataAccess.Database
     public class MsSqlDbSourceGateway : Orc.DataAccess.Database.MsSqlDbSourceGatewayBase
     {
         public MsSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
+    }
+    public abstract class MsSqlDbSourceGatewayBase : Orc.DataAccess.Database.SqlDbSourceGatewayBase
+    {
+        public MsSqlDbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source) { }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<Orc.DataAccess.DataSourceParameters>> DataSourceParametersFactory { get; }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
         protected override System.Data.Common.DbCommand CreateGetTableRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled) { }
@@ -442,6 +446,11 @@ namespace Orc.DataAccess.Database
     {
         public SystemSqlDbDataSourceProvider() { }
         protected override string ProviderName { get; }
+    }
+    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
+    public class SystemSqlDbSourceGateway : Orc.DataAccess.Database.MsSqlDbSourceGatewayBase
+    {
+        public SystemSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
     }
     public enum TableType
     {
