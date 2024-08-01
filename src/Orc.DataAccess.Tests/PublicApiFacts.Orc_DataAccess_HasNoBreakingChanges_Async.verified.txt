@@ -378,7 +378,7 @@ namespace Orc.DataAccess.Database
         protected override System.Data.Common.DbCommand CreateTableCountCommand(System.Data.Common.DbConnection connection) { }
         public override Orc.DataAccess.DataSourceParameters GetQueryParameters() { }
     }
-    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SQLite")]
+    [Orc.DataAccess.Database.ConnectToProvider("SQLite Data Provider")]
     public class SqLiteSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
     {
         public SqLiteSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
