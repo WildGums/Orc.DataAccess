@@ -41,7 +41,7 @@ public abstract class DataSourceBase : ModelBase
 
         base.OnPropertyChanged(e);
 
-        var newValue = GetValue<object?>(propertyName);
+        var newValue = GetValueFromPropertyBag<object?>(propertyName);
         if (newValue is null)
         {
             _properties.Remove(propertyName);
