@@ -338,8 +338,8 @@ namespace Orc.DataAccess.Database
         protected abstract string ProviderName { get; }
         public virtual System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
     }
-    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
-    public class MsSqlDbSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
+    [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
+    public class MsSqlDbSourceGateway : Orc.DataAccess.Database.MsSqlDbSourceGatewayBase
     {
         public MsSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<Orc.DataAccess.DataSourceParameters>> DataSourceParametersFactory { get; }
