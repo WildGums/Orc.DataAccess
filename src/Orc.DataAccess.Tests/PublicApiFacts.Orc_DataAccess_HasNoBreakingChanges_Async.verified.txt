@@ -102,7 +102,7 @@ namespace Orc.DataAccess
     public static class KeyValueStringParser
     {
         public const char KeyValueDelimiter = '=';
-        public const string KeyValuePairsDelimiter = "|&|";
+        public const string KeyValuePairsDelimiter = "|||";
         public static string FormatToKeyValueString(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> keyPairs) { }
         public static string? GetValue(string source, string key) { }
         public static System.Collections.Generic.Dictionary<string, string> Parse(string source) { }
