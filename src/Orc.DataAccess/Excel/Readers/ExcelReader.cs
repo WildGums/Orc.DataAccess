@@ -23,7 +23,7 @@ public class ExcelReader : ReaderBase
     public ExcelReader(string source)
         : base(source)
     {
-        _fieldHeaders = Array.Empty<string>();
+        _fieldHeaders = [];
         Initialize(source);
     }
 
