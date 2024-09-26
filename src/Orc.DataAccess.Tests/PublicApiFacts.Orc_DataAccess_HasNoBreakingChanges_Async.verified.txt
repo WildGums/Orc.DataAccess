@@ -257,14 +257,14 @@ namespace Orc.DataAccess.Database
     {
         public static void ConnectInstance<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, TBaseType instance) { }
         public static void ConnectType<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, System.Type type) { }
-        public static T CreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider, params object[] parameters)
+        public static T? CreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider, params object[] parameters)
             where T :  notnull { }
         public static System.Data.Common.DbConnection? CreateConnection(this Orc.DataAccess.Database.DbProvider dbProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
         public static System.Data.Common.DbConnection? CreateConnection(this Orc.DataAccess.Database.DbProvider dbProvider, string connectionString) { }
-        public static Orc.DataAccess.Database.DbSourceGatewayBase CreateDbSourceGateway(this Orc.DataAccess.Database.DbProvider dbProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
+        public static Orc.DataAccess.Database.DbSourceGatewayBase? CreateDbSourceGateway(this Orc.DataAccess.Database.DbProvider dbProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
         public static System.Collections.Generic.IList<System.Type> GetConnectedTypes<T>(this Orc.DataAccess.Database.DbProvider dbProvider) { }
         public static System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources(this Orc.DataAccess.Database.DbProvider dbProvider) { }
-        public static T GetOrCreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider)
+        public static T? GetOrCreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider)
             where T :  notnull { }
     }
     public class DbProviderFactoryRepository
