@@ -6,7 +6,7 @@ using Orc.Automation;
 using Orc.Automation.Controls;
 using Orc.Automation.Tests;
 
-public abstract class StyledControlTestFacts<TControl> : ControlUiTestFactsBase<TControl>
+public abstract class StyledControlTestFacts<TControl> : ControlUiTestsBase<TControl>
     where TControl : System.Windows.FrameworkElement
 {
     protected override bool TryLoadControl(TestHostAutomationControl testHost, out string testedControlAutomationId)

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using DataAccess;
 
-[ConnectToProvider("System.Data.SQLite")]
+[ConnectToProvider("SQLite Data Provider")]
 public class SqLiteSourceGateway : SqlDbSourceGatewayBase
 {
     public SqLiteSourceGateway(DatabaseSource source)

@@ -29,7 +29,7 @@ public static class DbConnectionStringExtensions
 
         var provider = connectionString.DbProvider;
         var schemaProvider = provider.GetProvider().GetOrCreateConnectedInstance<IDataSourceSchemaProvider>();
-        return schemaProvider.GetSchema(connectionString);
+        return schemaProvider?.GetSchema(connectionString);
     }
 
     public static ConnectionState GetConnectionState(this DbConnectionString connectionString)

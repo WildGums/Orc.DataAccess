@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 public static class KeyValueStringParser
 {
-    public const char KeyValuePairsDelimiter = ',';
+    public const string KeyValuePairsDelimiter = "|||";
     public const char KeyValueDelimiter = '=';
     private static readonly Regex KeyValueGroupRegex;
 

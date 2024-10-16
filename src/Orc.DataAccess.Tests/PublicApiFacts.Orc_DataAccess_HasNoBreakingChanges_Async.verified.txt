@@ -102,7 +102,7 @@ namespace Orc.DataAccess
     public static class KeyValueStringParser
     {
         public const char KeyValueDelimiter = '=';
-        public const char KeyValuePairsDelimiter = ',';
+        public const string KeyValuePairsDelimiter = "|||";
         public static string FormatToKeyValueString(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> keyPairs) { }
         public static string? GetValue(string source, string key) { }
         public static System.Collections.Generic.Dictionary<string, string> Parse(string source) { }
@@ -257,14 +257,14 @@ namespace Orc.DataAccess.Database
     {
         public static void ConnectInstance<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, TBaseType instance) { }
         public static void ConnectType<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, System.Type type) { }
-        public static T CreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider, params object[] parameters)
+        public static T? CreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider, params object[] parameters)
             where T :  notnull { }
         public static System.Data.Common.DbConnection? CreateConnection(this Orc.DataAccess.Database.DbProvider dbProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
         public static System.Data.Common.DbConnection? CreateConnection(this Orc.DataAccess.Database.DbProvider dbProvider, string connectionString) { }
-        public static Orc.DataAccess.Database.DbSourceGatewayBase CreateDbSourceGateway(this Orc.DataAccess.Database.DbProvider dbProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
+        public static Orc.DataAccess.Database.DbSourceGatewayBase? CreateDbSourceGateway(this Orc.DataAccess.Database.DbProvider dbProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
         public static System.Collections.Generic.IList<System.Type> GetConnectedTypes<T>(this Orc.DataAccess.Database.DbProvider dbProvider) { }
         public static System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources(this Orc.DataAccess.Database.DbProvider dbProvider) { }
-        public static T GetOrCreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider)
+        public static T? GetOrCreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider)
             where T :  notnull { }
     }
     public class DbProviderFactoryRepository
@@ -338,24 +338,23 @@ namespace Orc.DataAccess.Database
         protected abstract string ProviderName { get; }
         public virtual System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
     }
-    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
-    public class MsSqlDbSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
+    [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
+    public class MsSqlDbSourceGateway : Orc.DataAccess.Database.MsSqlDbSourceGatewayBase
     {
         public MsSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
+    }
+    public abstract class MsSqlDbSourceGatewayBase : Orc.DataAccess.Database.SqlDbSourceGatewayBase
+    {
+        public MsSqlDbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source) { }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<Orc.DataAccess.DataSourceParameters>> DataSourceParametersFactory { get; }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
         protected override System.Data.Common.DbCommand CreateGetTableRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled) { }
         protected override System.Data.Common.DbCommand CreateTableCountCommand(System.Data.Common.DbConnection connection) { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("MySql.Data.MySqlClient")]
-    public class MySqlSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
+    public class MySqlSourceGateway : Orc.DataAccess.Database.MsSqlDbSourceGatewayBase
     {
         public MySqlSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
-        protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<Orc.DataAccess.DataSourceParameters>> DataSourceParametersFactory { get; }
-        protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
-        protected override System.Data.Common.DbCommand CreateGetFunctionRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount) { }
-        protected override System.Data.Common.DbCommand CreateGetTableRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled) { }
-        protected override System.Data.Common.DbCommand CreateTableCountCommand(System.Data.Common.DbConnection connection) { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("Oracle.ManagedDataAccess.Client")]
     public class OracleSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
@@ -379,7 +378,7 @@ namespace Orc.DataAccess.Database
         protected override System.Data.Common.DbCommand CreateTableCountCommand(System.Data.Common.DbConnection connection) { }
         public override Orc.DataAccess.DataSourceParameters GetQueryParameters() { }
     }
-    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SQLite")]
+    [Orc.DataAccess.Database.ConnectToProvider("SQLite Data Provider")]
     public class SqLiteSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
     {
         public SqLiteSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
@@ -442,6 +441,11 @@ namespace Orc.DataAccess.Database
     {
         public SystemSqlDbDataSourceProvider() { }
         protected override string ProviderName { get; }
+    }
+    [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
+    public class SystemSqlDbSourceGateway : Orc.DataAccess.Database.MsSqlDbSourceGatewayBase
+    {
+        public SystemSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
     }
     public enum TableType
     {
