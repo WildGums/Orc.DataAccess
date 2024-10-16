@@ -21,7 +21,7 @@ public class ConnectionStringAdvancedOptionsViewModel : ViewModelBase
         ArgumentNullException.ThrowIfNull(connectionString);
 
         ConnectionString = connectionString;
-        ConnectionStringProperties = Array.Empty<DbConnectionStringProperty>();
+        ConnectionStringProperties = [];
 
         _updateFilterTimer.Interval = TimeSpan.FromMilliseconds(200);
         _updateFilterTimer.Tick += OnUpdateFilterTimerTick;

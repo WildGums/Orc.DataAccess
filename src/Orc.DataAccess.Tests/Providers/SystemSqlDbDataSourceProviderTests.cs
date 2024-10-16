@@ -2,19 +2,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Reflection;
-using NUnit.Framework;
 using Database;
 using Microsoft.Win32;
 using Moq;
-using Orc.Automation.Tests;
+using NUnit.Framework;
 
 [TestFixture]
 public class SystemSqlDbDataSourceProviderTests
 {
-    [TestCase<SystemSqlDbDataSourceProvider>("System.Data.SqlClient")]
-    [TestCase<MsSqlDbDataSourceProvider>("Microsoft.Data.SqlClient")]
+    [Orc.Automation.Tests.TestCase<SystemSqlDbDataSourceProvider>("System.Data.SqlClient")]
+    [Orc.Automation.Tests.TestCase<MsSqlDbDataSourceProvider>("Microsoft.Data.SqlClient")]
     public void GetDataSources_Returns_Correct_Local_Server_List<T>(string providerName)
         where T : MsSqlDbDataSourceProviderBase
     {
@@ -35,10 +33,7 @@ public class SystemSqlDbDataSourceProviderTests
                     {
                         if (Equals(x, "InstalledInstances"))
                         {
-                            return new List<string>
-                            {
-                                serverName
-                            };
+                            return new List<string> { serverName };
                         }
 
                         return null;
@@ -60,17 +55,17 @@ public class SystemSqlDbDataSourceProviderTests
                 {
                     return null;
                 }
-                
+
                 return registerKey.Object;
             });
 
-        var dbProvider = (T) Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Instance, 
-            (Binder?) null, new object?[] {registerKeyService.Object}, (CultureInfo?)null);
+        var dbProvider = (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Instance,
+            null, new object?[] { registerKeyService.Object }, null);
 
         var expectedServerName = $"{Environment.MachineName}\\{serverName}";
 
         var sources = dbProvider.GetDataSources();
 
-        Assert.That(sources, Is.EquivalentTo(new []{ new DbDataSource(providerName, expectedServerName) }));
+        Assert.That(sources, Is.EquivalentTo(new[] { new DbDataSource(providerName, expectedServerName) }));
     }
 }

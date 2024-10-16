@@ -78,11 +78,11 @@ public class ConnectionStringBuilder : Control
             {
                 _dbProvider = connectionStringEditViewModel.DbProvider;
                 var connectionString = connectionStringEditViewModel.ConnectionString;
-
+              
+                SetCurrentValue(DatabaseProviderProperty, connectionString?.DbProvider.InvariantName);
                 SetCurrentValue(ConnectionStringProperty, connectionString?.ToString());
                 _connectionStringTextBox?.SetCurrentValue(TextBox.TextProperty, connectionString?.ToDisplayString());
                 SetCurrentValue(ConnectionStateProperty, connectionStringEditViewModel.ConnectionState);
-                SetCurrentValue(DatabaseProviderProperty, connectionString?.DbProvider.InvariantName);
             }
         }
     }

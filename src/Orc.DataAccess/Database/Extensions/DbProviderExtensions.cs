@@ -18,7 +18,7 @@ public static class DbProviderExtensions
     private static readonly Dictionary<string, Dictionary<Type, IList<Type>>> ConnectedTypes = new();
     private static readonly Dictionary<string, Dictionary<Type, object>> ConnectedInstances = new();
 
-    public static T GetOrCreateConnectedInstance<T>(this DbProvider dbProvider)
+    public static T? GetOrCreateConnectedInstance<T>(this DbProvider dbProvider)
         where T : notnull
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
@@ -26,21 +26,32 @@ public static class DbProviderExtensions
         var providerInvariantName = dbProvider.ProviderInvariantName;
         var instances = GetConnectedInstances(providerInvariantName);
 
-        if (!instances.TryGetValue(typeof(T), out var instance))
+        if (instances.TryGetValue(typeof(T), out var instance))
         {
-            instance = CreateConnectedInstance<T>(dbProvider);
-            instances[typeof(T)] = instance;
+            return (T)instance;
         }
 
-        return (T)instance;
+        instance = CreateConnectedInstance<T>(dbProvider);
+        if (instance is null)
+        {
+            return default;
+        }
+
+        instances[typeof(T)] = instance;
+        return (T?)instance;
     }
 
-    public static T CreateConnectedInstance<T>(this DbProvider dbProvider, params object[] parameters)
+    public static T? CreateConnectedInstance<T>(this DbProvider dbProvider, params object[] parameters)
         where T : notnull
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
 
-        var connectedType = dbProvider.GetConnectedTypes<T>().First();
+        var connectedType = dbProvider.GetConnectedTypes<T>()
+            .FirstOrDefault();
+        if (connectedType is null)
+        {
+            return default;
+        }
 
 #pragma warning disable IDISP001 // Dispose created
         var typeFactory = dbProvider.GetTypeFactory();
@@ -128,7 +139,7 @@ public static class DbProviderExtensions
         ArgumentNullException.ThrowIfNull(dbProvider);
 
         var dataSourceProvider = dbProvider.GetOrCreateConnectedInstance<IDbDataSourceProvider>();
-        return dataSourceProvider.GetDataSources();
+        return dataSourceProvider?.GetDataSources() ?? [];
     }
 
     public static DbConnection? CreateConnection(this DbProvider dbProvider, DatabaseSource databaseSource)
@@ -144,7 +155,7 @@ public static class DbProviderExtensions
         return CreateConnection(dbProvider, databaseSource.ConnectionString);
     }
 
-    public static DbSourceGatewayBase CreateDbSourceGateway(this DbProvider dbProvider, DatabaseSource databaseSource)
+    public static DbSourceGatewayBase? CreateDbSourceGateway(this DbProvider dbProvider, DatabaseSource databaseSource)
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
         ArgumentNullException.ThrowIfNull(databaseSource);

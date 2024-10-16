@@ -7,10 +7,10 @@ using NUnit.Framework;
 [TestFixture]
 public class KeyValueStringParserFacts
 {
-    [TestCase(@"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;       , Table=RelationOperations,Dialect=SQLSERVER_2008            ",
+    [TestCase($@"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;    {KeyValueStringParser.KeyValuePairsDelimiter}Table=RelationOperations{KeyValueStringParser.KeyValuePairsDelimiter}  Dialect=SQLSERVER_2008   ",
         new[] {"ConnectionString", "Table", "Dialect"},
         new[] {@"Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;", "RelationOperations", "SQLSERVER_2008"})]
-    [TestCase(@"FilePath=ElsinoreData.xlsx,  Worksheet=Operation, CellRange=A212 ",
+    [TestCase(@$"FilePath=ElsinoreData.xlsx{KeyValueStringParser.KeyValuePairsDelimiter}  Worksheet=Operation{KeyValueStringParser.KeyValuePairsDelimiter} CellRange=A212 ",
         new[] {"FilePath", "Worksheet", "CellRange"},
         new[] {@"ElsinoreData.xlsx", "Operation", "A212"})]
     public void CorrectlyParseSourceIntoKeyValueDictionary(string source, string[] expectedKeys, string[] expectedValues)
@@ -23,9 +23,9 @@ public class KeyValueStringParserFacts
     }
 
     [TestCase(new[] {"ConnectionString", "Table", "Dialect"}, new[] {@"Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;", "RelationOperations", "SQLSERVER_2008"},
-        @"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;, Table=RelationOperations, Dialect=SQLSERVER_2008")]
+        $@"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;{KeyValueStringParser.KeyValuePairsDelimiter} Table=RelationOperations{KeyValueStringParser.KeyValuePairsDelimiter} Dialect=SQLSERVER_2008")]
     [TestCase(new[] {"FilePath", "Worksheet", "CellRange"}, new[] {@"ElsinoreData.xlsx", "Operation", "A212"},
-        @"FilePath=ElsinoreData.xlsx, Worksheet=Operation, CellRange=A212")]
+        $@"FilePath=ElsinoreData.xlsx{KeyValueStringParser.KeyValuePairsDelimiter} Worksheet=Operation{KeyValueStringParser.KeyValuePairsDelimiter} CellRange=A212")]
     public void CorrectlyFormatToKeyValueString(string[] keys, string[] values, string expectedResult)
     {
         var sourceKeyValues = keys.Zip(values, (key, value) => new KeyValuePair<string, string>(key, value));
@@ -35,11 +35,11 @@ public class KeyValueStringParserFacts
         Assert.That(expectedResult, Is.EqualTo(result));
     }
 
-    [TestCase(@"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;, Table=RelationOperations, Dialect=SQLSERVER_2008", "Catalog",
-        "SomeValue", @"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;, Table=RelationOperations, Dialect=SQLSERVER_2008, Catalog=SomeValue")]
-    [TestCase(@"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;, Table=RelationOperations, Dialect=SQLSERVER_2008", "ConnectionString",
-        "Other connection string", @"ConnectionString=Other connection string, Table=RelationOperations, Dialect=SQLSERVER_2008")]
-    [TestCase(@"FilePath =ElsinoreData.xlsx, Worksheet=Operation, CellRange=A212", "Worksheet", "Other worksheet", @"FilePath =ElsinoreData.xlsx, Worksheet=Other worksheet, CellRange=A212")]
+    [TestCase($@"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;{KeyValueStringParser.KeyValuePairsDelimiter} Table=RelationOperations{KeyValueStringParser.KeyValuePairsDelimiter} Dialect=SQLSERVER_2008", "Catalog",
+        "SomeValue", $@"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;{KeyValueStringParser.KeyValuePairsDelimiter} Table=RelationOperations{KeyValueStringParser.KeyValuePairsDelimiter} Dialect=SQLSERVER_2008{KeyValueStringParser.KeyValuePairsDelimiter} Catalog=SomeValue")]
+    [TestCase($@"ConnectionString=Data Source=myServer\sqlexpress;Initial Catalog=TestProject;Integrated Security=True;{KeyValueStringParser.KeyValuePairsDelimiter} Table=RelationOperations{KeyValueStringParser.KeyValuePairsDelimiter} Dialect=SQLSERVER_2008", "ConnectionString",
+        "Other connection string", $@"ConnectionString=Other connection string{KeyValueStringParser.KeyValuePairsDelimiter} Table=RelationOperations{KeyValueStringParser.KeyValuePairsDelimiter} Dialect=SQLSERVER_2008")]
+    [TestCase($@"FilePath =ElsinoreData.xlsx{KeyValueStringParser.KeyValuePairsDelimiter} Worksheet=Operation{KeyValueStringParser.KeyValuePairsDelimiter} CellRange=A212", "Worksheet", "Other worksheet", $@"FilePath =ElsinoreData.xlsx{KeyValueStringParser.KeyValuePairsDelimiter} Worksheet=Other worksheet{KeyValueStringParser.KeyValuePairsDelimiter} CellRange=A212")]
     public void CorrectlySetValueByKeyToKeyValueString(string source, string key, string value, string expectedSource)
     {
         var result = KeyValueStringParser.SetValue(source, key, value);
