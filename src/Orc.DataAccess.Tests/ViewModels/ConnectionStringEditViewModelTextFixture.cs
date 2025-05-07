@@ -2,12 +2,12 @@
 
 using System;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Catel.IoC;
 using Catel.Services;
 using Controls;
 using Database;
+using Microsoft.Data.SqlClient;
 using Moq;
 using NUnit.Framework;
 

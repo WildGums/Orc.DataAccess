@@ -60,7 +60,7 @@ public partial class App
 
         StyleHelper.CreateStyleForwardersForDefaultStyles();
 
-        var factory = System.Data.SqlClient.SqlClientFactory.Instance;
+        var factory = Microsoft.Data.SqlClient.SqlClientFactory.Instance;
         DbProviderFactories.RegisterFactory("System.Data.SqlClient", factory);
         DbProviderFactories.RegisterFactory("Microsoft.Data.SqlClient", SqlClientFactory.Instance);
 
