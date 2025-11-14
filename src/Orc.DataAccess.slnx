@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="Orc.DataAccess.Xaml/Orc.DataAccess.Xaml.csproj" />
+    <Project Path="Orc.DataAccess/Orc.DataAccess.csproj" />
+  </Folder>
+  <Folder Name="/src/Example/">
+    <Project Path="Orc.DataAccess.Example/Orc.DataAccess.Example.csproj" />
+  </Folder>
+  <Folder Name="/src/Tests/">
+    <Project Path="Orc.DataAccess.Tests/Orc.DataAccess.Tests.csproj" />
+  </Folder>
+</Solution>
