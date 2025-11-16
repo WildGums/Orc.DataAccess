@@ -46,19 +46,19 @@ public class CsvReader : ReaderBase
 
             if (_isFieldHeaderInitialized)
             {
-                return context.Reader.HeaderRecord ?? Array.Empty<string>();
+                return context.Reader?.HeaderRecord ?? Array.Empty<string>();
             }
 
             if (!_reader.Read())
             {
-                return context.Reader.HeaderRecord ?? Array.Empty<string>();
+                return context.Reader?.HeaderRecord ?? Array.Empty<string>();
             }
 
             _reader.ReadHeader();
 
             _isFieldHeaderInitialized = true;
 
-            return context.Reader.HeaderRecord ?? Array.Empty<string>();
+            return context.Reader?.HeaderRecord ?? Array.Empty<string>();
         }
     }
             
