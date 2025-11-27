@@ -17,6 +17,7 @@ public class TestDbConnection : DbConnection
 
     [DefaultValue(null)]
     public Func<DbCommand>? CreateCommandFunc { get; set; }
+
     [DefaultValue(null)]
     public Func<DbTransaction>? CreateTransactionFunc { get; set; }
 
