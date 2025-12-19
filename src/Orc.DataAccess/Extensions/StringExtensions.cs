@@ -20,8 +20,7 @@ public static class StringExtensions
         var initVectorBytes = Encoding.UTF8.GetBytes(InitVector);
         var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-        using var password = new Rfc2898DeriveBytes(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, Iterations, HashAlgorithm);
-        var keyBytes = password.GetBytes(Keysize / 8);
+        var keyBytes = Rfc2898DeriveBytes.Pbkdf2(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, Iterations, HashAlgorithm, Keysize / 8);
         using var symmetricKey = Aes.Create();
         var encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes); ////To encrypt
 
@@ -46,8 +45,8 @@ public static class StringExtensions
             var initVectorBytes = Encoding.ASCII.GetBytes(InitVector);
             var cipherTextBytes = Convert.FromBase64String(cipherText);
 
-            using var password = new Rfc2898DeriveBytes(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, Iterations, HashAlgorithm);
-            var keyBytes = password.GetBytes(Keysize / 8);
+            var keyBytes = Rfc2898DeriveBytes.Pbkdf2(passPhrase, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, Iterations, HashAlgorithm, Keysize / 8);
+
             using var symmetricKey = Aes.Create();
             var decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
 
