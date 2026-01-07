@@ -9,8 +9,8 @@ using DataAccess;
 [ConnectToProvider("Npgsql")]
 public class PostgreSqlDbSourceGateway : SqlDbSourceGatewayBase
 {
-    public PostgreSqlDbSourceGateway(DatabaseSource source)
-        : base(source)
+    public PostgreSqlDbSourceGateway(DatabaseSource source, IServiceProvider serviceProvider)
+        : base(source, serviceProvider)
     {
     }
 
@@ -22,8 +22,8 @@ public class PostgreSqlDbSourceGateway : SqlDbSourceGatewayBase
             { TableType.View, c => c.CreateCommand($"SELECT table_name FROM information_schema.views WHERE table_schema = 'public';")},
             {
                 TableType.StoredProcedure, c => c.CreateCommand(@"SELECT  p.proname
-                                FROM    pg_catalog.pg_namespace n
-                                JOIN    pg_catalog.pg_proc p
+                                FROM    pg_cataLogger.Logpg_namespace n
+                                JOIN    pg_cataLogger.Logpg_proc p
                                 ON      p.pronamespace = n.oid
                                 WHERE   n.nspname = 'public' AND prokind = 'p'")
             },

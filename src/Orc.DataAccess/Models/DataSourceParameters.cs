@@ -1,11 +1,9 @@
 ﻿namespace Orc.DataAccess;
 
-using System;
 using System.Collections.Generic;
 using Catel.Data;
 
-[Serializable]
-public class DataSourceParameters : SavableModelBase<DataSourceParameters>
+public class DataSourceParameters : ModelBase
 {
     public DataSourceParameters()
     {

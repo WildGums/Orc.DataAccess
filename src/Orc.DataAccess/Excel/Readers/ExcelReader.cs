@@ -8,10 +8,11 @@ using System.Text;
 using Catel.Collections;
 using Catel.Logging;
 using ExcelDataReader;
+using Microsoft.Extensions.Logging;
 
 public class ExcelReader : ReaderBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ExcelReader));
 
     private IExcelDataReader? _reader;
     private string[] _fieldHeaders;
@@ -27,7 +28,7 @@ public class ExcelReader : ReaderBase
         Initialize(source);
     }
 
-    public override string[] FieldHeaders
+    public override IReadOnlyList<string> FieldHeaders
     {
         get
         {
@@ -46,7 +47,7 @@ public class ExcelReader : ReaderBase
 
     public override object? this[int index] => _reader?[GetOriginalColumnIndex(index)];
 
-    public override object? this[string name] => _reader?[GetOriginalColumnIndex(FieldHeaders.IndexOf(name, 0))];
+    public override object? this[string name] => _reader?[GetOriginalColumnIndex(FieldHeaders.ToArray().IndexOf(name, 0))];
 
     public override int TotalRecordCount => _reader?.RowCount ?? 0;
 
@@ -65,7 +66,7 @@ public class ExcelReader : ReaderBase
                 var readResult = _reader.Read() && _reader[columnIndex] is not null;
 
 #if DEBUG
-                Log.Debug($"Read '{1}' rows with result: '{readResult}'");
+                Logger.LogDebug($"Read '{1}' rows with result: '{readResult}'");
 #endif
 
                 return readResult;
@@ -78,7 +79,7 @@ public class ExcelReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Failed to read data from '{Source}'");
+            Logger.LogError(ex, $"Failed to read data from '{Source}'");
             AddValidationError($"Failed to read data: '{ex.Message}'");
             return false;
         }
@@ -101,7 +102,7 @@ public class ExcelReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Log.Warning(ex, "Failed to get worksheet list");
+            Logger.LogWarning(ex, "Failed to get worksheet list");
         }
 
         return result;
@@ -118,12 +119,12 @@ public class ExcelReader : ReaderBase
             ConfigureStartRange(excelSource);
 
 #if DEBUG
-            Log.Debug($"Reader is initialized with '{source}'");
+            Logger.LogDebug($"Reader is initialized with '{source}'");
 #endif
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Failed to initialize reader for data source '{Source}'");
+            Logger.LogError(ex, $"Failed to initialize reader for data source '{Source}'");
             _reader?.Dispose();
             _reader = null;
 
@@ -204,7 +205,7 @@ public class ExcelReader : ReaderBase
 
         if (!isWorksheetFound)
         {
-            throw Log.ErrorAndCreateException<Exception>($"No worksheet with name: '{worksheetName}' in project data file");
+            throw Logger.LogErrorAndCreateException<Exception>($"No worksheet with name: '{worksheetName}' in project data file");
         }
     }
 
@@ -238,7 +239,7 @@ public class ExcelReader : ReaderBase
             .ToArray();
 
 #if DEBUG
-        Log.Debug($"'{fieldCount}' headers of excel file were read");
+        Logger.LogDebug($"'{fieldCount}' headers of excel file were read");
 #endif
     }
 

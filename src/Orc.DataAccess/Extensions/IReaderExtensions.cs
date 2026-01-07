@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public static class IReaderExtensions
 {
-    public static List<RecordTable> ReadAll(this IReader reader)
+    public static IReadOnlyList<RecordTable> ReadAll(this IReader reader)
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -20,7 +20,7 @@ public static class IReaderExtensions
             while (reader.Read())
             {
                 var record = new Record();
-                for (var i = 0; i < result.Headers.Length; i++)
+                for (var i = 0; i < result.Headers.Count; i++)
                 {
                     var name = result.Headers[i];
                     var value = reader[i];

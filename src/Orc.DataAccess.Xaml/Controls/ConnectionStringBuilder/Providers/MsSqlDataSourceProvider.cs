@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
 public class MsSqlDataSourceProvider : IDataSourceProvider
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(MsSqlDataSourceProvider));
 
     public string DataBasesQuery => "SELECT name from sys.databases";
 
@@ -43,6 +44,6 @@ public class MsSqlDataSourceProvider : IDataSourceProvider
 
     private static IEnumerable<string> GetRemoteSqlServerInstances()
     {
-        throw Log.ErrorAndCreateException<NotSupportedException>($"Not supported on .NET Core, SqlDataSourceEnumerator is not (yet) available. See https://github.com/dotnet/corefx/issues/32874");
+        throw Logger.LogErrorAndCreateException<NotSupportedException>($"Not supported on .NET Core, SqlDataSourceEnumerator is not (yet) available. See https://github.com/dotnet/corefx/issues/32874");
     }
 }

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -11,51 +12,55 @@ using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;
 using Database;
+using Microsoft.Extensions.Logging;
 using Timer = System.Timers.Timer;
 
 public class ConnectionStringEditViewModel : ViewModelBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ConnectionStringEditViewModel));
 
-    private static readonly FastObservableCollection<string> CachedServers = new();
+    private static readonly ObservableCollection<string> CachedServers = new();
 
     private static bool IsServersInitialized;
 
     private readonly IDispatcherService _dispatcherService;
-
-    private readonly DbProviderInfo? _initalDbProvider;
-    private readonly string _initialConnectionString;
+    private readonly IViewModelFactory _viewModelFactory;
+    private readonly DbProviderInfo? _initialDbProvider;
+    private readonly string? _initialConnectionString;
     private readonly IMessageService _messageService;
-    private readonly ITypeFactory _typeFactory;
     private readonly IUIVisualizerService _uiVisualizerService;
     private readonly Timer _initializeTimer = new(200);
 
     private bool _isDatabasesInitialized;
 
-    public ConnectionStringEditViewModel(string connectionString, DbProviderInfo? provider, IMessageService messageService,
-        IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory, IDispatcherService dispatcherService)
+    public ConnectionStringEditViewModel(IMessageService messageService,
+        IUIVisualizerService uiVisualizerService, IServiceProvider serviceProvider, IDispatcherService dispatcherService,
+        IViewModelFactory viewModelFactory)
+        : this(null, null, messageService, uiVisualizerService, serviceProvider, dispatcherService, viewModelFactory)
     {
-        ArgumentNullException.ThrowIfNull(uiVisualizerService);
-        ArgumentNullException.ThrowIfNull(typeFactory);
-        ArgumentNullException.ThrowIfNull(messageService);
-        ArgumentNullException.ThrowIfNull(dispatcherService);
+        // Leave empty
+    }
 
+    public ConnectionStringEditViewModel(string? connectionString, DbProviderInfo? provider, IMessageService messageService,
+        IUIVisualizerService uiVisualizerService, IServiceProvider serviceProvider, IDispatcherService dispatcherService,
+        IViewModelFactory viewModelFactory)
+        : base(serviceProvider)
+    {
         _messageService = messageService;
         _uiVisualizerService = uiVisualizerService;
-        _typeFactory = typeFactory;
         _dispatcherService = dispatcherService;
-
-        _initalDbProvider = provider;
+        _viewModelFactory = viewModelFactory;
+        _initialDbProvider = provider;
         _initialConnectionString = connectionString;
 
-        InitServers = new TaskCommand(InitServersAsync, () => !IsServersRefreshing);
-        RefreshServers = new TaskCommand(RefreshServersAsync, () => !IsServersRefreshing);
+        InitServers = new TaskCommand(serviceProvider, InitServersAsync, () => !IsServersRefreshing);
+        RefreshServers = new TaskCommand(serviceProvider, RefreshServersAsync, () => !IsServersRefreshing);
 
-        InitDatabases = new TaskCommand(InitDatabasesAsync, () => !IsDatabasesRefreshing);
-        RefreshDatabases = new TaskCommand(RefreshDatabasesAsync, CanInitDatabases);
+        InitDatabases = new TaskCommand(serviceProvider, InitDatabasesAsync, () => !IsDatabasesRefreshing);
+        RefreshDatabases = new TaskCommand(serviceProvider, RefreshDatabasesAsync, CanInitDatabases);
 
-        TestConnection = new Command(OnTestConnection);
-        ShowAdvancedOptions = new TaskCommand(OnShowAdvancedOptionsAsync, () => ConnectionString is not null);
+        TestConnection = new Command(serviceProvider, OnTestConnection);
+        ShowAdvancedOptions = new TaskCommand(serviceProvider, OnShowAdvancedOptionsAsync, () => ConnectionString is not null);
 
         _initializeTimer.Elapsed += OnInitializeTimerElapsed;
     }
@@ -115,8 +120,8 @@ public class ConnectionStringEditViewModel : ViewModelBase
     public TaskCommand RefreshDatabases { get; }
     public TaskCommand InitDatabases { get; }
 
-    public FastObservableCollection<string> Servers => CachedServers;
-    public FastObservableCollection<string> Databases { get; } = new();
+    public ObservableCollection<string> Servers => CachedServers;
+    public ObservableCollection<string> Databases { get; } = new();
 
     protected override async Task InitializeAsync()
     {
@@ -131,16 +136,17 @@ public class ConnectionStringEditViewModel : ViewModelBase
 
         _dispatcherService.Invoke(SetInitialState);
     }
-    
+
     private void SetInitialState()
     {
-        if (_initalDbProvider is not null)
+        if (_initialDbProvider is not null)
         {
             using (SuspendChangeNotifications())
             {
-                DbProvider = _initalDbProvider;
+                DbProvider = _initialDbProvider;
             }
-            ConnectionString = _initalDbProvider.CreateConnectionString(_initialConnectionString);
+
+            ConnectionString = _initialDbProvider.CreateConnectionString(ServiceProvider, _initialConnectionString ?? string.Empty);
 
             //Only apply default properties if connection string was empty
             if (string.IsNullOrWhiteSpace(_initialConnectionString))
@@ -151,10 +157,11 @@ public class ConnectionStringEditViewModel : ViewModelBase
             return;
         }
 
-        var allKnownProviders = Database.DbProvider.GetRegisteredProviders().Select(x => x.Value.Info).ToArray();
+        var allKnownProviders = Database.DbProvider.GetRegisteredProviders(ServiceProvider).Select(x => x.Value.Info).ToArray();
+
         foreach (var provider in allKnownProviders)
         {
-            var connectionString = provider.CreateConnectionString(_initialConnectionString);
+            var connectionString = provider.CreateConnectionString(ServiceProvider, _initialConnectionString ?? string.Empty);
             if (connectionString is null)
             {
                 continue;
@@ -162,7 +169,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
 
             try
             {
-                using var testConnection = provider.GetProvider().CreateConnection(connectionString.ToString());
+                using var testConnection = provider.GetProvider(ServiceProvider).CreateConnection(connectionString.ToString());
             }
             catch
             {
@@ -187,7 +194,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
         Databases.Clear();
         Servers.Clear();
 
-        ConnectionString = dbProvider.CreateConnectionString(string.Empty);
+        ConnectionString = dbProvider.CreateConnectionString(ServiceProvider, string.Empty);
         ApplyDefaultProperties();
         SetIntegratedSecurityToDefault();
     }
@@ -196,7 +203,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
     {
         ApplyDefaultProperties();
     }
-    
+
     private void ApplyDefaultProperties()
     {
         var defaultProperties = DefaultProperties;
@@ -252,7 +259,7 @@ public class ConnectionStringEditViewModel : ViewModelBase
             return;
         }
 
-        var advancedOptionsViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ConnectionStringAdvancedOptionsViewModel>(connectionString);
+        var advancedOptionsViewModel = _viewModelFactory.CreateRequiredViewModel<ConnectionStringAdvancedOptionsViewModel>(connectionString);
         advancedOptionsViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
 
         await _uiVisualizerService.ShowDialogAsync(advancedOptionsViewModel);
@@ -269,14 +276,14 @@ public class ConnectionStringEditViewModel : ViewModelBase
     {
         if (ConnectionString is null)
         {
-            Log.Warning("Can't test connection, because connection string is not set");
+            Logger.LogWarning("Can't test connection, because connection string is not set");
 
             _messageService.ShowAsync("Connection string is not specified", "Connection test result");
 
             return;
         }
 
-        ConnectionState = ConnectionString.GetConnectionState();
+        ConnectionState = ConnectionString.GetConnectionState(ServiceProvider);
 
         _messageService.ShowAsync($"{ConnectionState} connection!", "Connection test result");
     }
@@ -294,8 +301,8 @@ public class ConnectionStringEditViewModel : ViewModelBase
 
     private Task InitServersAsync()
     {
-        return IsServersInitialized 
-            ? Task.CompletedTask 
+        return IsServersInitialized
+            ? Task.CompletedTask
             : RefreshServersAsync();
     }
 
@@ -313,10 +320,10 @@ public class ConnectionStringEditViewModel : ViewModelBase
 
         await Task.Run(() =>
         {
-            var provider = Database.DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
-            var dataSources = provider.GetDataSources();
+            var provider = Database.DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName, ServiceProvider);
+            var dataSources = provider.GetDataSources(ServiceProvider);
 
-            _dispatcherService.BeginInvoke(() => Servers.AddItems(dataSources.Select(x => x.InstanceName)));
+            _dispatcherService.BeginInvoke(() => Servers.AddRange(dataSources.Select(x => x.InstanceName)));
 
             IsServersRefreshing = false;
             IsServersInitialized = true;
@@ -348,13 +355,13 @@ public class ConnectionStringEditViewModel : ViewModelBase
 
         await Task.Run(() =>
         {
-            var connectionState = connectionString.GetConnectionState();
+            var connectionState = connectionString.GetConnectionState(ServiceProvider);
             if (connectionState != ConnectionState.Invalid)
             {
-                var schema = connectionString.GetDataSourceSchema();
+                var schema = connectionString.GetDataSourceSchema(ServiceProvider);
                 if (schema is not null)
                 {
-                    _dispatcherService.BeginInvoke(() => Databases.AddItems(schema.Databases));
+                    _dispatcherService.BeginInvoke(() => Databases.AddRange(schema.Databases));
                 }
             }
             else

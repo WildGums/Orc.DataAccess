@@ -8,8 +8,8 @@ using DataAccess;
 
 public abstract class MsSqlDbSourceGatewayBase : SqlDbSourceGatewayBase
 {
-    public MsSqlDbSourceGatewayBase(DatabaseSource source)
-        : base(source)
+    public MsSqlDbSourceGatewayBase(DatabaseSource source, IServiceProvider serviceProvider)
+        : base(source, serviceProvider)
     {
     }
 

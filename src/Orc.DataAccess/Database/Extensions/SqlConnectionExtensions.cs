@@ -6,10 +6,11 @@ using System.Data;
 using System.Data.Common;
 using Catel;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 internal static class SqlConnectionExtensions
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(SqlConnectionExtensions));
 
     private static readonly Dictionary<Type, DbProvider> ConnectionTypeToProvider = new();
 
@@ -47,15 +48,15 @@ internal static class SqlConnectionExtensions
         return command;
     }
 
-    public static DbProvider GetDbProvider(this DbConnection connection)
+    public static DbProvider GetDbProvider(this DbConnection connection, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(connection);
 
         var connectionType = connection.GetType();
-        return GetProviderByConnectionType(connectionType);
+        return GetProviderByConnectionType(connectionType, serviceProvider);
     }
 
-    private static DbProvider GetProviderByConnectionType(Type connectionType)
+    private static DbProvider GetProviderByConnectionType(Type connectionType, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(connectionType);
 
@@ -64,7 +65,7 @@ internal static class SqlConnectionExtensions
             return dbProvider;
         }
 
-        var dbProviders = DbProvider.GetRegisteredProviders();
+        var dbProviders = DbProvider.GetRegisteredProviders(serviceProvider);
         foreach (var currentProvider in dbProviders.Values)
         {
             if (currentProvider.ConnectionType != connectionType)
@@ -76,6 +77,6 @@ internal static class SqlConnectionExtensions
             return currentProvider;
         }
 
-        throw Log.ErrorAndCreateException<InvalidOperationException>($"Failed to obtain '{nameof(DbProviderInfo)}'");
+        throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Failed to obtain '{nameof(DbProviderInfo)}'");
     }
 }

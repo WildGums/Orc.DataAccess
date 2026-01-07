@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Database;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using Moq;
 using NUnit.Framework;
@@ -18,8 +19,12 @@ public class SystemSqlDbDataSourceProviderTests
     {
         const string serverName = "Test server name";
 
-        var registerKey = new Mock<IRegistryKey>();
-        registerKey.Setup(x => x.OpenSubKey(It.IsAny<string>()))
+        var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+        using var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var registryKey = new Mock<IRegistryKey>();
+        registryKey.Setup(x => x.OpenSubKey(It.IsAny<string>()))
             .Returns<string>(n =>
             {
                 if (!Equals(n, @"SOFTWARE\Microsoft\Microsoft SQL Server"))
@@ -56,11 +61,10 @@ public class SystemSqlDbDataSourceProviderTests
                     return null;
                 }
 
-                return registerKey.Object;
+                return registryKey.Object;
             });
 
-        var dbProvider = (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Instance,
-            null, new object?[] { registerKeyService.Object }, null);
+        var dbProvider = ActivatorUtilities.CreateInstance<T>(serviceProvider, registerKeyService.Object);
 
         var expectedServerName = $"{Environment.MachineName}\\{serverName}";
 

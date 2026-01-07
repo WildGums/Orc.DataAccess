@@ -4,5 +4,5 @@ using System.Collections.Generic;
 
 public interface IDbDataSourceProvider
 {
-    IList<DbDataSource> GetDataSources();
+    IReadOnlyList<DbDataSource> GetDataSources();
 }

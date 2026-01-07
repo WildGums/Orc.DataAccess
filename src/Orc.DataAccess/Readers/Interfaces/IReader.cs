@@ -1,6 +1,7 @@
 ﻿namespace Orc.DataAccess;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Catel.Data;
@@ -8,7 +9,7 @@ using Catel.Data;
 public interface IReader : IDisposable
 {
     IValidationContext ValidationContext { get; }
-    string[] FieldHeaders { get; }
+    IReadOnlyList<string> FieldHeaders { get; }
     object? this[int index] { get; }
     object? this[string name] { get; }
     int TotalRecordCount { get; }

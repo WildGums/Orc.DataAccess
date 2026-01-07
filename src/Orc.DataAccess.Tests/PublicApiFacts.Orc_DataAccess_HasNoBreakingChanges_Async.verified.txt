@@ -12,7 +12,7 @@ namespace Orc.DataAccess.Csv
     public class CsvReader : Orc.DataAccess.ReaderBase
     {
         public CsvReader(string source, Orc.Csv.ICsvReaderService csvReaderService, Orc.FileSystem.IFileService fileService) { }
-        public override string[] FieldHeaders { get; }
+        public override System.Collections.Generic.IReadOnlyList<string> FieldHeaders { get; }
         public override object? this[int index] { get; }
         public override object? this[string name] { get; }
         public override int TotalRecordCount { get; }
@@ -48,8 +48,7 @@ namespace Orc.DataAccess
         public string Type { get; set; }
         public object? Value { get; set; }
     }
-    [System.Serializable]
-    public class DataSourceParameters : Catel.Data.SavableModelBase<Orc.DataAccess.DataSourceParameters>
+    public class DataSourceParameters : Catel.Data.ModelBase
     {
         public static readonly Catel.Data.IPropertyData ParametersProperty;
         public DataSourceParameters() { }
@@ -71,8 +70,8 @@ namespace Orc.DataAccess
     }
     public static class DbDataReaderExtensions
     {
-        public static string[] GetHeaders(this System.Data.Common.DbDataReader reader) { }
-        public static System.Collections.Generic.List<Orc.DataAccess.RecordTable> ReadAll(this System.Data.Common.DbDataReader reader) { }
+        public static System.Collections.Generic.IReadOnlyList<string> GetHeaders(this System.Data.Common.DbDataReader reader) { }
+        public static System.Collections.Generic.IReadOnlyList<Orc.DataAccess.RecordTable> ReadAll(this System.Data.Common.DbDataReader reader) { }
     }
     public static class ICollectionExtensions
     {
@@ -83,7 +82,7 @@ namespace Orc.DataAccess
     {
         System.Globalization.CultureInfo Culture { get; set; }
         int FetchCount { get; set; }
-        string[] FieldHeaders { get; }
+        System.Collections.Generic.IReadOnlyList<string> FieldHeaders { get; }
         object? this[int index] { get; }
         object? this[string name] { get; }
         int Offset { get; set; }
@@ -94,7 +93,16 @@ namespace Orc.DataAccess
     }
     public static class IReaderExtensions
     {
-        public static System.Collections.Generic.List<Orc.DataAccess.RecordTable> ReadAll(this Orc.DataAccess.IReader reader) { }
+        public static System.Collections.Generic.IReadOnlyList<Orc.DataAccess.RecordTable> ReadAll(this Orc.DataAccess.IReader reader) { }
+    }
+    public interface IRegistryKey : System.IDisposable
+    {
+        object? GetValue(string name);
+        Orc.DataAccess.IRegistryKey? OpenSubKey(string name);
+    }
+    public interface IRegistryKeyService
+    {
+        Orc.DataAccess.IRegistryKey OpenBaseKey(Microsoft.Win32.RegistryHive hKey, Microsoft.Win32.RegistryView view);
     }
     public static class IValidationContextExtensions
     {
@@ -115,7 +123,7 @@ namespace Orc.DataAccess
         protected ReaderBase(string source, int offset = 0, int fetchCount = 0) { }
         public System.Globalization.CultureInfo Culture { get; set; }
         public int FetchCount { get; set; }
-        public abstract string[] FieldHeaders { get; }
+        public abstract System.Collections.Generic.IReadOnlyList<string> FieldHeaders { get; }
         public abstract object? this[int index] { get; }
         public abstract object? this[string name] { get; }
         public int Offset { get; set; }
@@ -133,7 +141,7 @@ namespace Orc.DataAccess
     public class RecordTable : System.Collections.Generic.List<Orc.DataAccess.Record>
     {
         public RecordTable() { }
-        public string[] Headers { get; set; }
+        public System.Collections.Generic.IReadOnlyList<string> Headers { get; set; }
     }
     public static class RecordTableExtensions
     {
@@ -188,10 +196,10 @@ namespace Orc.DataAccess.Database
     }
     public static class DatabaseSourceExtensions
     {
-        public static System.Data.Common.DbConnection? CreateConnection(this Orc.DataAccess.Database.DatabaseSource databaseSource) { }
-        public static Orc.DataAccess.Database.DbSourceGatewayBase? CreateGateway(this Orc.DataAccess.Database.DatabaseSource databaseSource) { }
-        public static System.Collections.Generic.IList<Orc.DataAccess.Database.DbObject> GetObjectsOfType(this Orc.DataAccess.Database.DatabaseSource databaseSource, Orc.DataAccess.Database.TableType tableType) { }
-        public static Orc.DataAccess.Database.DbProvider GetProvider(this Orc.DataAccess.Database.DatabaseSource databaseSource) { }
+        public static System.Data.Common.DbConnection? CreateConnection(this Orc.DataAccess.Database.DatabaseSource databaseSource, System.IServiceProvider serviceProvider) { }
+        public static Orc.DataAccess.Database.DbSourceGatewayBase? CreateGateway(this Orc.DataAccess.Database.DatabaseSource databaseSource, System.IServiceProvider serviceProvider) { }
+        public static System.Collections.Generic.IList<Orc.DataAccess.Database.DbObject> GetObjectsOfType(this Orc.DataAccess.Database.DatabaseSource databaseSource, System.IServiceProvider serviceProvider, Orc.DataAccess.Database.TableType tableType) { }
+        public static Orc.DataAccess.Database.DbProvider GetProvider(this Orc.DataAccess.Database.DatabaseSource databaseSource, System.IServiceProvider serviceProvider) { }
     }
     public class DbConnectionString : Catel.Data.ModelBase
     {
@@ -205,8 +213,8 @@ namespace Orc.DataAccess.Database
     }
     public static class DbConnectionStringExtensions
     {
-        public static Orc.DataAccess.Database.ConnectionState GetConnectionState(this Orc.DataAccess.Database.DbConnectionString connectionString) { }
-        public static Orc.DataAccess.Database.DbDataSourceSchema? GetDataSourceSchema(this Orc.DataAccess.Database.DbConnectionString connectionString) { }
+        public static Orc.DataAccess.Database.ConnectionState GetConnectionState(this Orc.DataAccess.Database.DbConnectionString connectionString, System.IServiceProvider serviceProvider) { }
+        public static Orc.DataAccess.Database.DbDataSourceSchema? GetDataSourceSchema(this Orc.DataAccess.Database.DbConnectionString connectionString, System.IServiceProvider serviceProvider) { }
         public static Orc.DataAccess.Database.DbConnectionStringProperty? GetProperty(this Orc.DataAccess.Database.DbConnectionString connectionString, string propertyName) { }
     }
     public class DbConnectionStringProperty : Catel.Data.ObservableObject
@@ -238,8 +246,8 @@ namespace Orc.DataAccess.Database
     }
     public class DbProvider
     {
-        public DbProvider(Orc.DataAccess.Database.DbProviderInfo info) { }
-        public DbProvider(string providerInvariantName) { }
+        public DbProvider(Orc.DataAccess.Database.DbProviderInfo info, System.IServiceProvider serviceProvider) { }
+        public DbProvider(string providerInvariantName, System.IServiceProvider serviceProvider) { }
         public virtual System.Type ConnectionType { get; }
         protected System.Data.Common.DbProviderFactory DbProviderFactory { get; }
         public string? Dialect { get; }
@@ -248,8 +256,8 @@ namespace Orc.DataAccess.Database
         public virtual System.Data.Common.DbConnection? CreateConnection() { }
         public virtual Orc.DataAccess.Database.DbConnectionString? CreateConnectionString(string connectionString) { }
         protected virtual Orc.DataAccess.Database.DbProviderInfo GetInfo() { }
-        public static Orc.DataAccess.Database.DbProvider GetRegisteredProvider(string invariantName) { }
-        public static System.Collections.Generic.IReadOnlyDictionary<string, Orc.DataAccess.Database.DbProvider> GetRegisteredProviders() { }
+        public static Orc.DataAccess.Database.DbProvider GetRegisteredProvider(string invariantName, System.IServiceProvider serviceProvider) { }
+        public static System.Collections.Generic.IReadOnlyDictionary<string, Orc.DataAccess.Database.DbProvider> GetRegisteredProviders(System.IServiceProvider serviceProvider) { }
         public static void RegisterCustomProvider(Orc.DataAccess.Database.DbProvider provider) { }
         public static void RegisterProvider(Orc.DataAccess.Database.DbProviderInfo providerInfo) { }
         public static void UnregisterProvider(Orc.DataAccess.Database.DbProviderInfo providerInfo) { }
@@ -257,15 +265,15 @@ namespace Orc.DataAccess.Database
     public static class DbProviderExtensions
     {
         public static void ConnectInstance<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, TBaseType instance) { }
-        public static void ConnectType<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, System.Type type) { }
-        public static T? CreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider, params object[] parameters)
+        public static void ConnectType<TBaseType>(this Orc.DataAccess.Database.DbProvider dbProvider, System.IServiceProvider serviceProvider, System.Type type) { }
+        public static T? CreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider, System.IServiceProvider serviceProvider, params object[] parameters)
             where T :  notnull { }
         public static System.Data.Common.DbConnection? CreateConnection(this Orc.DataAccess.Database.DbProvider dbProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
         public static System.Data.Common.DbConnection? CreateConnection(this Orc.DataAccess.Database.DbProvider dbProvider, string connectionString) { }
-        public static Orc.DataAccess.Database.DbSourceGatewayBase? CreateDbSourceGateway(this Orc.DataAccess.Database.DbProvider dbProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
+        public static Orc.DataAccess.Database.DbSourceGatewayBase? CreateDbSourceGateway(this Orc.DataAccess.Database.DbProvider dbProvider, System.IServiceProvider serviceProvider, Orc.DataAccess.Database.DatabaseSource databaseSource) { }
         public static System.Collections.Generic.IList<System.Type> GetConnectedTypes<T>(this Orc.DataAccess.Database.DbProvider dbProvider) { }
-        public static System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources(this Orc.DataAccess.Database.DbProvider dbProvider) { }
-        public static T? GetOrCreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider)
+        public static System.Collections.Generic.IReadOnlyList<Orc.DataAccess.Database.DbDataSource> GetDataSources(this Orc.DataAccess.Database.DbProvider dbProvider, System.IServiceProvider serviceProvider) { }
+        public static T? GetOrCreateConnectedInstance<T>(this Orc.DataAccess.Database.DbProvider dbProvider, System.IServiceProvider serviceProvider)
             where T :  notnull { }
     }
     public class DbProviderFactoryRepository
@@ -287,14 +295,15 @@ namespace Orc.DataAccess.Database
     }
     public static class DbProviderInfoExtensions
     {
-        public static Orc.DataAccess.Database.DbConnectionString? CreateConnectionString(this Orc.DataAccess.Database.DbProviderInfo dbProviderInfo, string connectionString) { }
-        public static Orc.DataAccess.Database.DbProvider GetProvider(this Orc.DataAccess.Database.DbProviderInfo dbProviderInfo) { }
+        public static Orc.DataAccess.Database.DbConnectionString? CreateConnectionString(this Orc.DataAccess.Database.DbProviderInfo dbProviderInfo, System.IServiceProvider serviceProvider, string connectionString) { }
+        public static Orc.DataAccess.Database.DbProvider GetProvider(this Orc.DataAccess.Database.DbProviderInfo dbProviderInfo, System.IServiceProvider serviceProvider) { }
     }
     public abstract class DbSourceGatewayBase : System.IDisposable
     {
-        protected DbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source) { }
+        protected DbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
         public virtual System.Data.Common.DbConnection? Connection { get; }
         public virtual Orc.DataAccess.Database.DbProvider Provider { get; }
+        protected System.IServiceProvider ServiceProvider { get; }
         public Orc.DataAccess.Database.DatabaseSource Source { get; }
         public void Close() { }
         public void Dispose() { }
@@ -307,7 +316,7 @@ namespace Orc.DataAccess.Database
     [Orc.DataAccess.Database.ConnectToProvider("FirebirdSql.Data.FirebirdClient")]
     public class FirebirdSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
     {
-        public FirebirdSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
+        public FirebirdSourceGateway(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<Orc.DataAccess.DataSourceParameters>> DataSourceParametersFactory { get; }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
         protected override System.Data.Common.DbCommand CreateGetTableRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled) { }
@@ -319,34 +328,34 @@ namespace Orc.DataAccess.Database
     }
     public interface IDbDataSourceProvider
     {
-        System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources();
+        System.Collections.Generic.IReadOnlyList<Orc.DataAccess.Database.DbDataSource> GetDataSources();
     }
     [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
     public class MsSqlDataSourceSchemaProvider : Orc.DataAccess.Database.IDataSourceSchemaProvider
     {
-        public MsSqlDataSourceSchemaProvider() { }
+        public MsSqlDataSourceSchemaProvider(System.IServiceProvider serviceProvider) { }
         public Orc.DataAccess.Database.DbDataSourceSchema? GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString) { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
     public class MsSqlDbDataSourceProvider : Orc.DataAccess.Database.MsSqlDbDataSourceProviderBase
     {
-        public MsSqlDbDataSourceProvider() { }
+        public MsSqlDbDataSourceProvider(Orc.DataAccess.IRegistryKeyService registryKeyService) { }
         protected override string ProviderName { get; }
     }
     public abstract class MsSqlDbDataSourceProviderBase : Orc.DataAccess.Database.IDbDataSourceProvider
     {
-        protected MsSqlDbDataSourceProviderBase() { }
+        protected MsSqlDbDataSourceProviderBase(Orc.DataAccess.IRegistryKeyService registryKeyService) { }
         protected abstract string ProviderName { get; }
-        public virtual System.Collections.Generic.IList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
+        public virtual System.Collections.Generic.IReadOnlyList<Orc.DataAccess.Database.DbDataSource> GetDataSources() { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("Microsoft.Data.SqlClient")]
     public class MsSqlDbSourceGateway : Orc.DataAccess.Database.MsSqlDbSourceGatewayBase
     {
-        public MsSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
+        public MsSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
     }
     public abstract class MsSqlDbSourceGatewayBase : Orc.DataAccess.Database.SqlDbSourceGatewayBase
     {
-        public MsSqlDbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source) { }
+        public MsSqlDbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<Orc.DataAccess.DataSourceParameters>> DataSourceParametersFactory { get; }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
         protected override System.Data.Common.DbCommand CreateGetTableRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled) { }
@@ -355,12 +364,12 @@ namespace Orc.DataAccess.Database
     [Orc.DataAccess.Database.ConnectToProvider("MySql.Data.MySqlClient")]
     public class MySqlSourceGateway : Orc.DataAccess.Database.MsSqlDbSourceGatewayBase
     {
-        public MySqlSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
+        public MySqlSourceGateway(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("Oracle.ManagedDataAccess.Client")]
     public class OracleSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
     {
-        public OracleSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
+        public OracleSourceGateway(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<Orc.DataAccess.DataSourceParameters>> DataSourceParametersFactory { get; }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
         protected override System.Data.Common.DbCommand CreateGetFunctionRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount) { }
@@ -372,7 +381,7 @@ namespace Orc.DataAccess.Database
     [Orc.DataAccess.Database.ConnectToProvider("Npgsql")]
     public class PostgreSqlDbSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
     {
-        public PostgreSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
+        public PostgreSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
         protected override System.Data.Common.DbCommand CreateGetStoredProcedureRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount) { }
         protected override System.Data.Common.DbCommand CreateGetTableRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled) { }
@@ -382,7 +391,7 @@ namespace Orc.DataAccess.Database
     [Orc.DataAccess.Database.ConnectToProvider("SQLite Data Provider")]
     public class SqLiteSourceGateway : Orc.DataAccess.Database.SqlDbSourceGatewayBase
     {
-        public SqLiteSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
+        public SqLiteSourceGateway(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
         protected override System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
         protected override System.Data.Common.DbCommand CreateGetTableRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount, bool isPagingEnabled) { }
         protected override System.Data.Common.DbCommand CreateTableCountCommand(System.Data.Common.DbConnection connection) { }
@@ -390,7 +399,7 @@ namespace Orc.DataAccess.Database
     }
     public abstract class SqlDbSourceGatewayBase : Orc.DataAccess.Database.DbSourceGatewayBase
     {
-        protected SqlDbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source) { }
+        protected SqlDbSourceGatewayBase(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
         protected virtual System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<Orc.DataAccess.DataSourceParameters>> DataSourceParametersFactory { get; }
         protected virtual System.Collections.Generic.Dictionary<Orc.DataAccess.Database.TableType, System.Func<System.Data.Common.DbConnection, System.Data.Common.DbCommand>> GetObjectListCommandsFactory { get; }
         protected virtual System.Data.Common.DbCommand CreateGetFunctionRecordsCommand(System.Data.Common.DbConnection connection, Orc.DataAccess.DataSourceParameters parameters, int offset, int fetchCount) { }
@@ -408,9 +417,9 @@ namespace Orc.DataAccess.Database
     }
     public class SqlTableReader : Orc.DataAccess.ReaderBase
     {
-        public SqlTableReader(Orc.DataAccess.Database.DatabaseSource source, int offset = 0, int fetchCount = 0, Orc.DataAccess.DataSourceParameters? parameters = null) { }
-        public SqlTableReader(string source, int offset = 0, int fetchCount = 0, Orc.DataAccess.DataSourceParameters? parameters = null) { }
-        public override string[] FieldHeaders { get; }
+        public SqlTableReader(Orc.DataAccess.Database.DatabaseSource source, Orc.DataAccess.DataSourceParameters? parameters, System.IServiceProvider serviceProvider) { }
+        public SqlTableReader(string source, Orc.DataAccess.DataSourceParameters? parameters, System.IServiceProvider serviceProvider) { }
+        public override System.Collections.Generic.IReadOnlyList<string> FieldHeaders { get; }
         public bool HasRows { get; }
         public override object this[int index] { get; }
         public override object this[string name] { get; }
@@ -427,26 +436,26 @@ namespace Orc.DataAccess.Database
     }
     public static class StringExtensions
     {
-        public static string DecryptConnectionString(this string connectionString, string providerName) { }
-        public static string EncryptConnectionString(this string connectionString, string providerName) { }
-        public static string? GetConnectionStringProperty(this string connectionString, string providerName, string propertyName) { }
+        public static string DecryptConnectionString(this string connectionString, System.IServiceProvider serviceProvider, string providerName) { }
+        public static string EncryptConnectionString(this string connectionString, System.IServiceProvider serviceProvider, string providerName) { }
+        public static string? GetConnectionStringProperty(this string connectionString, System.IServiceProvider serviceProvider, string providerName, string propertyName) { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
     public class SystemSqlDataSourceSchemaProvider : Orc.DataAccess.Database.IDataSourceSchemaProvider
     {
-        public SystemSqlDataSourceSchemaProvider() { }
+        public SystemSqlDataSourceSchemaProvider(System.IServiceProvider serviceProvider) { }
         public Orc.DataAccess.Database.DbDataSourceSchema? GetSchema(Orc.DataAccess.Database.DbConnectionString connectionString) { }
     }
     [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
     public class SystemSqlDbDataSourceProvider : Orc.DataAccess.Database.MsSqlDbDataSourceProviderBase
     {
-        public SystemSqlDbDataSourceProvider() { }
+        public SystemSqlDbDataSourceProvider(Orc.DataAccess.IRegistryKeyService registryKeyService) { }
         protected override string ProviderName { get; }
     }
     [Orc.DataAccess.Database.ConnectToProvider("System.Data.SqlClient")]
     public class SystemSqlDbSourceGateway : Orc.DataAccess.Database.MsSqlDbSourceGatewayBase
     {
-        public SystemSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source) { }
+        public SystemSqlDbSourceGateway(Orc.DataAccess.Database.DatabaseSource source, System.IServiceProvider serviceProvider) { }
     }
     public enum TableType
     {
@@ -462,7 +471,7 @@ namespace Orc.DataAccess.Excel
     public class ExcelReader : Orc.DataAccess.ReaderBase
     {
         public ExcelReader(string source) { }
-        public override string[] FieldHeaders { get; }
+        public override System.Collections.Generic.IReadOnlyList<string> FieldHeaders { get; }
         public override object? this[int index] { get; }
         public override object? this[string name] { get; }
         public override int TotalRecordCount { get; }
@@ -482,10 +491,17 @@ namespace Orc.DataAccess.Excel
     }
     public static class ExcelSourceExtensions
     {
-        public static System.Collections.Generic.List<string> GetWorkseetsList(this Orc.DataAccess.Excel.ExcelSource excelSource) { }
+        public static System.Collections.Generic.IReadOnlyList<string> GetWorksheetsList(this Orc.DataAccess.Excel.ExcelSource excelSource) { }
     }
     public static class ReferenceHelper
     {
         public static int[] ReferenceToColumnAndRow(string reference) { }
+    }
+}
+namespace Orc
+{
+    public static class OrcDataAccessModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcDataAccess(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
     }
 }

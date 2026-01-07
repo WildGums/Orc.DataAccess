@@ -2,25 +2,20 @@
 
 using System;
 using System.Threading.Tasks;
-using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
 using Database;
 
 public class DbProviderPickerViewModel : ViewModelBase
 {
-    private readonly ITypeFactory _typeFactory;
     private readonly IUIVisualizerService _uiVisualizerService;
 
-    public DbProviderPickerViewModel(IUIVisualizerService uiVisualizerService, ITypeFactory typeFactory)
+    public DbProviderPickerViewModel(IUIVisualizerService uiVisualizerService, IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(uiVisualizerService);
-        ArgumentNullException.ThrowIfNull(typeFactory);
-
         _uiVisualizerService = uiVisualizerService;
-        _typeFactory = typeFactory;
 
-        ChangeDbProvider = new TaskCommand(OnChangeDbProviderAsync);
+        ChangeDbProvider = new TaskCommand(serviceProvider, OnChangeDbProviderAsync);
     }
 
     public DbProviderInfo? DbProvider { get; set; }
@@ -28,11 +23,11 @@ public class DbProviderPickerViewModel : ViewModelBase
 
     private async Task OnChangeDbProviderAsync()
     {
-        var dbProviderListViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<DbConnectionProviderListViewModel>(DbProvider);
-        var dialogResult = await _uiVisualizerService.ShowDialogAsync(dbProviderListViewModel);
+        var dialogResult = await _uiVisualizerService.ShowDialogAsync<DbConnectionProviderListViewModel>(DbProvider);
         if (dialogResult.DialogResult ?? false)
         {
-            DbProvider = dbProviderListViewModel.DbProvider;
+            var vm = dialogResult.GetViewModel<DbConnectionProviderListViewModel>();
+            DbProvider = vm!.DbProvider;
         }
     }
 }

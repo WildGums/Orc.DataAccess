@@ -16,10 +16,10 @@ public class ConnectionStringAdvancedOptionsViewModel : ViewModelBase
 
     private CollectionViewSource? _propertiesCollectionViewSource;
 
-    public ConnectionStringAdvancedOptionsViewModel(DbConnectionString connectionString)
+    public ConnectionStringAdvancedOptionsViewModel(DbConnectionString connectionString,
+        IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(connectionString);
-
         ConnectionString = connectionString;
         ConnectionStringProperties = [];
 

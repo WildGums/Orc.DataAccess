@@ -175,7 +175,7 @@ namespace Orc.DataAccess.Controls
         public static readonly Catel.Data.IPropertyData ConnectionStringPropertiesProperty;
         public static readonly Catel.Data.IPropertyData IsAdvancedOptionsReadOnlyProperty;
         public static readonly Catel.Data.IPropertyData PropertyFilterProperty;
-        public ConnectionStringAdvancedOptionsViewModel(Orc.DataAccess.Database.DbConnectionString connectionString) { }
+        public ConnectionStringAdvancedOptionsViewModel(Orc.DataAccess.Database.DbConnectionString connectionString, System.IServiceProvider serviceProvider) { }
         public Orc.DataAccess.Database.DbConnectionString ConnectionString { get; }
         public Orc.DataAccess.Database.DbConnectionStringProperty[] ConnectionStringProperties { get; }
         public System.ComponentModel.ICollectionView? ConnectionStringPropertiesCollectionView { get; }
@@ -187,6 +187,9 @@ namespace Orc.DataAccess.Controls
     public sealed class ConnectionStringAdvancedOptionsWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
     {
         public ConnectionStringAdvancedOptionsWindow() { }
+        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
+        public ConnectionStringAdvancedOptionsWindow(System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
+        public ConnectionStringAdvancedOptionsWindow(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
         public void InitializeComponent() { }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() { }
     }
@@ -200,7 +203,7 @@ namespace Orc.DataAccess.Controls
         public static readonly System.Windows.DependencyProperty IsAdvancedOptionsReadOnlyProperty;
         public static readonly System.Windows.DependencyProperty IsEditableProperty;
         public static readonly System.Windows.DependencyProperty IsInEditModeProperty;
-        public ConnectionStringBuilder() { }
+        public ConnectionStringBuilder(System.IServiceProvider serviceProvider, Catel.Services.IUIVisualizerService uiVisualizerService, Catel.MVVM.IViewModelFactory viewModelFactory) { }
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; set; }
         public string? ConnectionString { get; set; }
         public string? DatabaseProvider { get; set; }
@@ -224,12 +227,12 @@ namespace Orc.DataAccess.Controls
         public static readonly Catel.Data.IPropertyData IsDatabasesRefreshingProperty;
         public static readonly Catel.Data.IPropertyData IsServerListVisibleProperty;
         public static readonly Catel.Data.IPropertyData IsServersRefreshingProperty;
-        public ConnectionStringEditViewModel(string connectionString, Orc.DataAccess.Database.DbProviderInfo? provider, Catel.Services.IMessageService messageService, Catel.Services.IUIVisualizerService uiVisualizerService, Catel.IoC.ITypeFactory typeFactory, Catel.Services.IDispatcherService dispatcherService) { }
+        public ConnectionStringEditViewModel(string connectionString, Orc.DataAccess.Database.DbProviderInfo? provider, Catel.Services.IMessageService messageService, Catel.Services.IUIVisualizerService uiVisualizerService, System.IServiceProvider serviceProvider, Catel.Services.IDispatcherService dispatcherService, Catel.MVVM.IViewModelFactory viewModelFactory) { }
         public bool CanLogOnToServer { get; }
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; }
         public Orc.DataAccess.Database.DbConnectionString? ConnectionString { get; }
         public Orc.DataAccess.Database.DbConnectionStringProperty? DataSource { get; }
-        public Catel.Collections.FastObservableCollection<string> Databases { get; }
+        public System.Collections.ObjectModel.ObservableCollection<string> Databases { get; }
         public Orc.DataAccess.Database.DbProviderInfo? DbProvider { get; set; }
         public System.Collections.Generic.IReadOnlyCollection<Orc.DataAccess.Controls.DbConnectionPropertyDefinition>? DefaultProperties { get; set; }
         public Catel.MVVM.TaskCommand InitDatabases { get; }
@@ -247,7 +250,7 @@ namespace Orc.DataAccess.Controls
         public Orc.DataAccess.Database.DbConnectionStringProperty? Port { get; }
         public Catel.MVVM.TaskCommand RefreshDatabases { get; }
         public Catel.MVVM.TaskCommand RefreshServers { get; }
-        public Catel.Collections.FastObservableCollection<string> Servers { get; }
+        public System.Collections.ObjectModel.ObservableCollection<string> Servers { get; }
         public Catel.MVVM.TaskCommand ShowAdvancedOptions { get; }
         public Catel.MVVM.Command TestConnection { get; }
         public override string Title { get; }
@@ -259,6 +262,9 @@ namespace Orc.DataAccess.Controls
     public sealed class ConnectionStringEditWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
     {
         public ConnectionStringEditWindow() { }
+        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
+        public ConnectionStringEditWindow(System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
+        public ConnectionStringEditWindow(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
         public void InitializeComponent() { }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() { }
     }
@@ -276,7 +282,7 @@ namespace Orc.DataAccess.Controls
     {
         public static readonly Catel.Data.IPropertyData DbProviderProperty;
         public static readonly Catel.Data.IPropertyData DbProvidersProperty;
-        public DbConnectionProviderListViewModel(Orc.DataAccess.Database.DbProviderInfo selectedProvider) { }
+        public DbConnectionProviderListViewModel(Orc.DataAccess.Database.DbProviderInfo selectedProvider, System.IServiceProvider serviceProvider) { }
         public Orc.DataAccess.Database.DbProviderInfo? DbProvider { get; set; }
         public System.Collections.Generic.IList<Orc.DataAccess.Database.DbProviderInfo> DbProviders { get; }
         public Catel.MVVM.TaskCommand Open { get; }
@@ -287,6 +293,9 @@ namespace Orc.DataAccess.Controls
     public sealed class DbConnectionProviderListWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
     {
         public DbConnectionProviderListWindow() { }
+        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
+        public DbConnectionProviderListWindow(System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
+        public DbConnectionProviderListWindow(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
         public void InitializeComponent() { }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() { }
     }
@@ -294,6 +303,9 @@ namespace Orc.DataAccess.Controls
     {
         public static readonly System.Windows.DependencyProperty DbProviderProperty;
         public DbProviderPicker() { }
+        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
+        public DbProviderPicker(System.IServiceProvider serviceProvider, Catel.Services.IViewModelWrapperService viewModelWrapperService, Catel.MVVM.IDataContextSubscriptionService dataContextSubscriptionService) { }
+        public DbProviderPicker(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IViewModelWrapperService viewModelWrapperService, Catel.MVVM.IDataContextSubscriptionService dataContextSubscriptionService) { }
         [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayViewModelWins)]
         public Orc.DataAccess.Database.DbProviderInfo? DbProvider { get; set; }
         public void InitializeComponent() { }
@@ -302,7 +314,7 @@ namespace Orc.DataAccess.Controls
     public class DbProviderPickerViewModel : Catel.MVVM.ViewModelBase
     {
         public static readonly Catel.Data.IPropertyData DbProviderProperty;
-        public DbProviderPickerViewModel(Catel.Services.IUIVisualizerService uiVisualizerService, Catel.IoC.ITypeFactory typeFactory) { }
+        public DbProviderPickerViewModel(Catel.Services.IUIVisualizerService uiVisualizerService, System.IServiceProvider serviceProvider) { }
         public Catel.MVVM.TaskCommand ChangeDbProvider { get; }
         public Orc.DataAccess.Database.DbProviderInfo? DbProvider { get; set; }
     }
@@ -326,5 +338,12 @@ namespace Orc.DataAccess
     public static class SqlConnectionStringExtensions
     {
         public static Orc.DataAccess.Database.DbConnectionStringProperty? GetProperty(this Orc.DataAccess.Database.DbConnectionString connectionString, string propertyName) { }
+    }
+}
+namespace Orc
+{
+    public static class OrcDataAccessXamlModule
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddOrcDataAccessXaml(this Microsoft.Extensions.DependencyInjection.IServiceCollection serviceCollection) { }
     }
 }

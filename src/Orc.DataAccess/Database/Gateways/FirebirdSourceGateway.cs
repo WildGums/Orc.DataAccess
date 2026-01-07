@@ -8,8 +8,8 @@ using DataAccess;
 [ConnectToProvider("FirebirdSql.Data.FirebirdClient")]
 public class FirebirdSourceGateway : SqlDbSourceGatewayBase
 {
-    public FirebirdSourceGateway(DatabaseSource source)
-        : base(source)
+    public FirebirdSourceGateway(DatabaseSource source, IServiceProvider serviceProvider)
+        : base(source, serviceProvider)
     {
     }
 

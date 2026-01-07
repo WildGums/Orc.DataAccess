@@ -1,15 +1,17 @@
 ﻿namespace Orc.DataAccess.Csv;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Catel;
 using Catel.Logging;
 using FileSystem;
+using Microsoft.Extensions.Logging;
 using Orc.Csv;
 
 public class CsvReader : ReaderBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(CsvReader));
 
     private readonly ICsvReaderService _csvReaderService;
     private readonly IFileService _fileService;
@@ -23,17 +25,13 @@ public class CsvReader : ReaderBase
     public CsvReader(string source, ICsvReaderService csvReaderService, IFileService fileService)
         : base(source)
     {
-        Argument.IsNotNullOrWhitespace(() => source);
-        ArgumentNullException.ThrowIfNull(csvReaderService);
-        ArgumentNullException.ThrowIfNull(fileService);
-
         _csvReaderService = csvReaderService;
         _fileService = fileService;
 
         Initialize(source);
     }
 
-    public override string[] FieldHeaders
+    public override IReadOnlyList<string> FieldHeaders
     {
         get
         {
@@ -61,7 +59,7 @@ public class CsvReader : ReaderBase
             return context.Reader?.HeaderRecord ?? Array.Empty<string>();
         }
     }
-            
+
     public override object? this[int index] => _reader?[index];
     public override object? this[string name] => _reader?[name];
     public override int TotalRecordCount => GetRecordCount();
@@ -96,7 +94,7 @@ public class CsvReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Log.Warning(ex, $"Failed to read file '{Source}'");
+            Logger.LogWarning(ex, $"Failed to read file '{Source}'");
             AddValidationError($"Failed to read data: '{ex.Message}'");
 
             return false;
@@ -142,14 +140,17 @@ public class CsvReader : ReaderBase
 
         try
         {
-            var csvContext = new CsvContext<object> {Culture = Culture};
+            var csvContext = new CsvContext<object>
+            {
+                Culture = Culture
+            };
 
             _reader?.Dispose();
-            _reader = _csvReaderService.CreateReader(source, csvContext);
+            _reader = _csvReaderService.CreateReader(_fileService, source, csvContext);
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Failed to initialize reader for data source '{Source}'");
+            Logger.LogError(ex, $"Failed to initialize reader for data source '{Source}'");
 
             _reader?.Dispose();
             _reader = null;

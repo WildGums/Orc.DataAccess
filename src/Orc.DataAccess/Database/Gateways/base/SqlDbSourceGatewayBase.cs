@@ -7,13 +7,14 @@ using System.Data.Common;
 using Catel;
 using Catel.Logging;
 using DataAccess;
+using Microsoft.Extensions.Logging;
 
 public abstract class SqlDbSourceGatewayBase : DbSourceGatewayBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(SqlDbSourceGatewayBase));
 
-    protected SqlDbSourceGatewayBase(DatabaseSource source)
-        : base(source)
+    protected SqlDbSourceGatewayBase(DatabaseSource source, IServiceProvider serviceProvider)
+        : base(source, serviceProvider)
     {
     }
 
@@ -55,7 +56,7 @@ public abstract class SqlDbSourceGatewayBase : DbSourceGatewayBase
         var sql = source.Table;
         if (string.IsNullOrEmpty(sql))
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Command cannot be empty");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Command cannot be empty");
         }
 
         DbCommand command;
@@ -82,7 +83,7 @@ public abstract class SqlDbSourceGatewayBase : DbSourceGatewayBase
                 break;
 
             default:
-                throw Log.ErrorAndCreateException<NotSupportedException>($"'{source.TableType}' not supported");
+                throw Logger.LogErrorAndCreateException<NotSupportedException>($"'{source.TableType}' not supported");
         }
 
         command.AddParameters(queryParameters);
@@ -148,7 +149,7 @@ public abstract class SqlDbSourceGatewayBase : DbSourceGatewayBase
         using var connection = GetOpenedConnection();
         if (connection is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("No connection is already opened or can be created to source");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("No connection is already opened or can be created to source");
         }
 
         switch (Source.TableType)

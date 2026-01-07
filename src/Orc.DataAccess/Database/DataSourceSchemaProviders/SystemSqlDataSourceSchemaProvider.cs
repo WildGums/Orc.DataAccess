@@ -3,15 +3,23 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 [ConnectToProvider("System.Data.SqlClient")]
 public class SystemSqlDataSourceSchemaProvider : IDataSourceSchemaProvider
 {
+    private readonly IServiceProvider _serviceProvider;
+
+    public SystemSqlDataSourceSchemaProvider(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
     public DbDataSourceSchema? GetSchema(DbConnectionString connectionString)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
 
-        var provider = DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
+        var provider = DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName, _serviceProvider);
         var databases = new List<string>();
         using var sqlConnection = provider.CreateConnection();
         if (sqlConnection is null)

@@ -4,12 +4,17 @@ using System.Data.Common;
 using System.Windows;
 using Catel.Reflection;
 using Database;
+using Microsoft.Extensions.DependencyInjection;
 using Orc.Automation;
 
 public class RegisterProviderMethodRun : NamedAutomationMethodRun
 {
     public override bool TryInvoke(FrameworkElement owner, AutomationMethod method, out AutomationValue? result)
     {
+        var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+        using var serviceProvider = serviceCollection.BuildServiceProvider();
+
         result = AutomationValue.FromValue(true);
 
         var providerInvariantName = (string) method.Parameters[0].ExtractValue();
@@ -17,7 +22,7 @@ public class RegisterProviderMethodRun : NamedAutomationMethodRun
         var providerInfo = new DbProviderInfo(providerInvariantName, providerInvariantName,
             "For test sake", typeof(TestDbProviderFactory).GetSafeFullName());
 
-        var customProvider = new DbProvider(providerInfo);
+        var customProvider = new DbProvider(providerInfo, serviceProvider);
 
         var dataSourceProvider = new TestDbDataSourceProvider(customProvider);
         dataSourceProvider.AddDataSource("Data source 1");

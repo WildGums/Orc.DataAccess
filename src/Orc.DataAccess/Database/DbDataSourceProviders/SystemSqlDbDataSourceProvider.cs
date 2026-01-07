@@ -3,11 +3,7 @@
 [ConnectToProvider("System.Data.SqlClient")]
 public class SystemSqlDbDataSourceProvider : MsSqlDbDataSourceProviderBase
 {
-    public SystemSqlDbDataSourceProvider()
-    {
-    }
-
-    internal SystemSqlDbDataSourceProvider(IRegistryKeyService registryKeyService)
+    public SystemSqlDbDataSourceProvider(IRegistryKeyService registryKeyService)
         : base(registryKeyService)
     {
     }
