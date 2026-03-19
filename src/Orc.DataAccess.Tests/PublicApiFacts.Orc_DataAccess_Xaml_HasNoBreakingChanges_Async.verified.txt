@@ -187,7 +187,6 @@ namespace Orc.DataAccess.Controls
     public sealed class ConnectionStringAdvancedOptionsWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
     {
         public ConnectionStringAdvancedOptionsWindow() { }
-        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
         public ConnectionStringAdvancedOptionsWindow(System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
         public ConnectionStringAdvancedOptionsWindow(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
         public void InitializeComponent() { }
@@ -264,7 +263,6 @@ namespace Orc.DataAccess.Controls
     public sealed class ConnectionStringEditWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
     {
         public ConnectionStringEditWindow() { }
-        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
         public ConnectionStringEditWindow(System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
         public ConnectionStringEditWindow(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
         public void InitializeComponent() { }
@@ -296,7 +294,6 @@ namespace Orc.DataAccess.Controls
     public sealed class DbConnectionProviderListWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
     {
         public DbConnectionProviderListWindow() { }
-        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
         public DbConnectionProviderListWindow(System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
         public DbConnectionProviderListWindow(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
         public void InitializeComponent() { }
@@ -306,7 +303,6 @@ namespace Orc.DataAccess.Controls
     {
         public static readonly System.Windows.DependencyProperty DbProviderProperty;
         public DbProviderPicker() { }
-        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
         public DbProviderPicker(System.IServiceProvider serviceProvider, Catel.Services.IViewModelWrapperService viewModelWrapperService, Catel.MVVM.IDataContextSubscriptionService dataContextSubscriptionService) { }
         public DbProviderPicker(Catel.MVVM.IViewModel? viewModel, System.IServiceProvider serviceProvider, Catel.Services.IViewModelWrapperService viewModelWrapperService, Catel.MVVM.IDataContextSubscriptionService dataContextSubscriptionService) { }
         [Catel.MVVM.Views.ViewToViewModel("", MappingType=Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayViewModelWins)]
