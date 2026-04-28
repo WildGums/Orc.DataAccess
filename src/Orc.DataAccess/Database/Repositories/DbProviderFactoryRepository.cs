@@ -1,10 +1,8 @@
 ﻿namespace Orc.DataAccess.Database;
 
 using System;
-using System.Configuration;
 using System.Data;
 using System.Linq;
-using Catel.Logging;
 
 public class DbProviderFactoryRepository
 {
@@ -13,9 +11,7 @@ public class DbProviderFactoryRepository
     /// </summary>
     private const string DbProviderFactoriesElement = "DbProviderFactories";
 
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-    private DataTable? _dbProviderFactoryTable;
+    //private readonly DataTable? _dbProviderFactoryTable;
 
     /// <summary>
     /// Adds the specified provider.
@@ -60,29 +56,30 @@ public class DbProviderFactoryRepository
 
     private DataTable? GetProviderTable()
     {
-        if (_dbProviderFactoryTable is not null)
-        {
-            return _dbProviderFactoryTable;
-        }
+        //if (_dbProviderFactoryTable is not null)
+        //{
+        //    return _dbProviderFactoryTable;
+        //}
 
         // Open the configuration.
-        if (ConfigurationManager.GetSection("system.data") is not DataSet dataConfiguration)
-        {
-            Log.Error("Unable to open 'System.Data' from the configuration");
+        throw new NotImplementedException();
+        //if (ConfigurationManager .GetSection("system.data") is not DataSet dataConfiguration)
+        //{
+        //    Logger.LogError("Unable to open 'System.Data' from the configuration");
 
-            return null;
-        }
+        //    return null;
+        //}
 
-        // Open the provider table.
-        if (!dataConfiguration.Tables.Contains(DbProviderFactoriesElement))
-        {
-            Log.Error($"Unable to open the '{DbProviderFactoriesElement}' table");
+        //// Open the provider table.
+        //if (!dataConfiguration.Tables.Contains(DbProviderFactoriesElement))
+        //{
+        //    Logger.LogError($"Unable to open the '{DbProviderFactoriesElement}' table");
 
-            return null;
-        }
+        //    return null;
+        //}
 
-        _dbProviderFactoryTable = dataConfiguration.Tables[DbProviderFactoriesElement];
+        //_dbProviderFactoryTable = dataConfiguration.Tables[DbProviderFactoriesElement];
 
-        return _dbProviderFactoryTable;
+        //return _dbProviderFactoryTable;
     }
 }

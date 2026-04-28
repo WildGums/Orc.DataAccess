@@ -7,7 +7,7 @@ using System.Linq;
 
 public static class DbDataReaderExtensions
 {
-    public static string[] GetHeaders(this DbDataReader reader)
+    public static IReadOnlyList<string> GetHeaders(this DbDataReader reader)
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -16,7 +16,7 @@ public static class DbDataReaderExtensions
             .ToArray();
     }
 
-    public static List<RecordTable> ReadAll(this DbDataReader reader)
+    public static IReadOnlyList<RecordTable> ReadAll(this DbDataReader reader)
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -36,7 +36,8 @@ public static class DbDataReaderExtensions
             while (reader.Read())
             {
                 var record = new Record();
-                for (var i = 0; i < result.Headers.Length; i++)
+
+                for (var i = 0; i < result.Headers.Count; i++)
                 {
                     var name = result.Headers[i];
                     var value = reader.GetValue(i);

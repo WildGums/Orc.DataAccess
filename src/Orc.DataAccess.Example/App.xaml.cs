@@ -1,51 +1,70 @@
 ﻿namespace Orc.DataAccess.Example;
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Windows;
+using Catel;
 using Catel.IoC;
-using Catel.Logging;
-using Catel.Reflection;
 using Catel.Services;
 using Microsoft.Data.SqlClient;
-using Newtonsoft.Json.Linq;
-using Orc.DataAccess.Database;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Orc.DataAccess.Example.Views;
 using Orchestra;
-using Theming;
-using ConnectionState = System.Data.ConnectionState;
 
-public partial class App
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+#pragma warning disable IDISP006 // Implement IDisposable
+    private readonly IHost _host;
+#pragma warning restore IDISP006 // Implement IDisposable
 
-    protected override void OnStartup(StartupEventArgs e)
+    public App()
     {
-        //UNCOMMENT THIS CODE IF YOU TEST SQLITE OR ORACLE DB
+        var hostBuilder = new HostBuilder()
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddCatelCore();
+                services.AddCatelMvvm();
+                services.AddOrcAutomation();
+                services.AddOrcControls();
+                services.AddOrcDataAccess();
+                services.AddOrcDataAccessXaml();
+                services.AddOrcFileSystem();
+                services.AddOrcSerializationJson();
+                services.AddOrcSystemInfo();
+                services.AddOrcTheming();
+                services.AddOrchestraCore();
 
-        //var sqLiteProviderInfo = new DbProviderInfo
-        //{
-        //    Name = "SQLite Data Provider",
-        //    InvariantName = "System.Data.SQLite",
-        //    Description = ".NET Framework Data Provider for SQLite",
-        //    AssemblyQualifiedName = "System.Data.SQLite.SQLiteFactory, System.Data.SQLite, Version=1.0.110.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139"
-        //};
-        //DbProvider.RegisterProvider(sqLiteProviderInfo);
+                var factory = Microsoft.Data.SqlClient.SqlClientFactory.Instance;
+                DbProviderFactories.RegisterFactory("System.Data.SqlClient", factory);
+                DbProviderFactories.RegisterFactory("Microsoft.Data.SqlClient", SqlClientFactory.Instance);
 
-        //var oracleProviderInfo = new DbProviderInfo
-        //{
-        //    Name = "ODP.NET, Managed Driver",
-        //    InvariantName = "Oracle.ManagedDataAccess.Client",
-        //    Description = "Oracle Data Provider for .NET, Managed Driver",
-        //    AssemblyQualifiedName = "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342"
-        //};
-        //DbProvider.RegisterProvider(oracleProviderInfo);
+                services.AddLogging(x =>
+                {
+                    x.AddConsole();
+                    x.AddDebug();
+                });
+            });
 
-        var languageService = ServiceLocator.Default.ResolveType<ILanguageService>();
+        _host = hostBuilder.Build();
+
+        IoCContainer.ServiceProvider = _host.Services;
+    }
+
+    protected override async void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        var serviceProvider = IoCContainer.ServiceProvider;
+
+        serviceProvider.CreateTypesThatMustBeConstructedAtStartup();
+
+        var languageService = serviceProvider.GetRequiredService<ILanguageService>();
 
         // Note: it's best to use .CurrentUICulture in actual apps since it will use the preferred language
         // of the user. But in order to demo multilingual features for devs (who mostly have en-US as .CurrentUICulture),
@@ -53,17 +72,19 @@ public partial class App
         languageService.PreferredCulture = CultureInfo.CurrentCulture;
         languageService.FallbackCulture = new CultureInfo("en-US");
 
-        Log.Info("Starting application");
-        Log.Info("This log message should show up as debug");
-
         this.ApplyTheme();
 
-        StyleHelper.CreateStyleForwardersForDefaultStyles();
+        var mainWindow = ActivatorUtilities.CreateInstance<MainWindow>(_host.Services);
+        mainWindow.Show();
+    }
 
-        var factory = Microsoft.Data.SqlClient.SqlClientFactory.Instance;
-        DbProviderFactories.RegisterFactory("System.Data.SqlClient", factory);
-        DbProviderFactories.RegisterFactory("Microsoft.Data.SqlClient", SqlClientFactory.Instance);
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        using (_host)
+        {
+            await _host.StopAsync();
+        }
 
-        base.OnStartup(e);
+        base.OnExit(e);
     }
 }

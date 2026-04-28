@@ -6,8 +6,10 @@ using Orc.DataAccess.Automation.Controls;
 
 public sealed partial class ConnectionStringAdvancedOptionsWindow
 {
-    public ConnectionStringAdvancedOptionsWindow()
-        : base(DataWindowMode.Close) => InitializeComponent();
+    partial void OnInitializingComponent()
+    {
+        Mode = DataWindowMode.Close;
+    }
 
     protected override AutomationPeer OnCreateAutomationPeer()
     {

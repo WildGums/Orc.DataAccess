@@ -5,12 +5,11 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Catel;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public static class DatabaseSourceExtensions
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-
-    public static IList<DbObject> GetObjectsOfType(this DatabaseSource databaseSource, TableType tableType)
+    public static IList<DbObject> GetObjectsOfType(this DatabaseSource databaseSource, IServiceProvider serviceProvider, TableType tableType)
     {
         ArgumentNullException.ThrowIfNull(databaseSource);
 
@@ -19,32 +18,32 @@ public static class DatabaseSourceExtensions
             TableType = tableType
         };
 
-        var gateway = dataSourceCopy.CreateGateway();
+        var gateway = dataSourceCopy.CreateGateway(serviceProvider);
 
         return gateway?.GetObjects() ?? new List<DbObject>();
     }
 
-    public static DbConnection? CreateConnection(this DatabaseSource databaseSource)
+    public static DbConnection? CreateConnection(this DatabaseSource databaseSource, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(databaseSource);
 
-        var provider = databaseSource.GetProvider();
+        var provider = databaseSource.GetProvider(serviceProvider);
         return provider.CreateConnection(databaseSource);
     }
 
-    public static DbSourceGatewayBase? CreateGateway(this DatabaseSource databaseSource)
+    public static DbSourceGatewayBase? CreateGateway(this DatabaseSource databaseSource, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(databaseSource);
 
-        var dbProvider = databaseSource.GetProvider();
-        return dbProvider.CreateDbSourceGateway(databaseSource);
+        var dbProvider = databaseSource.GetProvider(serviceProvider);
+        return dbProvider.CreateDbSourceGateway(serviceProvider, databaseSource);
     }
 
-    public static DbProvider GetProvider(this DatabaseSource databaseSource)
+    public static DbProvider GetProvider(this DatabaseSource databaseSource, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(databaseSource);
         Argument.IsNotNullOrEmpty(databaseSource.ProviderName, "databaseSource.ProviderName");
 
-        return DbProvider.GetRegisteredProvider(databaseSource.ProviderName);
+        return DbProvider.GetRegisteredProvider(databaseSource.ProviderName, serviceProvider);
     }
 }

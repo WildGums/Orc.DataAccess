@@ -6,29 +6,29 @@ using Catel;
 
 public static class StringExtensions
 {
-    public static string EncryptConnectionString(this string connectionString, string providerName)
+    public static string EncryptConnectionString(this string connectionString, IServiceProvider serviceProvider, string providerName)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
         Argument.IsNotNullOrEmpty(() => providerName);
 
-        return AlterConnectionStringPropertyValue(connectionString, providerName, x => x.Encrypt());
+        return AlterConnectionStringPropertyValue(connectionString, serviceProvider, providerName, x => x.Encrypt());
     }
 
-    public static string DecryptConnectionString(this string connectionString, string providerName)
+    public static string DecryptConnectionString(this string connectionString, IServiceProvider serviceProvider, string providerName)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
         Argument.IsNotNullOrEmpty(() => providerName);
 
-        return AlterConnectionStringPropertyValue(connectionString, providerName, x => x.Decrypt());
+        return AlterConnectionStringPropertyValue(connectionString, serviceProvider, providerName, x => x.Decrypt());
     }
 
-    private static string AlterConnectionStringPropertyValue(this string connectionString, string providerName, Func<string, string?> alterFunction)
+    private static string AlterConnectionStringPropertyValue(this string connectionString, IServiceProvider serviceProvider, string providerName, Func<string, string?> alterFunction)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
         Argument.IsNotNullOrEmpty(() => providerName);
         ArgumentNullException.ThrowIfNull(alterFunction);
 
-        var provider = DbProvider.GetRegisteredProviders()[providerName];
+        var provider = DbProvider.GetRegisteredProviders(serviceProvider)[providerName];
         var dbConnectionString = provider.CreateConnectionString(connectionString);
         if (dbConnectionString is null)
         {
@@ -50,13 +50,13 @@ public static class StringExtensions
         return connectionStringBuilder.ConnectionString;
     }
 
-    public static string? GetConnectionStringProperty(this string connectionString, string providerName, string propertyName)
+    public static string? GetConnectionStringProperty(this string connectionString, IServiceProvider serviceProvider, string providerName, string propertyName)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
         Argument.IsNotNullOrEmpty(() => providerName);
         Argument.IsNotNullOrEmpty(() => propertyName);
 
-        var provider = DbProvider.GetRegisteredProviders()[providerName];
+        var provider = DbProvider.GetRegisteredProviders(serviceProvider)[providerName];
         var dbConnectionString = provider.CreateConnectionString(connectionString);
         if (dbConnectionString is null)
         {

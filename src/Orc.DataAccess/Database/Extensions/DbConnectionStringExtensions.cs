@@ -23,16 +23,16 @@ public static class DbConnectionStringExtensions
     }
 
     //TODO: Make it async
-    public static DbDataSourceSchema? GetDataSourceSchema(this DbConnectionString connectionString)
+    public static DbDataSourceSchema? GetDataSourceSchema(this DbConnectionString connectionString, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
 
         var provider = connectionString.DbProvider;
-        var schemaProvider = provider.GetProvider().GetOrCreateConnectedInstance<IDataSourceSchemaProvider>();
+        var schemaProvider = provider.GetProvider(serviceProvider).GetOrCreateConnectedInstance<IDataSourceSchemaProvider>(serviceProvider);
         return schemaProvider?.GetSchema(connectionString);
     }
 
-    public static ConnectionState GetConnectionState(this DbConnectionString connectionString)
+    public static ConnectionState GetConnectionState(this DbConnectionString connectionString, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
 
@@ -42,7 +42,7 @@ public static class DbConnectionStringExtensions
             return ConnectionState.Invalid;
         }
 
-        var connection = connectionString.DbProvider.GetProvider().CreateConnection();
+        var connection = connectionString.DbProvider.GetProvider(serviceProvider).CreateConnection();
         if (connection is null)
         {
             return ConnectionState.Invalid;

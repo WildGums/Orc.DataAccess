@@ -3,11 +3,12 @@
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
-using Catel.IoC;
+using Catel.MVVM;
 using Catel.Services;
 using Controls;
 using Database;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 
@@ -24,6 +25,10 @@ public class ConnectionStringEditViewModelTextFixture
             Assert.That(connectionString, Is.Not.Null);
             Assert.That(connectionString, Is.Not.Empty);
 
+            var serviceCollection = ServiceCollectionHelper.CreateServiceCollection();
+
+            using var serviceProvider = serviceCollection.BuildServiceProvider();
+
             DbProviderFactories.RegisterFactory("System.Data.SqlClient", typeof(SqlClientFactory));
 
             var sqLiteProviderInfo = new DbProviderInfo(
@@ -34,14 +39,14 @@ public class ConnectionStringEditViewModelTextFixture
 
             var messageService = new Mock<IMessageService>().Object;
             var uiVisualizerService = new Mock<IUIVisualizerService>().Object;
-            var typeFactory = TypeFactory.Default;
+            
             var dispatcherServiceMock = new Mock<IDispatcherService>();
             dispatcherServiceMock.Setup(x => x.Invoke(It.IsAny<Action>(), It.IsAny<bool>()))
                 .Callback((Action action, bool onlyInvokeWhenNoAccess) => action.Invoke());
             var dispatcherService = dispatcherServiceMock.Object;
 
-
-            var vm = new ConnectionStringEditViewModel(connectionString, sqLiteProviderInfo, messageService, uiVisualizerService, typeFactory, dispatcherService);
+            var vm = new ConnectionStringEditViewModel(connectionString, sqLiteProviderInfo, messageService, 
+                uiVisualizerService, serviceProvider, dispatcherService, serviceProvider.GetRequiredService<IViewModelFactory>());
             await vm.InitializeViewModelAsync();
 
             // Wait for timer

@@ -1,7 +1,4 @@
-using System.Runtime.CompilerServices;
-using Catel.IoC;
-using Catel.Services;
-using Orc.DataAccess;
+﻿using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.
@@ -14,11 +11,6 @@ public static class ModuleInitializer
     [ModuleInitializer]
     public static void Initialize()
     {
-        var serviceLocator = ServiceLocator.Default;
 
-        var languageService = serviceLocator.ResolveRequiredType<ILanguageService>();
-        languageService.RegisterLanguageSource(new LanguageResourceSource("Orc.DataAccess", "Orc.DataAccess.Properties", "Resources"));
-
-        serviceLocator.RegisterType<IRegistryKeyService, RegistryKeyService>();
     }
 }

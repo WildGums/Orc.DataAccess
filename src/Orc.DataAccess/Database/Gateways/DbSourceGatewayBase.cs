@@ -4,23 +4,25 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 #pragma warning disable IDISP025 // Class with no virtual dispose method should be sealed.
 public abstract class DbSourceGatewayBase : IDisposable
 #pragma warning restore IDISP025 // Class with no virtual dispose method should be sealed.
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(DbSourceGatewayBase));
 
     private DbConnection? _connection;
     private DbProvider? _provider;
 
     private readonly List<DbConnection> _openedConnections = new();
 
-    protected DbSourceGatewayBase(DatabaseSource source)
+    protected DbSourceGatewayBase(DatabaseSource source, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(source);
 
         Source = source;
+        ServiceProvider = serviceProvider;
     }
 
     public void Dispose()
@@ -36,7 +38,9 @@ public abstract class DbSourceGatewayBase : IDisposable
     }
 
     public DatabaseSource Source { get; }
-    public virtual DbProvider Provider => _provider ??= Source.GetProvider();
+    protected IServiceProvider ServiceProvider { get; }
+
+    public virtual DbProvider Provider => _provider ??= Source.GetProvider(ServiceProvider);
     public virtual DbConnection? Connection => _connection ??= Provider.CreateConnection(Source);
 
     public abstract DbDataReader GetRecords(DataSourceParameters queryParameters, int offset = 0, int fetchCount = -1);
@@ -49,7 +53,7 @@ public abstract class DbSourceGatewayBase : IDisposable
         var connection = Connection;
         if (connection is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created");
         }
 
         if (connection.State.HasFlag(System.Data.ConnectionState.Open))
@@ -57,7 +61,7 @@ public abstract class DbSourceGatewayBase : IDisposable
             var newConnection = Provider.CreateConnection(Source);
             if (newConnection is null)
             {
-                throw Log.ErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created");
+                throw Logger.LogErrorAndCreateException<InvalidOperationException>("Failed to get opened connection. No connection to source is already opened or can be created");
             }
             newConnection.Open();
 

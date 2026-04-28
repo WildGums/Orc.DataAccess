@@ -10,5 +10,5 @@ public class RecordTable : List<Record>
         Headers = Array.Empty<string>();
     }
 
-    public string[] Headers { get; set; }
+    public IReadOnlyList<string> Headers { get; set; }
 }

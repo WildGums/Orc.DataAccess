@@ -21,5 +21,5 @@ public class TestDbDataSourceProvider : IDbDataSourceProvider
         _dataSources.Add(new DbDataSource(_provider.ProviderInvariantName, name));
     }
 
-    public IList<DbDataSource> GetDataSources() => _dataSources;
+    public IReadOnlyList<DbDataSource> GetDataSources() => _dataSources;
 }

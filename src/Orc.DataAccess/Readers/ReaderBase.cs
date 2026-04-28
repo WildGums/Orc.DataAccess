@@ -1,5 +1,6 @@
 ﻿namespace Orc.DataAccess;
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Catel;
@@ -29,7 +30,7 @@ public abstract class ReaderBase : IReader
     }
 
     public IValidationContext ValidationContext { get; }
-    public abstract string[] FieldHeaders { get; }
+    public abstract IReadOnlyList<string> FieldHeaders { get; }
     public abstract object? this[int index] { get; }
     public abstract object? this[string name] { get; }
     public abstract int TotalRecordCount { get; }

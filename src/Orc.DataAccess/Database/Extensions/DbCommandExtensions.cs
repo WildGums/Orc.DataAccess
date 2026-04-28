@@ -3,10 +3,11 @@
 using System;
 using System.Data.Common;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
 
 public static class DbCommandExtensions
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(DbCommandExtensions));
 
     public static DbCommand AddParameters(this DbCommand dbCommand, DataSourceParameters parameters)
     {
@@ -24,8 +25,9 @@ public static class DbCommandExtensions
 
         if (parameter.Value is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot add parameter with null value");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot add parameter with null value");
         }
+
         return dbCommand.AddParameter(parameter.Name, parameter.Value);
     }
 
@@ -42,6 +44,7 @@ public static class DbCommandExtensions
 
         return dbCommand;
     }
+
     public static long GetRecordsCount(this DbCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);

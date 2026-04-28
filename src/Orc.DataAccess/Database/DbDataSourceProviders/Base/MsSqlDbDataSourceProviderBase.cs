@@ -1,37 +1,30 @@
 ﻿namespace Orc.DataAccess.Database;
 
-using Microsoft.Win32;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data;
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
-using Catel.IoC;
 using Catel.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 
 public abstract class MsSqlDbDataSourceProviderBase : IDbDataSourceProvider
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
-    
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(MsSqlDbDataSourceProviderBase));
+
     private const string MicrosoftSqlServerRegPath = @"SOFTWARE\Microsoft\Microsoft SQL Server";
 
     private readonly IRegistryKeyService _registryKeyService;
 
-    protected MsSqlDbDataSourceProviderBase()
-        : this(ServiceLocator.Default.ResolveRequiredType<IRegistryKeyService>())
+    protected internal MsSqlDbDataSourceProviderBase(IRegistryKeyService registryKeyService)
     {
-    }
-
-    internal MsSqlDbDataSourceProviderBase(IRegistryKeyService registryKeyService)
-    {
-        ArgumentNullException.ThrowIfNull(registryKeyService);
-
         _registryKeyService = registryKeyService;
     }
 
     protected abstract string ProviderName { get; }
 
-    public virtual IList<DbDataSource> GetDataSources()
+    public virtual IReadOnlyList<DbDataSource> GetDataSources()
     {
         var localServers = GetLocalSqlServerInstances().ToList();
         var remoteServers = GetRemoteSqlServerInstances().ToList();
@@ -70,9 +63,9 @@ public abstract class MsSqlDbDataSourceProviderBase : IDbDataSourceProvider
         {
             sqlFactory = DbProviderFactories.GetFactory(ProviderName);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Log.Error(e);
+            Logger.LogError(ex, null);
 
             return Enumerable.Empty<string>();
         }

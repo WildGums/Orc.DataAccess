@@ -10,15 +10,17 @@ using Catel.Caching;
 using Catel.IoC;
 using Catel.Logging;
 using Catel.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 public static class DbProviderExtensions
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(DbProviderExtensions));
 
     private static readonly Dictionary<string, Dictionary<Type, IList<Type>>> ConnectedTypes = new();
     private static readonly Dictionary<string, Dictionary<Type, object>> ConnectedInstances = new();
 
-    public static T? GetOrCreateConnectedInstance<T>(this DbProvider dbProvider)
+    public static T? GetOrCreateConnectedInstance<T>(this DbProvider dbProvider, IServiceProvider serviceProvider)
         where T : notnull
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
@@ -31,7 +33,7 @@ public static class DbProviderExtensions
             return (T)instance;
         }
 
-        instance = CreateConnectedInstance<T>(dbProvider);
+        instance = CreateConnectedInstance<T>(dbProvider, serviceProvider);
         if (instance is null)
         {
             return default;
@@ -41,7 +43,7 @@ public static class DbProviderExtensions
         return (T?)instance;
     }
 
-    public static T? CreateConnectedInstance<T>(this DbProvider dbProvider, params object[] parameters)
+    public static T? CreateConnectedInstance<T>(this DbProvider dbProvider, IServiceProvider serviceProvider, params object[] parameters)
         where T : notnull
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
@@ -53,10 +55,7 @@ public static class DbProviderExtensions
             return default;
         }
 
-#pragma warning disable IDISP001 // Dispose created
-        var typeFactory = dbProvider.GetTypeFactory();
-#pragma warning restore IDISP001 // Dispose created
-        return (T)typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion(connectedType, parameters);
+        return (T)ActivatorUtilities.CreateInstance(serviceProvider, connectedType, parameters);
     }
 
     public static IList<Type> GetConnectedTypes<T>(this DbProvider dbProvider)
@@ -77,7 +76,7 @@ public static class DbProviderExtensions
             typeBatch[typeof(T)] = types;
         }
 
-        return types;
+        return types.ToArray();
     }
 
     private static Dictionary<Type, object> GetConnectedInstances(string providerInvariantName)
@@ -92,7 +91,7 @@ public static class DbProviderExtensions
         return instances;
     }
 
-    public static void ConnectType<TBaseType>(this DbProvider dbProvider, Type type)
+    public static void ConnectType<TBaseType>(this DbProvider dbProvider, IServiceProvider serviceProvider, Type type)
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
         ArgumentNullException.ThrowIfNull(type);
@@ -118,6 +117,7 @@ public static class DbProviderExtensions
 
         var providerInvariantName = dbProvider.ProviderInvariantName;
         var attributedSqlCompilerTypes = typeof(T).GetAllAssignableFrom();
+
         foreach (var attributedSqlCompilerType in attributedSqlCompilerTypes)
         {
             var connectToProviderAttribute = attributedSqlCompilerType.GetCustomAttributeEx(typeof(ConnectToProviderAttribute), true) as ConnectToProviderAttribute;
@@ -134,12 +134,12 @@ public static class DbProviderExtensions
     }
 
     //TODO: Make it async
-    public static IList<DbDataSource> GetDataSources(this DbProvider dbProvider)
+    public static IReadOnlyList<DbDataSource> GetDataSources(this DbProvider dbProvider, IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
 
-        var dataSourceProvider = dbProvider.GetOrCreateConnectedInstance<IDbDataSourceProvider>();
-        return dataSourceProvider?.GetDataSources() ?? [];
+        var dataSourceProvider = dbProvider.GetOrCreateConnectedInstance<IDbDataSourceProvider>(serviceProvider);
+        return dataSourceProvider?.GetDataSources() ?? Array.Empty<DbDataSource>();
     }
 
     public static DbConnection? CreateConnection(this DbProvider dbProvider, DatabaseSource databaseSource)
@@ -149,18 +149,18 @@ public static class DbProviderExtensions
 
         if (string.IsNullOrEmpty(databaseSource.ConnectionString))
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Invalid source");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Invalid source");
         }
 
         return CreateConnection(dbProvider, databaseSource.ConnectionString);
     }
 
-    public static DbSourceGatewayBase? CreateDbSourceGateway(this DbProvider dbProvider, DatabaseSource databaseSource)
+    public static DbSourceGatewayBase? CreateDbSourceGateway(this DbProvider dbProvider, IServiceProvider serviceProvider, DatabaseSource databaseSource)
     {
         ArgumentNullException.ThrowIfNull(dbProvider);
         ArgumentNullException.ThrowIfNull(databaseSource);
 
-        return dbProvider.CreateConnectedInstance<DbSourceGatewayBase>(databaseSource);
+        return dbProvider.CreateConnectedInstance<DbSourceGatewayBase>(serviceProvider, databaseSource);
     }
 
     public static DbConnection? CreateConnection(this DbProvider dbProvider, string connectionString)

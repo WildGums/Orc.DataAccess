@@ -8,8 +8,8 @@ using DataAccess;
 [ConnectToProvider("SQLite Data Provider")]
 public class SqLiteSourceGateway : SqlDbSourceGatewayBase
 {
-    public SqLiteSourceGateway(DatabaseSource source)
-        : base(source)
+    public SqLiteSourceGateway(DatabaseSource source, IServiceProvider serviceProvider)
+        : base(source, serviceProvider)
     {
     }
 

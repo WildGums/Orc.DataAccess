@@ -7,11 +7,18 @@ using System.Data;
 [ConnectToProvider("Microsoft.Data.SqlClient")]
 public class MsSqlDataSourceSchemaProvider : IDataSourceSchemaProvider
 {
+    private readonly IServiceProvider _serviceProvider;
+
+    public MsSqlDataSourceSchemaProvider(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
     public DbDataSourceSchema? GetSchema(DbConnectionString connectionString)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
 
-        var provider = DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName);
+        var provider = DbProvider.GetRegisteredProvider(connectionString.DbProvider.InvariantName, _serviceProvider);
         var databases = new List<string>();
         using var sqlConnection = provider.CreateConnection();
         if (sqlConnection is null)

@@ -6,14 +6,15 @@ using System.Data;
 using System.Data.Common;
 using Catel.Logging;
 using DataAccess;
+using Microsoft.Extensions.Logging;
 
 [ConnectToProvider("Oracle.ManagedDataAccess.Client")]
 public class OracleSourceGateway : SqlDbSourceGatewayBase
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(OracleSourceGateway));
 
-    public OracleSourceGateway(DatabaseSource source)
-        : base(source)
+    public OracleSourceGateway(DatabaseSource source, IServiceProvider serviceProvider)
+        : base(source, serviceProvider)
     {
     }
 
@@ -56,7 +57,7 @@ public class OracleSourceGateway : SqlDbSourceGatewayBase
                 }
 
             default:
-                throw Log.ErrorAndCreateException<NotSupportedException>($"'{source}' not supported in GetQueryParameters");
+                throw Logger.LogErrorAndCreateException<NotSupportedException>($"'{source}' not supported in GetQueryParameters");
         }
 
         return new DataSourceParameters();
@@ -81,7 +82,7 @@ public class OracleSourceGateway : SqlDbSourceGatewayBase
 
         if (Source.Table is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Cannot create stored procedure command on null table");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot create stored procedure command on null table");
         }
 
         return connection.CreateCommand(Source.Table, CommandType.StoredProcedure);

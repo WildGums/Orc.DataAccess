@@ -2,7 +2,7 @@
 
 using Microsoft.Win32;
 
-internal interface IRegistryKeyService
+public interface IRegistryKeyService
 {
     IRegistryKey OpenBaseKey(RegistryHive hKey, RegistryView view);
 }

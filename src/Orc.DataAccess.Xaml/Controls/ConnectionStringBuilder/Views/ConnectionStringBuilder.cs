@@ -1,40 +1,39 @@
 ﻿namespace Orc.DataAccess.Controls;
 
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Catel;
-using Catel.IoC;
 using Catel.Logging;
+using Catel.MVVM;
 using Catel.Services;
 using Database;
+using Microsoft.Extensions.Logging;
 using Orc.DataAccess.Automation.Controls;
 
 #pragma warning disable IDISP006 // Implement IDisposable
 [TemplatePart(Name = "PART_ConnectionStringTextBox", Type = typeof(TextBox))]
-public class ConnectionStringBuilder : Control
+public partial class ConnectionStringBuilder : Control
 {
-    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.GetLogger(typeof(ConnectionStringBuilder));
 
-    private readonly ITypeFactory _typeFactory;
+    private readonly IServiceProvider _serviceProvider;
     private readonly IUIVisualizerService _uiVisualizerService;
+    private readonly IViewModelFactory _viewModelFactory;
 
     private DbProviderInfo? _dbProvider;
     private TextBox? _connectionStringTextBox;
 
     private bool _isConnectionStringUpdating;
 
-    public ConnectionStringBuilder()
+    public ConnectionStringBuilder(IServiceProvider serviceProvider, IUIVisualizerService uiVisualizerService,
+        IViewModelFactory viewModelFactory)
     {
-        _typeFactory = this.GetTypeFactory();
-#pragma warning disable IDISP001 // Dispose created.
-        var serviceLocator = this.GetServiceLocator();
-#pragma warning restore IDISP001 // Dispose created.
-
-        _uiVisualizerService = serviceLocator.ResolveRequiredType<IUIVisualizerService>();
+        _serviceProvider = serviceProvider;
+        _uiVisualizerService = uiVisualizerService;
+        _viewModelFactory = viewModelFactory;
 
         var editCommandBinding = new CommandBinding
         {
@@ -64,7 +63,7 @@ public class ConnectionStringBuilder : Control
         using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance.SetCurrentValue(IsInEditModeProperty, true), 
                    x => x.Instance.SetCurrentValue(IsInEditModeProperty, false)))
         {
-            var connectionStringEditViewModel = _typeFactory.CreateRequiredInstanceWithParametersAndAutoCompletion<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
+            var connectionStringEditViewModel = _viewModelFactory.CreateRequiredViewModel<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
             connectionStringEditViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
             connectionStringEditViewModel.DefaultProperties = DefaultProperties;
 
@@ -178,7 +177,7 @@ public class ConnectionStringBuilder : Control
         _connectionStringTextBox = GetTemplateChild("PART_ConnectionStringTextBox") as TextBox;
         if (_connectionStringTextBox is null)
         {
-            throw Log.ErrorAndCreateException<InvalidOperationException>("Can't find template part 'PART_ConnectionStringTextBox'");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Can't find template part 'PART_ConnectionStringTextBox'");
         }
 
         _connectionStringTextBox.TextChanged += OnTextChanged;
@@ -226,7 +225,7 @@ public class ConnectionStringBuilder : Control
             var providerName = DatabaseProvider;
             var connectionString = ConnectionString ?? string.Empty;
 
-            var providers = DbProvider.GetRegisteredProviders();
+            var providers = DbProvider.GetRegisteredProviders(_serviceProvider);
             DbConnectionString? displayedConnectionsString = null;
             DbProvider? dbProvider = null;
             if (string.IsNullOrEmpty(providerName))
