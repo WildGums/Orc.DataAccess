@@ -44,7 +44,7 @@ public class DbProvider
     protected DbProviderFactory DbProviderFactory => _dbProviderFactory ??= DbProviderFactories.GetFactory(ProviderInvariantName);
 #pragma warning disable IDISP004 // Don't ignore created IDisposable.
     public virtual Type ConnectionType => _connectionType ??= DbProviderFactory.CreateConnection()?.GetType() 
-                                                              ?? throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Failed to get '{nameof(ConnectionType)}' value");
+                                                              ?? throw Logger.LogErrorAndCreateException<InvalidOperationException>("Failed to get 'ConnectionType' value");
 #pragma warning restore IDISP004 // Don't ignore created IDisposable.
     public virtual DbProviderInfo Info => GetInfo();
     public string? Dialect { get; }
@@ -81,7 +81,7 @@ public class DbProvider
             return dbProvider;
         }
 
-        throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Provider with name '{invariantName}' is not registered");
+        throw Logger.LogErrorAndCreateException<InvalidOperationException>("Provider with name '{InvariantName}' is not registered", invariantName);
     }
 
     public static IReadOnlyDictionary<string, DbProvider> GetRegisteredProviders(IServiceProvider serviceProvider)
@@ -150,7 +150,7 @@ public class DbProvider
 
         if (infoRow is null)
         {
-            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Failed to obtain '{nameof(DbProviderInfo)}'");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Failed to obtain 'DbProviderInfo'");
         }
 
         _info = infoRow.ToDbProviderInfo();

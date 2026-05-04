@@ -44,6 +44,6 @@ public class MsSqlDataSourceProvider : IDataSourceProvider
 
     private static IEnumerable<string> GetRemoteSqlServerInstances()
     {
-        throw Logger.LogErrorAndCreateException<NotSupportedException>($"Not supported on .NET Core, SqlDataSourceEnumerator is not (yet) available. See https://github.com/dotnet/corefx/issues/32874");
+        throw Logger.LogErrorAndCreateException<NotSupportedException>("Not supported on .NET Core, SqlDataSourceEnumerator is not (yet) available. See https://github.com/dotnet/corefx/issues/32874");
     }
 }
