@@ -57,7 +57,7 @@ public class OracleSourceGateway : SqlDbSourceGatewayBase
                 }
 
             default:
-                throw Logger.LogErrorAndCreateException<NotSupportedException>($"'{source}' not supported in GetQueryParameters");
+                throw Logger.LogErrorAndCreateException<NotSupportedException>("'{Source}' not supported in GetQueryParameters", source);
         }
 
         return new DataSourceParameters();

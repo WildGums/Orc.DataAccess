@@ -66,7 +66,7 @@ public class ExcelReader : ReaderBase
                 var readResult = _reader.Read() && _reader[columnIndex] is not null;
 
 #if DEBUG
-                Logger.LogDebug($"Read '{1}' rows with result: '{readResult}'");
+                Logger.LogDebug("Read '{ReadCount}' rows with result: '{ReadResult}'", 1, readResult);
 #endif
 
                 return readResult;
@@ -79,7 +79,7 @@ public class ExcelReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Failed to read data from '{Source}'");
+            Logger.LogError(ex, "Failed to read data from '{Source}'", Source);
             AddValidationError($"Failed to read data: '{ex.Message}'");
             return false;
         }
@@ -119,12 +119,12 @@ public class ExcelReader : ReaderBase
             ConfigureStartRange(excelSource);
 
 #if DEBUG
-            Logger.LogDebug($"Reader is initialized with '{source}'");
+            Logger.LogDebug("Reader is initialized with '{Source}'", source);
 #endif
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Failed to initialize reader for data source '{Source}'");
+            Logger.LogError(ex, "Failed to initialize reader for data source '{Source}'", Source);
             _reader?.Dispose();
             _reader = null;
 
@@ -205,7 +205,7 @@ public class ExcelReader : ReaderBase
 
         if (!isWorksheetFound)
         {
-            throw Logger.LogErrorAndCreateException<Exception>($"No worksheet with name: '{worksheetName}' in project data file");
+            throw Logger.LogErrorAndCreateException<Exception>("No worksheet with name: '{WorksheetName}' in project data file", worksheetName);
         }
     }
 
@@ -239,7 +239,7 @@ public class ExcelReader : ReaderBase
             .ToArray();
 
 #if DEBUG
-        Logger.LogDebug($"'{fieldCount}' headers of excel file were read");
+        Logger.LogDebug("'{FieldCount}' headers of excel file were read", fieldCount);
 #endif
     }
 

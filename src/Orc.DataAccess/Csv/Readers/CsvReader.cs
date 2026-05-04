@@ -94,7 +94,7 @@ public class CsvReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Logger.LogWarning(ex, $"Failed to read file '{Source}'");
+            Logger.LogWarning(ex, "Failed to read file '{Source}'", Source);
             AddValidationError($"Failed to read data: '{ex.Message}'");
 
             return false;
@@ -150,7 +150,7 @@ public class CsvReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Failed to initialize reader for data source '{Source}'");
+            Logger.LogError(ex, "Failed to initialize reader for data source '{Source}'", Source);
 
             _reader?.Dispose();
             _reader = null;

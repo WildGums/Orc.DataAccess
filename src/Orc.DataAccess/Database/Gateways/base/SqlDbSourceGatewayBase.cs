@@ -83,7 +83,7 @@ public abstract class SqlDbSourceGatewayBase : DbSourceGatewayBase
                 break;
 
             default:
-                throw Logger.LogErrorAndCreateException<NotSupportedException>($"'{source.TableType}' not supported");
+                throw Logger.LogErrorAndCreateException<NotSupportedException>("'{TableType}' not supported", source.TableType);
         }
 
         command.AddParameters(queryParameters);

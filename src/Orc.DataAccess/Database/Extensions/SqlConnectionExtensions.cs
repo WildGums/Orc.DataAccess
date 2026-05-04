@@ -77,6 +77,6 @@ internal static class SqlConnectionExtensions
             return currentProvider;
         }
 
-        throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Failed to obtain '{nameof(DbProviderInfo)}'");
+        throw Logger.LogErrorAndCreateException<InvalidOperationException>("Failed to obtain 'DbProviderInfo'");
     }
 }

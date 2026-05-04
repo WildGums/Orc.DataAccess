@@ -103,7 +103,7 @@ public class SqlTableReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Failed to read source '{Source}'");
+            Logger.LogError(ex, "Failed to read source '{Source}'", Source);
             AddValidationError($"Failed to read data: '{ex.Message}'");
             return false;
         }
@@ -130,7 +130,7 @@ public class SqlTableReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Failed to read source '{Source}'");
+            Logger.LogError(ex, "Failed to read source '{Source}'", Source);
             AddValidationError($"Failed to read data: '{ex.Message}'");
             return false;
         }
@@ -157,7 +157,7 @@ public class SqlTableReader : ReaderBase
     {
         if (_reader is null)
         {
-            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Cannot get value from source. '{nameof(_reader)}' was null");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot get value from source. '" + nameof(_reader) + "' was null");
         }
         return _reader[index];
     }
@@ -166,7 +166,7 @@ public class SqlTableReader : ReaderBase
     {
         if (_reader is null)
         {
-            throw Logger.LogErrorAndCreateException<InvalidOperationException>($"Cannot get value from source. '{nameof(_reader)}' was null");
+            throw Logger.LogErrorAndCreateException<InvalidOperationException>("Cannot get value from source. '" + nameof(_reader) + "' was null");
         }
 
         return _reader[name];
@@ -222,7 +222,7 @@ public class SqlTableReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Failed to initialize reader for data source '{Source}'");
+            Logger.LogError(ex, "Failed to initialize reader for data source '{Source}'", Source);
 
             AddValidationError($"Filed to initialize reader: '{ex.Message}'");
         }
@@ -252,7 +252,7 @@ public class SqlTableReader : ReaderBase
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Failed to initialize SelectAllReader for data source '{Source}'");
+            Logger.LogError(ex, "Failed to initialize SelectAllReader for data source '{Source}'", Source);
             _reader?.Dispose();
             _reader = null;
 
@@ -270,7 +270,7 @@ public class SqlTableReader : ReaderBase
         _fieldHeaders = _reader.GetHeaders();
 
 #if DEBUG
-        Logger.LogDebug($"'{_fieldHeaders.Count}' headers of table were read");
+        Logger.LogDebug("'{FieldCount}' headers of table were read", _fieldHeaders.Count);
 #endif
     }
 }
