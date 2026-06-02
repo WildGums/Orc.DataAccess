@@ -15,7 +15,7 @@ using Database;
 using Microsoft.Extensions.Logging;
 using Timer = System.Timers.Timer;
 
-public class ConnectionStringEditViewModel : ViewModelBase
+public partial class ConnectionStringEditViewModel : ViewModelBase
 {
     private static readonly ILogger Logger = LogManager.GetLogger(typeof(ConnectionStringEditViewModel));
 

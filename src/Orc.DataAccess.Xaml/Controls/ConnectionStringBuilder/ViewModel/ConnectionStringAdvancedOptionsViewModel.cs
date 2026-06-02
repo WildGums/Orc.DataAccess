@@ -10,7 +10,7 @@ using Catel;
 using Catel.MVVM;
 using Database;
 
-public class ConnectionStringAdvancedOptionsViewModel : ViewModelBase
+public partial class ConnectionStringAdvancedOptionsViewModel : ViewModelBase
 {
     private readonly DispatcherTimer _updateFilterTimer = new();
 

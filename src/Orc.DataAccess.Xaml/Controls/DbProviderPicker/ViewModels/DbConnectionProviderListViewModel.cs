@@ -9,7 +9,7 @@ using Catel.MVVM;
 using Catel.Services;
 using Database;
 
-public class DbConnectionProviderListViewModel : ViewModelBase
+public partial class DbConnectionProviderListViewModel : ViewModelBase
 {
     private readonly DbProviderInfo? _selectedProvider;
     private readonly ILanguageService _languageService;
