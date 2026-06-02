@@ -15,7 +15,7 @@ using Database;
 using Microsoft.Extensions.Logging;
 using Timer = System.Timers.Timer;
 
-public class ConnectionStringEditViewModel : ViewModelBase
+public partial class ConnectionStringEditViewModel : ViewModelBase
 {
     private static readonly ILogger Logger = LogManager.GetLogger(typeof(ConnectionStringEditViewModel));
 
@@ -36,12 +36,12 @@ public class ConnectionStringEditViewModel : ViewModelBase
     public ConnectionStringEditViewModel(IMessageService messageService,
         IUIVisualizerService uiVisualizerService, IServiceProvider serviceProvider, IDispatcherService dispatcherService,
         IViewModelFactory viewModelFactory)
-        : this(null, null, messageService, uiVisualizerService, serviceProvider, dispatcherService, viewModelFactory)
+        : this(new ConnectionStringEditContext(), messageService, uiVisualizerService, serviceProvider, dispatcherService, viewModelFactory)
     {
         // Leave empty
     }
 
-    public ConnectionStringEditViewModel(string? connectionString, DbProviderInfo? provider, IMessageService messageService,
+    public ConnectionStringEditViewModel(ConnectionStringEditContext context, IMessageService messageService,
         IUIVisualizerService uiVisualizerService, IServiceProvider serviceProvider, IDispatcherService dispatcherService,
         IViewModelFactory viewModelFactory)
         : base(serviceProvider)
@@ -50,8 +50,8 @@ public class ConnectionStringEditViewModel : ViewModelBase
         _uiVisualizerService = uiVisualizerService;
         _dispatcherService = dispatcherService;
         _viewModelFactory = viewModelFactory;
-        _initialDbProvider = provider;
-        _initialConnectionString = connectionString;
+        _initialDbProvider = context.Provider;
+        _initialConnectionString = context.ConnectionString;
 
         InitServers = new TaskCommand(serviceProvider, InitServersAsync, () => !IsServersRefreshing);
         RefreshServers = new TaskCommand(serviceProvider, RefreshServersAsync, () => !IsServersRefreshing);

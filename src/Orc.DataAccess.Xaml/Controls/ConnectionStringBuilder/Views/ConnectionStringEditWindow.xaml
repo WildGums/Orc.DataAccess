@@ -165,7 +165,7 @@
                 <ComboBox IsEditable="True"
                           IsDropDownOpen="{Binding IsDatabaseListVisible}"
                           ItemsSource="{Binding Databases}"
-                          Text="{Binding InitialCataLogger.LogValue, UpdateSourceTrigger=PropertyChanged}" >
+                          Text="{Binding InitialCatalog.Value, UpdateSourceTrigger=PropertyChanged}" >
                     <xamlbehaviors:Interaction.Behaviors>
                         <orccontrols:DoNotShowDropDownOnClickComboboxBehavior/>
                     </xamlbehaviors:Interaction.Behaviors>

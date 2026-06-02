@@ -6,7 +6,7 @@ using Catel.MVVM;
 using Catel.Services;
 using Database;
 
-public class DbProviderPickerViewModel : ViewModelBase
+public partial class DbProviderPickerViewModel : ViewModelBase
 {
     private readonly IUIVisualizerService _uiVisualizerService;
 

@@ -45,7 +45,13 @@ public class ConnectionStringEditViewModelTextFixture
                 .Callback((Action action, bool onlyInvokeWhenNoAccess) => action.Invoke());
             var dispatcherService = dispatcherServiceMock.Object;
 
-            var vm = new ConnectionStringEditViewModel(connectionString, sqLiteProviderInfo, messageService, 
+            var context = new ConnectionStringEditContext
+            { 
+                ConnectionString = connectionString, 
+                Provider = sqLiteProviderInfo
+            };
+            
+            var vm = new ConnectionStringEditViewModel(context, messageService, 
                 uiVisualizerService, serviceProvider, dispatcherService, serviceProvider.GetRequiredService<IViewModelFactory>());
             await vm.InitializeViewModelAsync();
 
