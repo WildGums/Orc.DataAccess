@@ -63,7 +63,13 @@ public partial class ConnectionStringBuilder : Control
         using (new DisposableToken<ConnectionStringBuilder>(this, x => x.Instance.SetCurrentValue(IsInEditModeProperty, true), 
                    x => x.Instance.SetCurrentValue(IsInEditModeProperty, false)))
         {
-            var connectionStringEditViewModel = _viewModelFactory.CreateRequiredViewModel<ConnectionStringEditViewModel>(ConnectionString, _dbProvider);
+            var context = new ConnectionStringEditContext
+            {
+                ConnectionString = ConnectionString,
+                Provider = _dbProvider
+            };
+            
+            var connectionStringEditViewModel = _viewModelFactory.CreateRequiredViewModel<ConnectionStringEditViewModel>(context);
             connectionStringEditViewModel.IsAdvancedOptionsReadOnly = IsAdvancedOptionsReadOnly;
             connectionStringEditViewModel.DefaultProperties = DefaultProperties;
 
