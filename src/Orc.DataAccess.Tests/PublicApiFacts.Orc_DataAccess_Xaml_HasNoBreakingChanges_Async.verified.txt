@@ -216,6 +216,12 @@ namespace Orc.DataAccess.Controls
         public override void OnApplyTemplate() { }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() { }
     }
+    public class ConnectionStringEditContext
+    {
+        public ConnectionStringEditContext() { }
+        public string? ConnectionString { get; set; }
+        public Orc.DataAccess.Database.DbProviderInfo? Provider { get; set; }
+    }
     public class ConnectionStringEditViewModel : Catel.MVVM.ViewModelBase
     {
         public static readonly Catel.Data.IPropertyData ConnectionStateProperty;
@@ -228,7 +234,7 @@ namespace Orc.DataAccess.Controls
         public static readonly Catel.Data.IPropertyData IsServerListVisibleProperty;
         public static readonly Catel.Data.IPropertyData IsServersRefreshingProperty;
         public ConnectionStringEditViewModel(Catel.Services.IMessageService messageService, Catel.Services.IUIVisualizerService uiVisualizerService, System.IServiceProvider serviceProvider, Catel.Services.IDispatcherService dispatcherService, Catel.MVVM.IViewModelFactory viewModelFactory) { }
-        public ConnectionStringEditViewModel(string? connectionString, Orc.DataAccess.Database.DbProviderInfo? provider, Catel.Services.IMessageService messageService, Catel.Services.IUIVisualizerService uiVisualizerService, System.IServiceProvider serviceProvider, Catel.Services.IDispatcherService dispatcherService, Catel.MVVM.IViewModelFactory viewModelFactory) { }
+        public ConnectionStringEditViewModel(Orc.DataAccess.Controls.ConnectionStringEditContext context, Catel.Services.IMessageService messageService, Catel.Services.IUIVisualizerService uiVisualizerService, System.IServiceProvider serviceProvider, Catel.Services.IDispatcherService dispatcherService, Catel.MVVM.IViewModelFactory viewModelFactory) { }
         public bool CanLogOnToServer { get; }
         public Orc.DataAccess.Database.ConnectionState ConnectionState { get; }
         public Orc.DataAccess.Database.DbConnectionString? ConnectionString { get; }
@@ -260,7 +266,7 @@ namespace Orc.DataAccess.Controls
         protected override System.Threading.Tasks.Task InitializeAsync() { }
         protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e) { }
     }
-    public sealed class ConnectionStringEditWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
+    public class ConnectionStringEditWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
     {
         public ConnectionStringEditWindow() { }
         public ConnectionStringEditWindow(System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
@@ -291,7 +297,7 @@ namespace Orc.DataAccess.Controls
         public override string Title { get; }
         protected override System.Threading.Tasks.Task InitializeAsync() { }
     }
-    public sealed class DbConnectionProviderListWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
+    public class DbConnectionProviderListWindow : Catel.Windows.DataWindow, System.Windows.Markup.IComponentConnector
     {
         public DbConnectionProviderListWindow() { }
         public DbConnectionProviderListWindow(System.IServiceProvider serviceProvider, Catel.Services.IWrapControlService wrapControlService, Catel.Services.ILanguageService languageService) { }
