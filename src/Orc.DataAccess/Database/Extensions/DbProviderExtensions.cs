@@ -76,7 +76,7 @@ public static class DbProviderExtensions
             typeBatch[typeof(T)] = types;
         }
 
-        return types.ToArray();
+        return types;
     }
 
     private static Dictionary<Type, object> GetConnectedInstances(string providerInvariantName)
