@@ -1,9 +1,11 @@
 ﻿namespace Orc;
 
+using System;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Orc.DataAccess.Controls;
 
 /// <summary>
